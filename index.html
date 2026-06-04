@@ -146,11 +146,13 @@ z-index:1000;
 box-shadow:0 4px 15px rgba(0,0,0,0.15);
 }
 
-.nav-logo{
-color:white;
-font-size:32px;
-font-weight:700;
-letter-spacing:2px;
+.nav-logo img{
+height:65px;
+width:auto;
+transition:all 0.4s ease;
+}
+  .scrolled .nav-logo img{
+height:45px;
 }
 
 .nav-links{
@@ -174,8 +176,9 @@ transition:0.3s;
 
 <body>
 
-<nav>
-    <div class="nav-logo">ADH</div>
+<div class="nav-logo">
+    <img src="LOGO ADH Authen Data Hub.png" alt="ADH Logo">
+</div>
 
     <ul class="nav-links">
         <li><a href="#home">Home</a></li>
@@ -332,5 +335,18 @@ Chat on WhatsApp
 
 </footer>
 
+  <script>
+window.addEventListener("scroll", function() {
+
+    const nav = document.querySelector("nav");
+
+    if(window.scrollY > 100){
+        nav.classList.add("scrolled");
+    } else {
+        nav.classList.remove("scrolled");
+    }
+
+});
+</script>
 </body>
 </html>
