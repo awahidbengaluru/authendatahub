@@ -7,6 +7,10 @@
 <title>Authen Data Hub (ADH)</title>
 
 <style>
+html{
+scroll-behavior:smooth;
+}
+
 *{
 margin:0;
 padding:0;
@@ -131,20 +135,22 @@ font-size:2rem;
   /* Navigation Bar */
 
 nav{
-    position:sticky;
-    top:0;
-    background:#002f86;
-    padding:15px 8%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    z-index:1000;
+position:sticky;
+top:0;
+background:#002f86;
+padding:18px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:1000;
+box-shadow:0 4px 15px rgba(0,0,0,0.15);
 }
 
 .nav-logo{
-    color:white;
-    font-size:28px;
-    font-weight:bold;
+color:white;
+font-size:32px;
+font-weight:700;
+letter-spacing:2px;
 }
 
 .nav-links{
@@ -160,7 +166,8 @@ nav{
 }
 
 .nav-links a:hover{
-    color:#00d4ff;
+color:#00d4ff;
+transition:0.3s;
 }
 </style>
 </head>
