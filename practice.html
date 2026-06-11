@@ -3,211 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADH NCERT Active Recall Pro Portal</title>
+    <title>NCERT BIO Game for NEET</title>
     <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
         
-        :root {
-            --primary: #38bdf8; --bg: #030712; --panel: #0b1329; --text: #f8fafc;
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f1f5f9; 
+            color: #1e293b; 
+            transition: all 0.3s ease; 
         }
-        
-        /* Dynamic Theme Palette Configurations */
-        body.theme-cyber { --primary: #00f2fe; --bg: #020617; --panel: #0b1528; }
-        body.theme-botanical { --primary: #4ade80; --bg: #022c22; --panel: #064e3b; }
-        body.theme-anatomy { --primary: #f43f5e; --bg: #1c050c; --panel: #4c0519; }
-        body.theme-ecology { --primary: #f59e0b; --bg: #1c1917; --panel: #44403c; }
 
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--text); transition: all 0.4s ease; }
-        .game-font { font-family: 'Chakra Petch', sans-serif; }
+        /* High-Contrast Interactive Game Board Layout Elements */
+        .drop-zone { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-width: 140px; 
+            height: 36px; 
+            border: 2px dashed #94a3b8; 
+            background-color: #ffffff; 
+            border-radius: 8px; 
+            margin: 4px 6px; 
+            vertical-align: middle; 
+            transition: all 0.2s ease; 
+            color: #0f172a; 
+            font-weight: 700; 
+            text-align: center; 
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+        }
+        .drop-zone.hovered { border-color: #22c55e; background-color: #f0fdf4; }
+        .drop-zone.filled { border-style: solid; border-color: #22c55e; background-color: #f8fafc; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .drop-zone.correct { border-color: #16a34a !important; color: #ffffff !important; background-color: #16a34a !important; box-shadow: 0 0 12px rgba(22, 163, 74, 0.3) !important; }
+        .drop-zone.wrong { border-color: #dc2626 !important; color: #ffffff !important; background-color: #dc2626 !important; box-shadow: 0 0 12px rgba(220, 38, 38, 0.3) !important; }
 
-        /* Smooth Micro-Animations */
-        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 8px var(--primary); } 50% { box-shadow: 0 0 20px var(--primary); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
-        @keyframes scaleIn { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        
-        .animate-scale-in { animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-        .animate-shake { animation: shake 0.2s ease-in-out 2; }
+        /* Draggable & Clickable High-Contrast Word Chips */
+        .word-chip { 
+            display: inline-block; 
+            padding: 10px 16px; 
+            background-color: #ffffff; 
+            border: 2px solid #cbd5e1; 
+            border-radius: 10px; 
+            font-weight: 700; 
+            color: #0f172a; 
+            text-align: center; 
+            cursor: grab; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            user-select: none; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
+        }
+        .word-chip:hover { border-color: #22c55e; transform: translateY(-2px); box-shadow: 0 6px 12px -1px rgba(0,0,0,0.1); }
+        .word-chip.selected { border-color: #15803d; background-color: #4ade80; color: #ffffff; box-shadow: 0 0 12px rgba(74, 222, 128, 0.5); }
+        .word-chip.used { opacity: 0.2; cursor: default; pointer-events: none; transform: none !important; box-shadow: none; }
 
-        /* High-Contrast Interactive Empty Drop Zones */
-        .drop-zone { display: inline-flex; align-items: center; justify-content: center; min-width: 140px; height: 36px; border: 2px dashed #64748b; background-color: rgba(15, 23, 42, 0.8); border-radius: 8px; margin: 4px 6px; vertical-align: middle; transition: all 0.2s ease; color: #ffffff; font-weight: 700; text-align: center; cursor: pointer; border-bottom: 3px solid #64748b; }
-        .drop-zone.hovered { border-color: var(--primary); background-color: rgba(56, 189, 248, 0.15); }
-        .drop-zone.filled { border-style: solid; border-color: var(--primary); background-color: #1e293b; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); animation: pulseGlow 2s infinite; }
-        .drop-zone.correct { border-color: #22c55e !important; color: #ffffff !important; background-color: #15803d !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); box-shadow: 0 0 15px rgba(34, 197, 94, 0.4) !important; animation: none; }
-        .drop-zone.wrong { border-color: #ef4444 !important; color: #ffffff !important; background-color: #b91c1c !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); box-shadow: 0 0 15px rgba(239, 68, 68, 0.4) !important; animation: none; }
+        .accordion-btn { transition: background-color 0.2s; }
+        .accordion-btn:hover { background-color: #e2e8f0; }
 
-        /* High-Contrast Word Selection Chips */
-        .word-chip { display: inline-block; padding: 10px 16px; background: #1e293b; border: 2px solid #475569; border-radius: 10px; font-weight: 700; color: #ffffff; text-align: center; cursor: grab; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); user-select: none; box-shadow: 0 4px 6px rgba(0,0,0,0.4); }
-        .word-chip:hover { border-color: var(--primary); transform: translateY(-3px) scale(1.03); box-shadow: 0 8px 16px rgba(0,0,0,0.5); }
-        .word-chip.selected { border-color: #ffffff; background-color: var(--primary); color: #000000; box-shadow: 0 0 15px var(--primary); }
-        .word-chip.used { opacity: 0.15; cursor: default; pointer-events: none; transform: none !important; box-shadow: none; }
-
-        /* Accordion Panel Formatting Layout overrides */
-        .accordion-header { background-color: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); transition: all 0.2s; }
-        .accordion-header:hover { background-color: rgba(56, 189, 248, 0.05); }
-        
-        /* FIX: High-Contrast Pure White Input Visibility Configurations */
-        .hc-input { background-color: #ffffff !important; color: #000000 !important; font-weight: 700 !important; border: 3px solid var(--primary) !important; }
-        .hc-input::placeholder { color: #64748b !important; font-weight: 500; }
+        /* Custom Inversion Class Override for Admin Workspace Forms visibility layout controllers */
+        .hc-text-box { background-color: #ffffff !important; color: #000000 !important; font-weight: 700 !important; border: 2px solid #cbd5e1 !important; }
+        .hc-text-box:focus { border-color: #22c55e !important; outline: none; }
     </style>
 </head>
-<body class="p-3 md:p-6 min-h-screen flex flex-col theme-cyber">
+<body class="flex flex-col min-h-screen">
 
-    <div class="max-w-7xl w-full mx-auto flex flex-wrap justify-between items-center border-b border-slate-800 pb-4 mb-6">
-        <div>
-            <h1 class="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400 game-font">Authen Data Hub</h1>
-            <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mt-0.5">NCERT Biology Active Recall Gaming Portal Pro</p>
-        </div>
-        <div class="flex gap-3 mt-3 sm:mt-0">
-            <button onclick="exportDataBackup()" class="bg-slate-900 hover:bg-slate-800 text-amber-400 text-xs font-bold px-3 py-2 rounded-xl border border-amber-500/30 transition">💾 Backup Data</button>
-            <button onclick="toggleAdminPanel()" class="bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg transition">⚙️ Control Room (Add Text)</button>
+    <div class="bg-white border-b border-slate-200 shadow-sm p-4 sticky top-0 z-50">
+        <div class="max-w-7xl w-full mx-auto flex flex-wrap justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-extrabold tracking-tight text-emerald-600" id="mainHeaderLogo">NCERT BIO Game for NEET</h1>
+                <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mt-0.5" id="subHeaderTagline">Master the NCERT Bio by repeatedly playing this game</p>
+            </div>
+            <div class="flex gap-3 mt-2 sm:mt-0">
+                <div class="flex items-center bg-slate-100 rounded-xl p-1 border border-slate-200">
+                    <input type="file" id="importFileHandler" class="hidden" onchange="importDataBackup(event)">
+                    <button onclick="document.getElementById('importFileHandler').click()" class="text-slate-700 text-xs font-bold px-3 py-1.5 hover:bg-white rounded-lg transition">📥 Restore Data</button>
+                    <button onclick="exportDataBackup()" class="text-slate-700 text-xs font-bold px-3 py-1.5 hover:bg-white rounded-lg transition">💾 Backup Data</button>
+                </div>
+                <button onclick="triggerSecureAdminView()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow transition">
+                    ⚙️ Control Room (Add Text)
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+    <div id="introWelcomeScreen" class="max-w-4xl w-full mx-auto bg-white border border-slate-200 rounded-2xl p-6 mt-6 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-800 mb-3 flex items-center gap-2">🎯 Want to Become an NCERT Biology Master?</h2>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4 font-semibold text-emerald-700">You are at the right place!</p>
+        <div class="text-sm text-slate-600 space-y-3 leading-relaxed">
+            <p>Play this game regularly and revise the entire NCERT Biology syllabus in a fun, engaging, and highly effective way. Every time you play, you strengthen your concepts, improve your memory, and sharpen your recall.</p>
+            <p>By repeatedly playing this game, you will master NCERT Biology chapter by chapter and turn important facts into long-term memory. Daily practice will make your NCERT knowledge crystal clear and help you answer questions with greater speed and accuracy.</p>
+            <p>The more you play, the fewer silly mistakes you'll make, the stronger your concepts will become, and the higher your chances of scoring excellent marks in both NEET and Board Exams.</p>
+            <p class="font-bold text-emerald-600 pt-2">🚀 Play Daily. Revise Smartly. Master NCERT Biology. Crack NEET with Confidence.</p>
+        </div>
+        <button onclick="dismissWelcomeBanner()" class="mt-5 w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition uppercase tracking-wider">
+            Enter Game Arena Grid & Select Chapter Below
+        </button>
+    </div>
+
+    <div class="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 flex-grow items-start">
         
-        <div id="adminPanel" class="hidden lg:col-span-12 bg-slate-900 border-2 border-slate-800 rounded-2xl p-6 shadow-2xl animate-scale-in">
-            <h2 class="text-xl font-bold text-emerald-400 mb-1 game-font">NCERT Interactive Script Composer</h2>
-            <p class="text-xs text-slate-400 mb-4">Wrap structural recall keys inside square brackets. Example: Kingdom Monera comprises [bacteria].</p>
-            <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <select id="chapterIndexSelector" class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 outline-none focus:border-sky-500 font-semibold">
-                        <option value="">-- Choose Syllabus Chapter Destination --</option>
-                        <optgroup label="Class 11 - Biology">
-                            <option value="11-1">Ch 1: The Living World</option>
-                            <option value="11-2">Ch 2: Biological Classification</option>
-                            <option value="11-3">Ch 3: Plant Kingdom</option>
-                            <option value="11-4">Ch 4: Animal Kingdom</option>
-                            <option value="11-5">Ch 5: Morphology of Flowering Plants</option>
-                            <option value="11-6">Ch 6: Anatomy of Flowering Plants</option>
-                            <option value="11-7">Ch 7: Structural Organisation in Animals</option>
-                            <option value="11-8">Ch 8: Cell: The Unit of Life</option>
-                            <option value="11-9">Ch 9: Biomolecules</option>
-                            <option value="11-10">Ch 10: Cell Cycle and Cell Division</option>
-                            <option value="11-11">Ch 11: Photosynthesis in Higher Plants</option>
-                            <option value="11-12">Ch 12: Respiration in Plants</option>
-                            <option value="11-13">Ch 13: Plant Growth and Development</option>
-                            <option value="11-14">Ch 14: Breathing and Exchange of Gases</option>
-                            <option value="11-15">Ch 15: Body Fluids and Circulation</option>
-                            <option value="11-16">Ch 16: Excretory Products and Elimination</option>
-                            <option value="11-17">Ch 17: Locomotion and Movement</option>
-                            <option value="11-18">Ch 18: Neural Control and Coordination</option>
-                            <option value="11-19">Ch 19: Chemical Coordination and Integration</option>
-                        </optgroup>
-                        <optgroup label="Class 12 - Biology">
-                            <option value="12-1">Ch 1: Sexual Reproduction in Flowering Plants</option>
-                            <option value="12-2">Ch 2: Human Reproduction</option>
-                            <option value="12-3">Ch 3: Reproductive Health</option>
-                            <option value="12-4">Ch 4: Principles of Inheritance and Variation</option>
-                            <option value="12-5">Ch 5: Molecular Basis of Inheritance</option>
-                            <option value="12-6">Ch 6: Evolution</option>
-                            <option value="12-7">Ch 7: Human Health and Disease</option>
-                            <option value="12-8">Ch 8: Microbes in Human Welfare</option>
-                            <option value="12-9">Ch 9: Biotechnology: Principles and Processes</option>
-                            <option value="12-10">Ch 10: Biotechnology and its Applications</option>
-                            <option value="12-11">Ch 11: Organisms and Populations</option>
-                            <option value="12-12">Ch 12: Ecosystem</option>
-                            <option value="12-13">Ch 13: Biodiversity and Conservation</option>
-                        </optgroup>
-                    </select>
-                    <input type="text" id="gameSubtitle" placeholder="Exercise Label (e.g., Paragraph 1.2 Hierarchy)" class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 outline-none focus:border-sky-500">
-                    <select id="themeDropdown" class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 outline-none focus:border-sky-500 font-semibold">
-                        <option value="theme-cyber">🧬 Theme: Tech Cyber Blue</option>
-                        <option value="theme-botanical">🌿 Theme: Botanical Green</option>
-                        <option value="theme-anatomy">🫀 Theme: Anatomy Crimson</option>
-                        <option value="theme-ecology">🐾 Theme: Eco Safari Amber</option>
-                    </select>
+        <div id="adminPanel" class="hidden lg:col-span-12 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+            <h2 class="text-lg font-bold text-slate-800 border-b pb-2 flex justify-between items-center">
+                <span>NCERT Content Script Insertion Matrix</span>
+                <button onclick="closeAdminPanel()" class="text-xs text-rose-500 font-bold border border-rose-200 px-2 py-1 rounded bg-rose-50">Close ✖</button>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <select id="adminChapterSelection" class="hc-text-box rounded-xl p-3 text-sm outline-none" onchange="populateAdminPartsDropdown()">
+                    <option value="">-- Choose Target Chapter --</option>
+                    <optgroup label="Class 11 Chapters">
+                        <script>
+                            const ch11Names = ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Morphology of Flowering Plants", "Anatomy of Flowering Plants", "Structural Organisation in Animals", "Cell: The Unit of Life", "Biomolecules", "Cell Cycle and Cell Division", "Photosynthesis in Higher Plants", "Respiration in Plants", "Plant Growth and Development", "Breathing and Exchange of Gases", "Body Fluids and Circulation", "Excretory Products and their Elimination", "Locomotion and Movement", "Neural Control and Coordination", "Chemical Coordination and Integration"];
+                            ch11Names.forEach((n, idx) => document.write(`<option value="11-${idx+1}">Ch ${idx+1}: ${n}</option>`));
+                        </script>
+                    </optgroup>
+                    <optgroup label="Class 12 Chapters">
+                        <script>
+                            const ch12Names = ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"];
+                            ch12Names.forEach((n, idx) => document.write(`<option value="12-${idx+1}">Ch ${idx+1}: ${n}</option>`));
+                        </script>
+                    </optgroup>
+                </select>
+                <select id="adminPartSelection" class="hc-text-box rounded-xl p-3 text-sm outline-none">
+                    <option value="">-- Choose Part Page Mapping --</option>
+                </select>
+                <div class="flex items-center gap-2">
+                    <label class="text-xs font-bold text-slate-500 whitespace-nowrap">Timer (Secs):</label>
+                    <input type="number" id="adminTimerConfig" value="180" class="hc-text-box rounded-xl p-2.5 text-sm w-full">
                 </div>
-                <textarea id="chapterText" rows="5" placeholder="Paste official text print segments here framing key targets inside [brackets]..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 outline-none focus:border-sky-500"></textarea>
-                <button onclick="compileModuleCard()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-xl">Deploy Interactive Matrix Module</button>
             </div>
+            <textarea id="adminContentTextarea" rows="6" placeholder="Paste NCERT book layout sentences here. Hide terms inside square brackets like [this]..." class="w-full hc-text-box rounded-xl p-4 text-sm"></textarea>
+            <button onclick="commitModuleConfigurationData()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow transition">
+                Deploy / Overwrite Page Component Data
+            </button>
         </div>
 
-        <div class="lg:col-span-4 space-y-3 flex flex-col">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex-grow overflow-y-auto max-h-[70vh] lg:max-h-none">
-                <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest mb-4 game-font">Syllabus Index Inventory</h3>
-                
-                <div class="mb-3 rounded-xl overflow-hidden">
-                    <button onclick="toggleAccordion('c11_panel')" class="w-full text-left p-3 flex justify-between items-center text-sm font-bold text-sky-400 accordion-header">
-                        <span>Class 11 Mastery Index</span>
-                        <span id="c11_panel_arrow">🔽</span>
-                    </button>
-                    <div id="c11_panel" class="hidden p-2 bg-slate-950/40 border-x border-b border-slate-900 space-y-1">
-                        <div id="c11_container" class="space-y-2"></div>
-                    </div>
-                </div>
+        <div class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-4">
+            <h3 class="font-extrabold text-xs text-slate-400 uppercase tracking-widest border-b pb-2">NCERT Biology Syllabus</h3>
+            
+            <div class="border border-slate-200 rounded-xl overflow-hidden">
+                <button onclick="toggleSidebarAccordion('c11_wrapper')" class="w-full bg-slate-50 p-3 flex justify-between items-center font-bold text-slate-700 text-sm accordion-btn">
+                    <span>Class 11</span> <span id="c11_wrapper_indicator">🔽</span>
+                </button>
+                <div id="c11_wrapper" class="hidden p-2 bg-white space-y-2 max-h-[50vh] overflow-y-auto"></div>
+            </div>
 
-                <div class="rounded-xl overflow-hidden">
-                    <button onclick="toggleAccordion('c12_panel')" class="w-full text-left p-3 flex justify-between items-center text-sm font-bold text-emerald-400 accordion-header">
-                        <span>Class 12 Mastery Index</span>
-                        <span id="c12_panel_arrow">🔽</span>
-                    </button>
-                    <div id="c12_panel" class="hidden p-2 bg-slate-950/40 border-x border-b border-slate-900 space-y-1">
-                        <div id="c12_container" class="space-y-2"></div>
-                    </div>
-                </div>
+            <div class="border border-slate-200 rounded-xl overflow-hidden">
+                <button onclick="toggleSidebarAccordion('c12_wrapper')" class="w-full bg-slate-50 p-3 flex justify-between items-center font-bold text-slate-700 text-sm accordion-btn">
+                    <span>Class 12</span> <span id="c12_wrapper_indicator">🔽</span>
+                </button>
+                <div id="c12_wrapper" class="hidden p-2 bg-white space-y-2 max-h-[50vh] overflow-y-auto"></div>
             </div>
         </div>
 
         <div class="lg:col-span-8 flex flex-col space-y-4">
             
-            <div id="telemetryBar" class="grid grid-cols-3 gap-3 bg-slate-900 border border-slate-800 rounded-2xl p-4 hidden animate-scale-in">
-                <div class="text-center border-r border-slate-800/60">
+            <div id="telemetryStatusHub" class="grid grid-cols-3 gap-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hidden">
+                <div class="text-center border-r">
                     <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Clock Matrix</p>
-                    <p id="clockTimerDisplay" class="text-2xl font-bold text-amber-400 game-font mt-0.5">00:00</p>
+                    <p id="clockView" class="text-xl font-bold text-amber-500 font-mono mt-0.5">00:00</p>
                 </div>
-                <div class="text-center border-r border-slate-800/60">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Shield Vectors</p>
-                    <p id="shieldHeartDisplay" class="text-xl font-bold mt-1 text-rose-500">❤️❤️❤️</p>
+                <div class="text-center border-r">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Shield Health</p>
+                    <p id="livesView" class="text-base font-bold mt-1 text-rose-500">❤️❤️❤️</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Tally Track</p>
-                    <p id="boardTallyDisplay" class="text-2xl font-bold text-sky-400 game-font mt-0.5">0 / 0</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Tally Completion</p>
+                    <p id="tallyView" class="text-xl font-bold text-emerald-600 font-mono mt-0.5">0 / 0</p>
                 </div>
             </div>
 
-            <div id="gameplayDashboard" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hidden flex-grow flex flex-col justify-between animate-scale-in">
+            <div id="gameplayDashboard" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hidden space-y-6">
                 <div>
-                    <h2 id="activeModuleHeader" class="text-xl font-bold text-slate-100 mb-1 game-font"></h2>
-                    <p id="activeSubheader" class="text-xs text-slate-400 font-semibold mb-4 italic"></p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-                        <div class="md:col-span-4 bg-slate-950 border border-slate-800 rounded-xl p-3 shadow-inner">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center border-b border-slate-800 pb-2">Word Inventory Bank</p>
-                            <div id="wordBankShelf" class="flex flex-wrap md:flex-col gap-2 justify-center"></div>
-                        </div>
+                    <h2 id="displayChapterTitle" class="text-xl font-black text-slate-800"></h2>
+                    <p id="displayPartSubtitle" class="text-xs text-emerald-600 font-bold uppercase tracking-wider mt-0.5"></p>
+                </div>
 
-                        <div class="md:col-span-8 space-y-4">
-                            <div id="textSequenceBoard" class="leading-relaxed text-slate-100 text-lg bg-slate-950 border border-slate-800/80 p-6 rounded-xl shadow-inner min-h-[180px]"></div>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                    <div class="md:col-span-4 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center border-b pb-2 mb-3">Word Inventory Bank</p>
+                        <div id="wordBankShelf" class="flex flex-wrap md:flex-col gap-2 justify-center"></div>
+                    </div>
+
+                    <div class="md:col-span-8">
+                        <div id="textSequenceBoard" class="leading-relaxed text-slate-800 text-lg bg-white border border-slate-200 p-5 rounded-xl shadow-inner min-h-[160px]"></div>
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-4 items-center border-t border-slate-800/60 pt-5 mt-6">
-                    <input type="text" id="identitySign" placeholder="TYPE NICKNAME BEFORE CHECKING SCORE (MANDATORY)" class="hc-input w-full p-4 rounded-xl text-base outline-none shadow-lg">
-                    <button onclick="evaluateBoardPerformance()" class="bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-500 hover:brightness-110 text-white font-bold text-base px-8 py-4 rounded-xl transition shadow-xl whitespace-nowrap w-full sm:w-auto game-font uppercase tracking-wide">
+                <div class="border-t pt-4 flex flex-col sm:flex-row gap-4 items-center">
+                    <input type="text" id="studentNicknameInput" placeholder="ENTER STUDENT'S NAME BEFORE TESTING ACCURACY (MANDATORY)" class="hc-text-box w-full p-4 rounded-xl text-sm shadow-sm">
+                    <button onclick="evaluateBoardPerformance()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-6 py-4 rounded-xl shadow transition whitespace-nowrap w-full sm:w-auto uppercase tracking-wide">
                         Check Accuracy Vectors
                     </button>
                 </div>
             </div>
 
-            <div id="errorAnalysisDashboard" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hidden space-y-3 animate-scale-in">
-                <h3 class="text-sm font-bold text-rose-400 uppercase tracking-widest game-font flex items-center gap-2">🔬 Diagnostic Resolution Log</h3>
-                <div id="reviewLogsArea" class="space-y-2"></div>
-            </div>
-
-            <div id="scoreRankZone" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hidden animate-scale-in">
-                <h3 class="font-bold text-md text-amber-400 mb-4 flex items-center gap-2 tracking-wider game-font uppercase">🏆 Real-Time Target Ranks Index</h3>
+            <div id="errorAnalysisDashboard" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hidden space-y-4">
+                <h3 class="text-sm font-bold text-rose-600 uppercase tracking-widest border-b pb-2 flex items-center gap-2">🔬 Diagnostic Resolution Log</h3>
+                
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
+                    <table class="w-full text-left text-xs font-bold text-slate-500">
                         <thead>
-                            <tr class="border-b border-slate-800 text-slate-500 text-xs font-bold uppercase tracking-widest pb-2">
-                                <th class="py-2 w-16">Rank</th>
-                                <th>Candidate Aspirant Token Identification</th>
-                                <th class="text-right">Accuracy Rate Metric</th>
+                            <tr class="border-b text-slate-400 uppercase tracking-wider">
+                                <th class="pb-2">Box Number</th>
+                                <th>Student's Answer</th>
+                                <th class="text-right">NCERT Answer</th>
                             </tr>
                         </thead>
-                        <tbody id="scoreboardRenderList" class="divide-y divide-slate-800/40"></tbody>
+                        <tbody id="diagnosticLogsTableBody" class="divide-y text-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="scoreRankZone" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hidden">
+                <h3 class="font-extrabold text-sm text-amber-500 mb-4 uppercase tracking-wider border-b pb-2">🏆 Your Real-Time Rank</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-bold text-slate-600">
+                        <thead>
+                            <tr class="border-b text-slate-400 uppercase tracking-widest pb-2 font-black">
+                                <th class="py-2">Rank</th>
+                                <th>Student's Name</th>
+                                <th class="text-center text-emerald-600">Correct</th>
+                                <th class="text-center text-rose-600">Incorrect</th>
+                                <th class="text-center text-amber-600">Left</th>
+                                <th class="text-right text-slate-800">Accuracy Percent %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scoreboardRenderList" class="divide-y text-slate-800 font-semibold text-sm"></tbody>
                     </table>
                 </div>
             </div>
@@ -217,308 +239,342 @@
 
     <script>
         let correctAnswersList = [];
-        let activeModuleKey = "";
-        let selectedChipRef = null;
-        let timerCountdownRef = null;
-        let secondsRemaining = 120;
-        let remainingLives = 3;
+        let activeModuleStorageCompositeKey = "";
+        let selectedChipNodeRef = null;
+        let countdownTimerIntervalRef = null;
+        let secondsRemaining = 180;
+        let remainingLivesCount = 3;
+        let isAdminLoggedIn = false;
 
-        // Custom High-Quality Audio Synthesis Controller 
-        const ArcadeSynth = {
-            ctx: null,
-            init() { if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
-            play(f, t, d, gVal=0.15) {
-                try {
-                    this.init();
-                    let osc = this.ctx.createOscillator();
-                    let gain = this.ctx.createGain();
-                    osc.type = t;
-                    osc.frequency.setValueAtTime(f, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(gVal, this.ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + d);
-                    osc.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(); osc.stop(this.ctx.currentTime + d);
-                } catch(e){}
-            },
-            click() { this.play(600, 'triangle', 0.05, 0.1); },
-            success() { this.play(523.25, 'sine', 0.08); setTimeout(() => this.play(659.25, 'sine', 0.12), 80); setTimeout(() => this.play(783.99, 'sine', 0.2), 160); },
-            fail() { this.play(220, 'sawtooth', 0.15); setTimeout(() => this.play(147, 'sawtooth', 0.25), 100); },
-            slotted() { this.play(880, 'sine', 0.04, 0.08); }
+        // Custom High Contrast Structural Syllabus Part Quantities Limits Array Vector Configs
+        const ChapterPartsLimitsConfig = {
+            "11-1": 7, "11-2": 13, "11-3": 14, "11-4": 18, "11-5": 14, "11-6": 8, "11-7": 6, "11-8": 17, "11-9": 16, "11-10": 11, "11-11": 20, "11-12": 8, "11-13": 20, "11-14": 10, "11-15": 12, "11-16": 12, "11-17": 13, "11-18": 9, "11-19": 12,
+            "12-1": 21, "12-2": 23, "12-3": 8, "12-4": 26, "12-5": 31, "12-6": 17, "12-7": 20, "12-8": 14, "12-9": 14, "12-10": 11, "12-11": 15, "12-12": 11, "12-13": 12
         };
 
-        const SyllabusSkeletons = {
-            "11-1": "Ch 1: The Living World", "11-2": "Ch 2: Biological Classification", "11-3": "Ch 3: Plant Kingdom", "11-4": "Ch 4: Animal Kingdom", "11-5": "Ch 5: Morphology of Flowering Plants", "11-6": "Ch 6: Anatomy of Flowering Plants", "11-7": "Ch 7: Structural Organisation in Animals", "11-8": "Ch 8: Cell: The Unit of Life", "11-9": "Ch 9: Biomolecules", "11-10": "Ch 10: Cell Cycle and Cell Division", "11-11": "Ch 11: Photosynthesis in Higher Plants", "11-12": "Ch 12: Respiration in Plants", "11-13": "Ch 13: Plant Growth and Development", "11-14": "Ch 14: Breathing and Exchange of Gases", "11-15": "Ch 15: Body Fluids and Circulation", "11-16": "Ch 16: Excretory Products and Elimination", "11-17": "Ch 17: Locomotion and Movement", "11-18": "Ch 18: Neural Control and Coordination", "11-19": "Ch 19: Chemical Coordination and Integration",
-            "12-1": "Ch 1: Sexual Reproduction in Flowering Plants", "12-2": "Ch 2: Human Reproduction", "12-3": "Ch 3: Reproductive Health", "12-4": "Ch 4: Principles of Inheritance and Variation", "12-5": "Ch 5: Molecular Basis of Inheritance", "12-6": "Ch 6: Evolution", "12-7": "Ch 7: Human Health and Disease", "12-8": "Ch 8: Microbes in Human Welfare", "12-9": "Ch 9: Biotechnology: Principles and Processes", "12-10": "Ch 10: Biotechnology and its Applications", "12-11": "Ch 11: Organisms and Populations", "12-12": "Ch 12: Ecosystem", "12-13": "Ch 13: Biodiversity and Conservation"
+        const ChapterNamesMasterMatrix = {
+            "11-1": "The Living World", "11-2": "Biological Classification", "11-3": "Plant Kingdom", "11-4": "Animal Kingdom", "11-5": "Morphology of Flowering Plants", "11-6": "Anatomy of Flowering Plants", "11-7": "Structural Organisation in Animals", "11-8": "Cell: The Unit of Life", "11-9": "Biomolecules", "11-10": "Cell Cycle and Cell Division", "11-11": "Photosynthesis in Higher Plants", "11-12": "Respiration in Plants", "11-13": "Plant Growth and Development", "11-14": "Breathing and Exchange of Gases", "11-15": "Body Fluids and Circulation", "11-16": "Excretory Products and their Elimination", "11-17": "Locomotion and Movement", "11-18": "Neural Control and Coordination", "11-19": "Chemical Coordination and Integration",
+            "12-1": "Sexual Reproduction in Flowering Plants", "12-2": "Human Reproduction", "12-3": "Reproductive Health", "12-4": "Principles of Inheritance and Variation", "12-5": "Molecular Basis of Inheritance", "12-6": "Evolution", "12-7": "Human Health and Disease", "12-8": "Microbes in Human Welfare", "12-9": "Biotechnology: Principles and Processes", "12-10": "Biotechnology and its Applications", "12-11": "Organisms and Populations", "12-12": "Ecosystem", "12-13": "Biodiversity and Conservation"
         };
 
-        function toggleAdminPanel() { ArcadeSynth.click(); document.getElementById('adminPanel').classList.toggle('hidden'); }
-        function toggleAccordion(id) { ArcadeSynth.click(); const el = document.getElementById(id); el.classList.toggle('hidden'); document.getElementById(id+'_arrow').innerText = el.classList.contains('hidden') ? "🔽" : "🔼"; }
+        function dismissWelcomeBanner() { document.getElementById('introWelcomeScreen').classList.add('hidden'); }
+        function toggleSidebarAccordion(id) { document.getElementById(id).classList.toggle('hidden'); const ind = document.getElementById(id+'_indicator'); ind.innerText = document.getElementById(id).classList.contains('hidden') ? "🔽" : "🔼"; }
+        function closeAdminPanel() { document.getElementById('adminPanel').classList.add('hidden'); }
 
-        function compileModuleCard() {
-            const codeMapping = document.getElementById('chapterIndexSelector').value;
-            const subtitle = document.getElementById('gameSubtitle').value.trim();
-            const text = document.getElementById('chapterText').value.trim();
-            const theme = document.getElementById('themeDropdown').value;
-
-            if(!codeMapping || !subtitle || !text) return alert("All configuration metadata matrices parameters must be selected filled!");
-
-            const database = JSON.parse(localStorage.getItem('adh_recall_v2') || '[]');
-            const key = 'module_' + Date.now();
-            
-            database.push({ key, codeMapping, chapterName: SyllabusSkeletons[codeMapping], subtitle, text, theme });
-            localStorage.setItem('adh_recall_v2', JSON.stringify(database));
-
-            alert("Dynamic Core Component Integrated!");
-            document.getElementById('gameSubtitle').value = "";
-            document.getElementById('chapterText').value = "";
-            toggleAdminPanel();
-            renderDynamicSidebarIndex();
+        function triggerSecureAdminView() {
+            const pass = prompt("Enter Control Room Security Credential Verification Key:");
+            if(pass === "1234") {
+                isAdminLoggedIn = true;
+                document.getElementById('adminPanel').classList.remove('hidden');
+                renderSyllabusSidebarMenus();
+            } else {
+                alert("ACCESS DENIED: Infallible security verification checkpoint handshake sequence trace failure!");
+            }
         }
 
-        function renderDynamicSidebarIndex() {
-            const c11Container = document.getElementById('c11_container');
-            const c12Container = document.getElementById('c12_container');
-            const database = JSON.parse(localStorage.getItem('adh_recall_v2') || '[]');
+        function populateAdminPartsDropdown() {
+            const chKey = document.getElementById('adminChapterSelection').value;
+            const dropdown = document.getElementById('adminPartSelection');
+            dropdown.innerHTML = '<option value="">-- Choose Part Page Mapping --</option>';
+            if(!chKey) return;
+            const limits = ChapterPartsLimitsConfig[chKey];
+            for(let i = 1; i <= limits; i++) {
+                dropdown.innerHTML += `<option value="${i}">Part ${i} of ${limits} Game</option>`;
+            }
+        }
 
-            c11Container.innerHTML = ""; c12Container.innerHTML = "";
+        function commitModuleConfigurationData() {
+            const chCode = document.getElementById('adminChapterSelection').value;
+            const partIdx = document.getElementById('adminPartSelection').value;
+            const timerVal = parseInt(document.getElementById('adminTimerConfig').value) || 180;
+            const txtSeq = document.getElementById('adminContentTextarea').value.trim();
 
-            // Seed defaults systematically sorted by index code parameters mapping arrays keys
-            Object.keys(SyllabusSkeletons).forEach(code => {
-                const elementsMatching = database.filter(item => item.codeMapping === code);
-                const isClass11 = code.startsWith('11-');
-                const targetBox = isClass11 ? c11Container : c12Container;
+            if(!chCode || !partIdx || !txtSeq) return alert("Validation Loop Fail: Ensure all structure mapping dropdowns and texts are loaded!");
 
-                if(elementsMatching.length > 0) {
-                    const groupWrapper = document.createElement('div');
-                    groupWrapper.className = "p-2 bg-slate-900/90 rounded-lg border border-slate-800";
-                    groupWrapper.innerHTML = `<p class="text-[10px] font-bold text-slate-500 uppercase mb-1 tracking-wider">${SyllabusSkeletons[code]}</p>`;
-                    
-                    elementsMatching.forEach(m => {
-                        const cell = document.createElement('button');
-                        cell.className = "w-full text-left p-2 rounded-md hover:bg-slate-800 text-xs font-semibold text-slate-300 block border-l-2 border-transparent hover:border-sky-400 transition mb-1 bg-slate-950/40";
-                        cell.innerText = m.subtitle;
-                        cell.onclick = () => launchArcadeConsole(m.key, m.chapterName, m.subtitle, m.text, m.theme);
-                        groupWrapper.appendChild(cell);
-                    });
-                    targetBox.appendChild(groupWrapper);
+            const storageKey = `seq_${chCode}_p_${partIdx}`;
+            const packet = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], partIdx, timerVal, txtSeq };
+            
+            localStorage.setItem(storageKey, JSON.stringify(packet));
+            alert("Dynamic Block Injected & Re-indexed Successfully!");
+            
+            document.getElementById('adminContentTextarea').value = "";
+            renderSyllabusSidebarMenus();
+        }
+
+        function renderSyllabusSidebarMenus() {
+            const c11 = document.getElementById('c11_wrapper');
+            const c12 = document.getElementById('c12_wrapper');
+            c11.innerHTML = ""; c12.innerHTML = "";
+
+            Object.keys(ChapterNamesMasterMatrix).forEach(key => {
+                const isC11 = key.startsWith('11-');
+                const targetBox = isC11 ? c11 : c12;
+                const totalParts = ChapterPartsLimitsConfig[key];
+
+                const blockCard = document.createElement('div');
+                blockCard.className = "p-2 bg-slate-50 border rounded-lg space-y-1";
+                blockCard.innerHTML = `<p class="text-[10px] font-black text-slate-400 uppercase tracking-wide border-b pb-0.5 mb-1">${ChapterNamesMasterMatrix[key]}</p>`;
+
+                let componentsFound = false;
+                for(let p = 1; p <= totalParts; p++) {
+                    const savedData = localStorage.getItem(`seq_${key}_p_${p}`);
+                    if(savedData) {
+                        componentsFound = true;
+                        const data = JSON.parse(savedData);
+                        const row = document.createElement('div');
+                        row.className = "flex justify-between items-center gap-2 mb-1";
+                        
+                        const playBtn = document.createElement('button');
+                        playBtn.className = "w-full text-left p-1.5 rounded bg-white hover:bg-emerald-50 text-xs font-bold text-slate-700 border transition hover:text-emerald-600 truncate";
+                        playBtn.innerText = `Part ${p} of ${totalParts} Game`;
+                        playBtn.onclick = () => launchActiveArcadeSession(data.storageKey);
+                        row.appendChild(playBtn);
+
+                        if(isAdminLoggedIn) {
+                            const editBtn = document.createElement('button');
+                            editBtn.className = "bg-amber-100 hover:bg-amber-200 border border-amber-300 text-[10px] font-black text-amber-800 px-2 py-1 rounded transition whitespace-nowrap";
+                            editBtn.innerText = "✏️ Edit";
+                            editBtn.onclick = () => loadRecordToWorkspaceArea(data.storageKey);
+                            row.appendChild(editBtn);
+                        }
+                        blockCard.appendChild(row);
+                    }
                 }
+
+                // If admin is logged in, allow them to see structural part shells that haven't been created yet so they can select them to build
+                if(!componentsFound && isAdminLoggedIn) {
+                    blockCard.innerHTML += `<p class="text-[10px] text-slate-400 italic p-1">Empty Structural Container Page Node (Admin Ready)</p>`;
+                    componentsFound = true;
+                }
+
+                if(componentsFound) targetBox.appendChild(blockCard);
             });
 
-            if(!c11Container.innerHTML) c11Container.innerHTML = `<p class="text-[11px] text-slate-600 italic p-2">No dynamic active pipelines loaded. Click Control Room to deploy scripts.</p>`;
-            if(!c12Container.innerHTML) c12Container.innerHTML = `<p class="text-[11px] text-slate-600 italic p-2">No dynamic active pipelines loaded. Click Control Room to deploy scripts.</p>`;
+            if(!c11.innerHTML) c11.innerHTML = `<p class="text-xs text-slate-400 italic p-2 text-center">No active content modules published yet.</p>`;
+            if(!c12.innerHTML) c12.innerHTML = `<p class="text-xs text-slate-400 italic p-2 text-center">No active content modules published yet.</p>`;
         }
 
-        function launchArcadeConsole(key, chapterName, subtitle, text, visualTheme) {
-            ArcadeSynth.click();
-            clearInterval(timerCountdownRef);
+        function loadRecordToWorkspaceArea(key) {
+            const data = JSON.parse(localStorage.getItem(key));
+            document.getElementById('adminChapterSelection').value = data.chCode;
+            populateAdminPartsDropdown();
+            document.getElementById('adminPartSelection').value = data.partIdx;
+            document.getElementById('adminTimerConfig').value = data.timerVal;
+            document.getElementById('adminContentTextarea').value = data.txtSeq;
+            document.getElementById('adminPanel').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function launchActiveArcadeSession(key) {
+            dismissWelcomeBanner();
+            clearInterval(countdownTimerIntervalRef);
+            const data = JSON.parse(localStorage.getItem(key));
             
-            // Apply Dynamic Body Frame Skin Theme Profile Layout classes
-            document.body.className = "p-3 md:p-6 min-h-screen flex flex-col " + visualTheme;
-
-            activeModuleKey = key;
+            activeModuleStorageCompositeKey = key;
             correctAnswersList = [];
-            remainingLives = 3;
-            secondsRemaining = 180; // Standardized full operational clock vector duration parameter
+            remainingLivesCount = 3;
+            secondsRemaining = data.timerVal || 180;
 
-            document.getElementById('activeModuleHeader').innerText = chapterName;
-            document.getElementById('activeSubheader').innerText = subtitle;
+            document.getElementById('displayChapterTitle').innerText = data.chName;
+            document.getElementById('displayPartSubtitle').innerText = `Part ${data.partIdx} of ${ChapterPartsLimitsConfig[data.chCode]} Game`;
             document.getElementById('gameplayDashboard').classList.remove('hidden');
-            document.getElementById('telemetryBar').classList.remove('hidden');
+            document.getElementById('telemetryStatusHub').classList.remove('hidden');
             document.getElementById('errorAnalysisDashboard').classList.add('hidden');
-            document.getElementById('gameplayDashboard').classList.remove('animate-shake');
 
-            // Extraction Parsing Array Token Generation Matrix mapping sequences
-            let extractionPool = [];
-            let counterIdx = 0;
-            const operationalMarkup = text.replace(/\[(.*?)\]/g, (match, wordSegment) => {
-                const targetedLiteral = wordSegment.trim();
-                correctAnswersList.push(targetedLiteral.toLowerCase());
-                extractionPool.push(targetedLiteral);
-                return `<div class="drop-zone" data-target-slot="${counterIdx++}" onclick="injectTokenToSlot(this)" ondragover="allowDropTransfer(event)" ondrop="executeDropTransfer(event)">?</div>`;
+            let chipScrambleArray = [];
+            let countingSlots = 0;
+            const interactiveMarkup = data.txtSeq.replace(/\[(.*?)\]/g, (match, wordStr) => {
+                const extraction = wordStr.trim();
+                correctAnswersList.push(extraction.toLowerCase());
+                chipScrambleArray.push(extraction);
+                return `<div class="drop-zone" data-slot-id-idx="${countingSlots++}" onclick="handleZoneInteraction(this)">?</div>`;
             });
 
-            document.getElementById('textSequenceBoard').innerHTML = operationalMarkup;
+            document.getElementById('textSequenceBoard').innerHTML = interactiveMarkup;
 
-            // Scramble Word Tokens inside Left Bank Grid Space
-            extractionPool.sort(() => Math.random() - 0.5);
+            // Scramble and Render Chips Tray Bank Layout
+            chipScrambleArray.sort(() => Math.random() - 0.5);
             const shelf = document.getElementById('wordBankShelf');
             shelf.innerHTML = "";
-            
-            extractionPool.forEach(word => {
+            chipScrambleArray.forEach(word => {
                 const chip = document.createElement('div');
                 chip.className = "word-chip";
                 chip.innerText = word;
                 chip.setAttribute('draggable', 'true');
-                chip.onclick = () => selectWordChipRef(chip);
-                chip.ondragstart = (e) => {
-                    selectWordChipRef(chip);
-                    e.dataTransfer.setData('text/plain', word);
-                };
+                chip.onclick = () => selectWordChipBadge(chip);
+                chip.ondragstart = (e) => { selectWordChipBadge(chip); e.dataTransfer.setData('text/plain', word); };
                 shelf.appendChild(chip);
             });
 
-            timerCountdownRef = setInterval(() => {
+            countdownTimerIntervalRef = setInterval(() => {
                 secondsRemaining--;
-                syncTelemetryPanelDisplays();
-                if(secondsRemaining <= 0) {
-                    clearInterval(timerCountdownRef);
-                    evaluateBoardPerformance();
-                }
+                syncDashboardDisplays();
+                if(secondsRemaining <= 0) { clearInterval(countdownTimerIntervalRef); evaluateBoardPerformance(); }
             }, 1000);
 
-            syncTelemetryPanelDisplays();
-            renderScoreRankIndexTable();
+            syncDashboardDisplays();
+            renderActiveScoreboardMetricsTable();
         }
 
-        function selectWordChipRef(chip) {
-            ArcadeSynth.click();
-            const activeSel = document.querySelector('.word-chip.selected');
-            if(activeSel) activeSel.classList.remove('selected');
-            
+        function selectWordChipBadge(chip) {
+            const activePrev = document.querySelector('.word-chip.selected');
+            if(activePrev) activePrev.classList.remove('selected');
             chip.classList.add('selected');
-            selectedChipRef = chip;
+            selectedChipNodeRef = chip;
         }
 
-        function injectTokenToSlot(zone) {
-            if(!selectedChipRef) return;
-            ArcadeSynth.slotted();
-
-            if(zone.getAttribute('data-holding-word')) {
-                returnTokenToInventoryShelf(zone.getAttribute('data-holding-word'));
-            }
-
-            const activeLiteralDataValue = selectedChipRef.innerText;
-            zone.innerText = activeLiteralDataValue;
-            zone.className = "drop-zone filled";
-            zone.setAttribute('data-holding-word', activeLiteralDataValue);
-
-            selectedChipRef.classList.add('used');
-            selectedChipRef.classList.remove('selected');
-            selectedChipRef = null;
-            syncTelemetryPanelDisplays();
-        }
-
-        function allowDropTransfer(e) { e.preventDefault(); const dz = e.currentTarget; dz.classList.add('hovered'); }
-        function executeDropTransfer(e) { e.preventDefault(); e.currentTarget.classList.remove('hovered'); injectTokenToSlot(e.currentTarget); }
-
-        function returnTokenToInventoryShelf(wordStr) {
-            const pool = document.querySelectorAll('.word-chip');
-            for(let node of pool) {
-                if(node.innerText === wordStr && node.classList.contains('used')) {
-                    node.classList.remove('used');
-                    break;
+        function handleZoneInteraction(zone) {
+            // Requirement 1: Click to remove word if field is already filled
+            if(zone.getAttribute('data-holding-literal-value')) {
+                const wordValueToReturn = zone.getAttribute('data-holding-literal-value');
+                zone.innerText = "?";
+                zone.className = "drop-zone";
+                zone.removeAttribute('data-holding-literal-value');
+                
+                // Unlock chip back in inventory shelf bank
+                const chips = document.querySelectorAll('.word-chip');
+                for(let node of chips) {
+                    if(node.innerText === wordValueToReturn && node.classList.contains('used')) {
+                        node.classList.remove('used');
+                        break;
+                    }
                 }
+                syncDashboardDisplays();
+                return;
             }
+
+            if(!selectedChipNodeRef) return;
+
+            const targetWordString = selectedChipNodeRef.innerText;
+            zone.innerText = targetWordString;
+            zone.className = "drop-zone filled";
+            zone.setAttribute('data-holding-literal-value', targetWordString);
+
+            selectedChipNodeRef.classList.add('used');
+            selectedChipNodeRef.classList.remove('selected');
+            selectedChipNodeRef = null;
+            syncDashboardDisplays();
         }
 
-        function syncTelemetryPanelDisplays() {
+        function syncDashboardDisplays() {
             const m = Math.floor(secondsRemaining / 60).toString().padStart(2, '0');
             const s = (secondsRemaining % 60).toString().padStart(2, '0');
-            document.getElementById('clockTimerDisplay').innerText = `${m}:${s}`;
-            document.getElementById('shieldHeartDisplay').innerText = "❤️".repeat(remainingLives) || "💀 WARNING CRITICAL";
+            document.getElementById('clockView').innerText = `${m}:${s}`;
+            document.getElementById('livesView').innerText = "❤️".repeat(remainingLivesCount) || "💀 CRITICAL FAULT";
             
-            const loadedCount = document.querySelectorAll('.drop-zone.filled').length;
-            document.getElementById('boardTallyDisplay').innerText = `${loadedCount} / ${correctAnswersList.length}`;
+            const checkedCount = document.querySelectorAll('.drop-zone.filled').length;
+            document.getElementById('tallyView').innerText = `${checkedCount} / ${correctAnswersList.length}`;
         }
 
         function evaluateBoardPerformance() {
-            clearInterval(timerCountdownRef);
-            const alias = document.getElementById('identitySign').value.trim();
-            if(!alias) return alert("MANDATORY FIELD VALIDATION ROUTINE FAIL: Please enter your candidate nickname tracker index first!");
+            clearInterval(countdownTimerIntervalRef);
+            const studentName = document.getElementById('studentNicknameInput').value.trim();
+            if(!studentName) return alert("Validation Loop Fail: Student's Name tracking identifier is mandatory before scoring performance parameters!");
 
             const zones = document.querySelectorAll('.drop-zone');
-            const diagnosticsLogBox = document.getElementById('reviewLogsArea');
-            const diagnosticsDashboardFrame = document.getElementById('errorAnalysisDashboard');
-            
-            let coreCorrectMatchesHits = 0;
-            diagnosticsLogBox.innerHTML = "";
+            const tableBody = document.getElementById('diagnosticLogsTableBody');
+            tableBody.innerHTML = "";
+
+            let correctTrackerCount = 0;
+            let incorrectTrackerCount = 0;
+            let leftTrackerBlankCount = 0;
 
             zones.forEach(zone => {
-                const idx = parseInt(zone.getAttribute('data-target-slot'));
-                const userTextValString = (zone.getAttribute('data-holding-word') || "").trim().toLowerCase();
-                const preciseExpectedString = correctAnswersList[idx];
+                const idx = parseInt(zone.getAttribute('data-slot-id-idx'));
+                const studentValInput = (zone.getAttribute('data-holding-literal-value') || "").trim();
+                const expectedTextVal = correctAnswersList[idx];
 
-                if(userTextValString === preciseExpectedString) {
-                    coreCorrectMatchesHits++;
-                    zone.className = "drop-zone filled correct";
-                } else {
+                const rowTr = document.createElement('tr');
+                rowTr.className = "border-b text-xs font-bold";
+
+                if(!studentValInput) {
+                    leftTrackerBlankCount++;
                     zone.className = "drop-zone filled wrong";
-                    remainingLives = Math.max(0, remainingLives - 1);
-                    document.getElementById('gameplayDashboard').classList.add('animate-shake');
-                    setTimeout(() => document.getElementById('gameplayDashboard').classList.remove('animate-shake'), 400);
-
-                    const errorCard = document.createElement('div');
-                    errorCard.className = "p-3 bg-slate-950 border border-slate-800 rounded-xl flex flex-wrap justify-between items-center text-xs font-semibold gap-2 animate-scale-in";
-                    errorCard.innerHTML = `<span class="text-slate-400">Recall Entry Target Box Slot #${idx + 1}</span>
-                        <span class="text-rose-400 bg-rose-950/50 px-3 py-1 rounded-md border border-rose-500/20">Candidate Input: "${userTextValString || 'EMPTY NULL'}"</span>
-                        <span class="text-emerald-400 bg-emerald-950/50 px-3 py-1 rounded-md border border-emerald-500/20">NCERT Print Text Verify: "${preciseExpectedString}"</span>`;
-                    diagnosticsLogBox.appendChild(errorCard);
+                    rowTr.innerHTML = `<td class="py-2 text-slate-400">Box ${idx + 1}</td><td class="text-amber-500 bg-amber-50 px-2">LEFT BLANK</td><td class="text-right text-emerald-600">${expectedTextVal}</td>`;
+                } else if(studentValInput.toLowerCase() === expectedTextVal) {
+                    correctTrackerCount++;
+                    zone.className = "drop-zone filled correct";
+                    rowTr.innerHTML = `<td class="py-2 text-slate-400">Box ${idx + 1}</td><td class="text-emerald-600 bg-emerald-50 px-2">${studentValInput}</td><td class="text-right text-emerald-600">${expectedTextVal}</td>`;
+                } else {
+                    incorrectTrackerCount++;
+                    zone.className = "drop-zone filled wrong";
+                    remainingLivesCount = Math.max(0, remainingLivesCount - 1);
+                    rowTr.innerHTML = `<td class="py-2 text-slate-400">Box ${idx + 1}</td><td class="text-rose-600 bg-rose-50 px-2">${studentValInput}</td><td class="text-right text-emerald-600">${expectedTextVal}</td>`;
                 }
+                tableBody.appendChild(rowTr);
             });
 
-            syncTelemetryPanelDisplays();
-            const absoluteAccuracyScore = Math.round((coreCorrectMatchesHits / correctAnswersList.length) * 100);
+            document.getElementById('errorAnalysisDashboard').classList.remove('hidden');
+            const scorePercent = Math.round((correctTrackerCount / correctAnswersList.length) * 100);
+            
+            // Push structured tracking records metrics matrix out to data repositories arrays lists map
+            const scoreboardRecordsList = JSON.parse(localStorage.getItem(`re_scores_${activeModuleStorageCompositeKey}`) || '[]');
+            scoreboardRecordsList.push({ name: studentName, correct: correctTrackerCount, incorrect: incorrectTrackerCount, left: leftTrackerBlankCount, pct: scorePercent });
+            localStorage.setItem(`re_scores_${activeModuleStorageCompositeKey}`, JSON.stringify(scoreboardRecordsList));
 
-            if(absoluteAccuracyScore === 100) {
-                ArcadeSynth.success();
-                alert(`🥇 ACCESS GRANTED: 100% Core Accuracy Vector Score Registered!`);
-            } else {
-                ArcadeSynth.fail();
-                diagnosticsDashboardFrame.classList.remove('hidden');
-                alert(`Assessment Evaluation Compiled: Accuracy at ${absoluteAccuracyScore}%`);
-            }
-
-            // Save metrics track down into storage clusters
-            const logRanksHistory = JSON.parse(localStorage.getItem(`arcade_scores_v2_${activeModuleKey}`) || '[]');
-            logRanksHistory.push({ name: alias, score: absoluteAccuracyScore });
-            localStorage.setItem(`arcade_scores_v2_${activeModuleKey}`, JSON.stringify(logRanksHistory));
-
-            document.getElementById('identitySign').value = "";
-            renderActiveScoreboardIndexList(logRanksHistory);
+            document.getElementById('studentNicknameInput').value = "";
+            syncDashboardDisplays();
+            renderActiveScoreboardMetricsTable();
         }
 
-        function renderScoreRankIndexTable() {
-            const scores = JSON.parse(localStorage.getItem(`arcade_scores_v2_${activeModuleKey}`) || '[]');
-            renderActiveScoreboardIndexList(scores);
-        }
-
-        function renderActiveScoreboardIndexList(scoresArray) {
-            const targetTableBody = document.getElementById('scoreboardRenderList');
+        function renderActiveScoreboardMetricsTable() {
+            const tbody = document.getElementById('scoreboardRenderList');
             document.getElementById('scoreRankZone').classList.remove('hidden');
 
-            if(scoresArray.length === 0) {
-                scoresArray = [
-                    { name: "AIIMS Delhi Scholar Baseline", score: 100 },
-                    { name: "NEET Top 10 Trajectory Vector", score: 90 },
-                    { name: "NCERT Active Revision Pioneer", score: 80 }
+            let dataList = JSON.parse(localStorage.getItem(`re_scores_${activeModuleStorageCompositeKey}`) || '[]');
+            if(dataList.length === 0) {
+                dataList = [
+                    { name: "AIIMS Delhi Core Competitor", correct: correctAnswersList.length || 10, incorrect: 0, left: 0, pct: 100 },
+                    { name: "NEET Top Rank Benchmark", correct: Math.max(0, (correctAnswersList.length || 10) - 1), incorrect: 1, left: 0, pct: 90 }
                 ];
             }
 
-            scoresArray.sort((alpha, beta) => beta.score - alpha.score);
-            targetTableBody.innerHTML = "";
-
-            scoresArray.slice(0, 10).forEach((entry, idx) => {
-                const row = `<tr class="border-b border-slate-800/40 text-xs text-slate-300 font-medium hover:bg-slate-950/30 transition">
-                    <td class="py-3 font-bold text-amber-500 font-mono text-sm">#${idx + 1}</td>
-                    <td class="font-semibold text-slate-100 pl-2">${entry.name}</td>
-                    <td class="text-right font-bold text-emerald-400 font-mono text-sm pr-2">${entry.score}%</td>
+            dataList.sort((a, b) => b.pct - a.pct);
+            tbody.innerHTML = "";
+            
+            dataList.slice(0, 10).forEach((entry, index) => {
+                tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition text-xs">
+                    <td class="py-3 font-extrabold text-amber-500 text-sm">#${index + 1}</td>
+                    <td class="font-bold text-slate-700">${entry.name}</td>
+                    <td class="text-center font-bold text-emerald-600 bg-emerald-50/50">${entry.correct}</td>
+                    <td class="text-center font-bold text-rose-600 bg-rose-50/50">${entry.incorrect}</td>
+                    <td class="text-center font-bold text-amber-600 bg-amber-50/50">${entry.left}</td>
+                    <td class="text-right font-black text-slate-900 text-sm pr-2">${entry.pct}%</td>
                 </tr>`;
-                targetTableBody.innerHTML += row;
             });
         }
 
         function exportDataBackup() {
-            const data = localStorage.getItem('adh_recall_v2');
-            if(!data || data === '[]') return alert("No active chapter matrix files data scripts available to backup!");
-            const fileBlob = new Blob([data], { type: 'text/json' });
+            let outputObjectMapStore = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if(key.startsWith('seq_') || key.startsWith('re_scores_')) {
+                    outputObjectMapStore[key] = localStorage.getItem(key);
+                }
+            }
+            const blob = new Blob([JSON.stringify(outputObjectMapStore)], { type: 'text/json' });
             const anchor = document.createElement('a');
             anchor.download = "ADH_NCERT_Arcade_Backup.txt";
-            anchor.href = window.URL.createObjectURL(fileBlob);
+            anchor.href = window.URL.createObjectURL(blob);
             anchor.click();
         }
 
-        // Initialize Runtime Systems Engine Boot
-        renderDynamicSidebarIndex();
+        function importDataBackup(event) {
+            const inputField = event.target;
+            const fileReader = new FileReader();
+            fileReader.onload = function() {
+                try {
+                    const parsedDataMap = JSON.parse(fileReader.result);
+                    Object.keys(parsedDataMap).forEach(k => localStorage.setItem(k, parsedDataMap[k]));
+                    alert("Backup Matrix Restored & Synchronized Successfully! Refreshing Layout Viewports.");
+                    renderSyllabusSidebarMenus();
+                } catch(e) { alert("File verification fail: Bad syntax block structural layout configuration!"); }
+            };
+            fileReader.readAsText(inputField.files[0]);
+        }
+
+        // Execution Start Phase Trigger
+        renderSyllabusSidebarMenus();
     </script>
 </body>
 </html>
