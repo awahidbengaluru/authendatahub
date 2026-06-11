@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADH NCERT Active Recall Practice</title>
+    <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .blank-input { background: transparent; border-bottom: 2px solid #38bdf8; border-top: none; border-left: none; border-right: none; color: #38bdf8; text-align: center; font-weight: 600; padding: 0 4px; outline: none; width: 130px; transition: all 0.2s; }
+        .blank-input:focus { border-bottom-color: #4ade80; background: rgba(56, 189, 248, 0.05); }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto flex justify-between items-center border-b border-slate-800 pb-4 mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-sky-400">Authen Data Hub</h1>
+            <p class="text-xs text-slate-400 uppercase tracking-wider">NCERT Active Recall Gaming Engine</p>
+        </div>
+        <button onclick="toggleAdminView()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-2 rounded border border-slate-700 transition">
+            ⚙️ Admin Panel (Add NCERT Text)
+        </button>
+    </div>
+
+    <div class="max-w-4xl mx-auto">
+        <div id="adminView" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
+            <h2 class="text-lg font-bold text-emerald-400 mb-1">Create Active Recall Game Card</h2>
+            <p class="text-xs text-slate-400 mb-4">Wrap any high-yield words you want to hide inside square brackets. Example: Monera contains [bacteria].</p>
+            
+            <div class="space-y-4">
+                <input type="text" id="chapterTitle" placeholder="e.g., Chapter 11: Principles of Biotechnology" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-slate-200 outline-none focus:border-sky-500">
+                <textarea id="chapterText" rows="5" placeholder="Paste raw NCERT lines here and wrap [keywords] in brackets..." class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-slate-200 outline-none focus:border-sky-500"></textarea>
+                <button onclick="saveNewGame()" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-2 rounded text-sm transition">Generate and Save Game Card</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 h-fit">
+                <h3 class="font-bold text-xs text-slate-500 uppercase tracking-wider mb-3">Live Practice Cards</h3>
+                <div id="chaptersList" class="space-y-2 text-sm">
+                    </div>
+            </div>
+
+            <div class="md:col-span-2 space-y-6">
+                <div id="gameZone" class="bg-slate-900 border border-slate-800 rounded-xl p-6 hidden">
+                    <h2 id="activeTitle" class="text-xl font-bold text-sky-400 mb-2"></h2>
+                    <div class="bg-amber-500/10 border border-amber-500/20 p-3 rounded text-xs text-amber-400 mb-4">
+                        ⚡ <strong>Rule:</strong> Fill inputs carefully. Spelling must precisely match the NCERT textbook print layout.
+                    </div>
+                    
+                    <div id="gameTextSpace" class="leading-relaxed text-slate-300 text-base mb-6 bg-slate-950/40 p-5 rounded-lg border border-slate-800/80"></div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 items-center border-t border-slate-800/60 pt-4">
+                        <input type="text" id="studentName" placeholder="Enter Nickname for Leaderboard" class="bg-slate-950 border border-slate-800 rounded p-2.5 text-sm outline-none focus:border-sky-500 w-full">
+                        <button onclick="checkAnswers()" class="bg-sky-600 hover:bg-sky-500 font-bold px-6 py-2.5 rounded text-sm transition whitespace-nowrap w-full sm:w-auto">Submit Score</button>
+                    </div>
+                </div>
+
+                <div id="leaderboardZone" class="bg-slate-900 border border-slate-800 rounded-xl p-6 hidden">
+                    <h3 class="font-bold text-base text-amber-400 mb-3 flex items-center gap-2">🏆 Instant All-India Leaderboard</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-slate-500 text-xs uppercase">
+                                    <th class="py-2 width-16">Rank</th>
+                                    <th>Aspirant Identity</th>
+                                    <th class="text-right">Accuracy Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboardData"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAnswers = [];
+        let activeKey = "";
+
+        function toggleAdminView() { document.getElementById('adminView').classList.toggle('hidden'); }
+
+        function saveNewGame() {
+            const title = document.getElementById('chapterTitle').value.trim();
+            const text = document.getElementById('chapterText').value.trim();
+            if(!title || !text) return alert("Please fill up both fields!");
+
+            const games = JSON.parse(localStorage.getItem('adh_games') || '[]');
+            const key = 'game_' + Date.now();
+            games.push({ key, title, text });
+            localStorage.setItem('adh_games', JSON.stringify(games));
+
+            alert("Game module successfully active!");
+            document.getElementById('chapterTitle').value = "";
+            document.getElementById('chapterText').value = "";
+            toggleAdminView();
+            loadChaptersList();
+        }
+
+        function loadChaptersList() {
+            const container = document.getElementById('chaptersList');
+            const games = JSON.parse(localStorage.getItem('adh_games') || '[]');
+            
+            if(games.length === 0) {
+                container.innerHTML = `<p class="text-slate-500 text-xs italic">No active games. Click 'Admin Panel' above to instantly generate your first module.</p>`;
+                return;
+            }
+
+            container.innerHTML = "";
+            games.forEach(g => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded border border-slate-800/80 hover:bg-slate-800 hover:text-white block transition mb-2 text-xs font-semibold text-slate-300";
+                btn.innerText = g.title;
+                btn.onclick = () => runGameWorkspace(g.key, g.title, g.text);
+                container.appendChild(btn);
+            });
+        }
+
+        function runGameWorkspace(key, title, text) {
+            activeKey = key;
+            currentAnswers = [];
+            document.getElementById('activeTitle').innerText = title;
+            document.getElementById('gameZone').classList.remove('hidden');
+            
+            let counter = 0;
+            const outputHTML = text.replace(/\[(.*?)\]/g, (match, word) => {
+                currentAnswers.push(word.trim().toLowerCase());
+                return `<input type="text" class="blank-input" data-ans-idx="${counter++}" placeholder="?">`;
+            });
+
+            document.getElementById('gameTextSpace').innerHTML = outputHTML;
+            displayLeaderboard();
+        }
+
+        function checkAnswers() {
+            const name = document.getElementById('studentName').value.trim();
+            if(!name) return alert("Please type your name/nickname before submitting!");
+
+            const inputs = document.querySelectorAll('.blank-input');
+            let accurateHits = 0;
+
+            inputs.forEach(input => {
+                const idx = input.getAttribute('data-ans-idx');
+                const userVal = input.value.trim().toLowerCase();
+                if(userVal === currentAnswers[idx]) {
+                    accurateHits++;
+                    input.style.borderBottomColor = "#22c55e";
+                } else {
+                    input.style.borderBottomColor = "#ef4444";
+                }
+            });
+
+            const rawPercent = Math.round((accurateHits / currentAnswers.length) * 100);
+            alert(`Your submission scored: ${rawPercent}% Accuracy! Check the leaderboard ranking below.`);
+
+            // Save Score Entry
+            const scores = JSON.parse(localStorage.getItem(`scores_${activeKey}`) || '[]');
+            scores.push({ name, score: rawPercent });
+            localStorage.setItem(`scores_${activeKey}`, JSON.stringify(scores));
+
+            document.getElementById('studentName').value = "";
+            displayLeaderboard();
+        }
+
+        function displayLeaderboard() {
+            const tbody = document.getElementById('leaderboardData');
+            document.getElementById('leaderboardZone').classList.remove('hidden');
+            
+            // Seed base baseline data mock strings to feel interactive instantly
+            let studentScores = JSON.parse(localStorage.getItem(`scores_${activeKey}`) || '[]');
+            if(studentScores.length === 0) {
+                studentScores = [
+                    { name: "AIIMS Delhi Dreamer", score: 95 },
+                    { name: "NEET Rank 1 Chaser", score: 90 },
+                    { name: "Bio NCERT Pro Max", score: 85 }
+                ];
+            }
+
+            // Sort Highest to Lowest
+            studentScores.sort((a,b) => b.score - a.score);
+
+            tbody.innerHTML = "";
+            studentScores.slice(0, 10).forEach((entry, idx) => {
+                const row = `<tr class="border-b border-slate-800/40 text-xs">
+                    <td class="py-3 font-bold text-amber-500">#${idx + 1}</td>
+                    <td class="font-semibold text-slate-200">${entry.name}</td>
+                    <td class="text-right font-bold text-emerald-400">${entry.score}%</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Boot
+        loadChaptersList();
+    </script>
+</body>
+</html>
