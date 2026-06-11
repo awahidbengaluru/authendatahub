@@ -3,198 +3,391 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADH NCERT Active Recall Practice</title>
+    <title>ADH Premium NCERT Arcade</title>
     <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
-        .blank-input { background: transparent; border-bottom: 2px solid #38bdf8; border-top: none; border-left: none; border-right: none; color: #38bdf8; text-align: center; font-weight: 600; padding: 0 4px; outline: none; width: 130px; transition: all 0.2s; }
-        .blank-input:focus { border-bottom-color: #4ade80; background: rgba(56, 189, 248, 0.05); }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Space+Grotesk:wght@400;600;700&display=swap');
+        body { font-family: 'Space Grotesk', sans-serif; background-color: #020617; color: #f8fafc; }
+        .arcade-font { font-family: 'Orbitron', sans-serif; }
+        
+        /* Interactive Blanks Drop Zones */
+        .drop-zone { display: inline-flex; align-items: center; justify-content: center; min-width: 130px; height: 32px; border: 2px dashed #475569; background-color: #0f172a; border-radius: 8px; margin: 0 6px; vertical-align: middle; transition: all 0.2s ease; color: #38bdf8; font-weight: 700; text-align: center; cursor: pointer; }
+        .drop-zone.hovered { border-color: #38bdf8; background-color: rgba(56, 189, 248, 0.1); }
+        .drop-zone.filled { border-style: solid; border-color: #38bdf8; background-color: #1e293b; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        .drop-zone.correct { border-color: #22c55e !important; color: #22c55e !important; background-color: rgba(34, 197, 94, 0.1) !important; box-shadow: 0 0 12px rgba(34, 197, 94, 0.3); }
+        .drop-zone.wrong { border-color: #ef4444 !important; color: #ef4444 !important; background-color: rgba(239, 68, 68, 0.1) !important; box-shadow: 0 0 12px rgba(239, 68, 68, 0.3); }
+
+        /* Draggable Word Badges */
+        .word-chip { display: inline-block; padding: 8px 14px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; border-radius: 8px; font-weight: 600; text-align: center; cursor: grab; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); user-select: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); }
+        .word-chip:hover { border-color: #38bdf8; transform: translateY(-2px); box-shadow: 0 8px 12px -1px rgba(56,189,248,0.2); }
+        .word-chip:active { cursor: grabbing; transform: scale(0.95); }
+        .word-chip.used { opacity: 0.25; cursor: default; pointer-events: none; border-style: dashed; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-3 md:p-6 min-h-screen flex flex-col">
 
-    <div class="max-w-4xl mx-auto flex justify-between items-center border-b border-slate-800 pb-4 mb-8">
+    <div class="max-w-6xl w-full mx-auto flex flex-wrap justify-between items-center border-b border-slate-800 pb-4 mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-sky-400">Authen Data Hub</h1>
-            <p class="text-xs text-slate-400 uppercase tracking-wider">NCERT Active Recall Gaming Engine</p>
+            <h1 class="text-2xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">Authen Data Hub</h1>
+            <p class="text-xs text-slate-400 uppercase tracking-widest">Premium NCERT Interactive Recall Grid</p>
         </div>
-        <button onclick="toggleAdminView()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-2 rounded border border-slate-700 transition">
-            ⚙️ Admin Panel (Add NCERT Text)
-        </button>
+        <div class="flex gap-3 mt-2 sm:mt-0">
+            <button onclick="toggleAdminPanel()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold px-4 py-2 rounded-lg border border-slate-800 transition">
+                ⚙️ Admin Panel (Create Module)
+            </button>
+        </div>
     </div>
 
-    <div class="max-w-4xl mx-auto">
-        <div id="adminView" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
-            <h2 class="text-lg font-bold text-emerald-400 mb-1">Create Active Recall Game Card</h2>
-            <p class="text-xs text-slate-400 mb-4">Wrap any high-yield words you want to hide inside square brackets. Example: Monera contains [bacteria].</p>
-            
+    <div class="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow">
+        
+        <div id="adminPanel" class="hidden lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+            <h2 class="text-lg font-bold text-emerald-400 mb-1">Module Generator Engine</h2>
+            <p class="text-xs text-slate-400 mb-4">Add square brackets around targeted test vocabulary. Example: The structural unit is a [cell].</p>
             <div class="space-y-4">
-                <input type="text" id="chapterTitle" placeholder="e.g., Chapter 11: Principles of Biotechnology" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-slate-200 outline-none focus:border-sky-500">
-                <textarea id="chapterText" rows="5" placeholder="Paste raw NCERT lines here and wrap [keywords] in brackets..." class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-sm text-slate-200 outline-none focus:border-sky-500"></textarea>
-                <button onclick="saveNewGame()" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-2 rounded text-sm transition">Generate and Save Game Card</button>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input type="text" id="chapterTitle" placeholder="Module Title (e.g., Biology Chapter 1 - Water)" class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 outline-none focus:border-sky-500">
+                    <input type="number" id="gameTimer" placeholder="Timer (Seconds) e.g., 120" class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 outline-none focus:border-sky-500">
+                </div>
+                <textarea id="chapterText" rows="5" placeholder="Paste structural text sequences from NCERT text templates..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 outline-none focus:border-sky-500"></textarea>
+                <button onclick="commitModuleToStorage()" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-3 rounded-xl text-sm transition shadow-lg">Deploy Module to Engine Inventory</button>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 h-fit">
-                <h3 class="font-bold text-xs text-slate-500 uppercase tracking-wider mb-3">Live Practice Cards</h3>
-                <div id="chaptersList" class="space-y-2 text-sm">
-                    </div>
+        <div class="space-y-4 lg:col-span-1">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                <h3 class="font-bold text-xs text-slate-400 uppercase tracking-widest mb-3">Target Units</h3>
+                <div id="moduleTargetStack" class="space-y-2"></div>
             </div>
+        </div>
 
-            <div class="md:col-span-2 space-y-6">
-                <div id="gameZone" class="bg-slate-900 border border-slate-800 rounded-xl p-6 hidden">
-                    <h2 id="activeTitle" class="text-xl font-bold text-sky-400 mb-2"></h2>
-                    <div class="bg-amber-500/10 border border-amber-500/20 p-3 rounded text-xs text-amber-400 mb-4">
-                        ⚡ <strong>Rule:</strong> Fill inputs carefully. Spelling must precisely match the NCERT textbook print layout.
-                    </div>
-                    
-                    <div id="gameTextSpace" class="leading-relaxed text-slate-300 text-base mb-6 bg-slate-950/40 p-5 rounded-lg border border-slate-800/80"></div>
-                    
-                    <div class="flex flex-col sm:flex-row gap-4 items-center border-t border-slate-800/60 pt-4">
-                        <input type="text" id="studentName" placeholder="Enter Nickname for Leaderboard" class="bg-slate-950 border border-slate-800 rounded p-2.5 text-sm outline-none focus:border-sky-500 w-full">
-                        <button onclick="checkAnswers()" class="bg-sky-600 hover:bg-sky-500 font-bold px-6 py-2.5 rounded text-sm transition whitespace-nowrap w-full sm:w-auto">Submit Score</button>
-                    </div>
+        <div class="lg:col-span-3 flex flex-col space-y-4">
+            
+            <div id="statusTelemetry" class="grid grid-cols-3 gap-2 bg-slate-900 border border-slate-800 rounded-2xl p-4 hidden">
+                <div class="text-center border-r border-slate-800">
+                    <p class="text-xs text-slate-500 font-semibold uppercase">Time Track</p>
+                    <p id="clockTimerDisplay" class="text-xl font-bold text-amber-400 arcade-font mt-1">00:00</p>
                 </div>
-
-                <div id="leaderboardZone" class="bg-slate-900 border border-slate-800 rounded-xl p-6 hidden">
-                    <h3 class="font-bold text-base text-amber-400 mb-3 flex items-center gap-2">🏆 Instant All-India Leaderboard</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-slate-300">
-                            <thead>
-                                <tr class="border-b border-slate-800 text-slate-500 text-xs uppercase">
-                                    <th class="py-2 width-16">Rank</th>
-                                    <th>Aspirant Identity</th>
-                                    <th class="text-right">Accuracy Score</th>
-                                </tr>
-                            </thead>
-                            <tbody id="leaderboardData"></tbody>
-                        </table>
-                    </div>
+                <div class="text-center border-r border-slate-800">
+                    <p class="text-xs text-slate-500 font-semibold uppercase">Lives Remainder</p>
+                    <p id="livesHeartDisplay" class="text-xl font-bold text-rose-500 mt-1">❤️❤️❤️</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xs text-slate-500 font-semibold uppercase">Completion</p>
+                    <p id="wordCountTracker" class="text-xl font-bold text-sky-400 arcade-font mt-1">0 / 0</p>
                 </div>
             </div>
+
+            <div id="gameplayDashboard" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hidden flex-grow flex flex-col">
+                <h2 id="activeModuleHeader" class="text-xl font-bold text-slate-100 mb-4"></h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 flex-grow items-start">
+                    <div class="bg-slate-950 border border-slate-800/60 rounded-xl p-4 md:col-span-1">
+                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">Word Inventory Bank</p>
+                        <div id="wordBankShelf" class="flex flex-wrap md:flex-col gap-2 justify-center"></div>
+                    </div>
+
+                    <div class="md:col-span-3 space-y-6">
+                        <div id="textSequenceBoard" class="leading-relaxed text-slate-300 text-lg bg-slate-950/60 p-6 rounded-xl border border-slate-800/80 shadow-inner min-h-[150px]"></div>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 items-center border-t border-slate-800/60 pt-4">
+                            <input type="text" id="identitySign" placeholder="Type Nickname for Leaderboard" class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm outline-none focus:border-sky-500 w-full">
+                            <button onclick="evaluateBoardPerformance()" class="bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-500 hover:to-emerald-500 font-bold px-8 py-3 rounded-xl text-sm transition shadow-lg whitespace-nowrap w-full sm:w-auto">
+                                Check Performance
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reviewAnalysisDashboard" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hidden space-y-4">
+                <h3 class="text-md font-bold text-emerald-400 uppercase tracking-wider">🔬 Error Correction Desk</h3>
+                <div id="reviewLogsArea" class="space-y-2 text-sm"></div>
+            </div>
+
+            <div id="scoreRankZone" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hidden">
+                <h3 class="font-bold text-base text-amber-400 mb-4 flex items-center gap-2 tracking-wide">🏆 National Active Recall Leaderboard</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-500 text-xs uppercase tracking-wider">
+                                <th class="py-2">Rank</th>
+                                <th>Candidate Nickname</th>
+                                <th class="text-right">Accuracy Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scoreboardRenderList"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        let currentAnswers = [];
-        let activeKey = "";
+        let correctAnswersList = [];
+        let activeModuleKey = "";
+        let selectedChip = null;
+        let timerCountdownRef = null;
+        let secondsRemaining = 0;
+        let remainingLives = 3;
 
-        function toggleAdminView() { document.getElementById('adminView').classList.toggle('hidden'); }
+        // Arcade Synth Sound Effects Engine
+        const AudioFX = {
+            ctx: null,
+            init() { if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+            playTone(freq, type, duration) {
+                this.init();
+                let osc = this.ctx.createOscillator();
+                let gain = this.ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + duration);
+            },
+            success() { this.playTone(523.25, 'sine', 0.1); setTimeout(() => this.playTone(659.25, 'sine', 0.15), 100); },
+            fail() { this.playTone(293.66, 'sawtooth', 0.12); setTimeout(() => this.playTone(220.00, 'sawtooth', 0.2), 120); },
+            click() { this.playTone(800, 'triangle', 0.04); }
+        };
 
-        function saveNewGame() {
+        function toggleAdminPanel() { document.getElementById('adminPanel').classList.toggle('hidden'); }
+
+        function commitModuleToStorage() {
             const title = document.getElementById('chapterTitle').value.trim();
             const text = document.getElementById('chapterText').value.trim();
-            if(!title || !text) return alert("Please fill up both fields!");
+            const timeLimit = parseInt(document.getElementById('gameTimer').value) || 120;
+            if(!title || !text) return alert("Please fill out title and content sequences!");
 
-            const games = JSON.parse(localStorage.getItem('adh_games') || '[]');
-            const key = 'game_' + Date.now();
-            games.push({ key, title, text });
-            localStorage.setItem('adh_games', JSON.stringify(games));
+            const database = JSON.parse(localStorage.getItem('adh_premium_arcade') || '[]');
+            const key = 'mod_' + Date.now();
+            database.push({ key, title, text, timeLimit });
+            localStorage.setItem('adh_premium_arcade', JSON.stringify(database));
 
-            alert("Game module successfully active!");
+            alert("Module integrated to inventory catalog successfully!");
             document.getElementById('chapterTitle').value = "";
             document.getElementById('chapterText').value = "";
-            toggleAdminView();
-            loadChaptersList();
+            toggleAdminPanel();
+            syncInventoryCatalog();
         }
 
-        function loadChaptersList() {
-            const container = document.getElementById('chaptersList');
-            const games = JSON.parse(localStorage.getItem('adh_games') || '[]');
-            
-            if(games.length === 0) {
-                container.innerHTML = `<p class="text-slate-500 text-xs italic">No active games. Click 'Admin Panel' above to instantly generate your first module.</p>`;
+        function syncInventoryCatalog() {
+            const stack = document.getElementById('moduleTargetStack');
+            const data = JSON.parse(localStorage.getItem('adh_premium_arcade') || '[]');
+            if(data.length === 0) {
+                stack.innerHTML = `<p class="text-slate-500 text-xs italic p-2">Inventory catalog empty. Use Admin Panel to spawn configurations.</p>`;
                 return;
             }
-
-            container.innerHTML = "";
-            games.forEach(g => {
-                const btn = document.createElement('button');
-                btn.className = "w-full text-left p-3 rounded border border-slate-800/80 hover:bg-slate-800 hover:text-white block transition mb-2 text-xs font-semibold text-slate-300";
-                btn.innerText = g.title;
-                btn.onclick = () => runGameWorkspace(g.key, g.title, g.text);
-                container.appendChild(btn);
+            stack.innerHTML = "";
+            data.forEach(m => {
+                const trigger = document.createElement('button');
+                trigger.className = "w-full text-left p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 bg-slate-950/40 text-xs font-semibold text-slate-300 transition block hover:bg-slate-900";
+                trigger.innerText = m.title;
+                trigger.onclick = () => initArcadeArena(m.key, m.title, m.text, m.timeLimit);
+                stack.appendChild(trigger);
             });
         }
 
-        function runGameWorkspace(key, title, text) {
-            activeKey = key;
-            currentAnswers = [];
-            document.getElementById('activeTitle').innerText = title;
-            document.getElementById('gameZone').classList.remove('hidden');
+        function initArcadeArena(key, title, text, limitSeconds) {
+            AudioFX.click();
+            clearInterval(timerCountdownRef);
+            activeModuleKey = key;
+            correctAnswersList = [];
+            remainingLives = 3;
+            secondsRemaining = limitSeconds;
             
-            let counter = 0;
-            const outputHTML = text.replace(/\[(.*?)\]/g, (match, word) => {
-                currentAnswers.push(word.trim().toLowerCase());
-                return `<input type="text" class="blank-input" data-ans-idx="${counter++}" placeholder="?">`;
+            document.getElementById('activeModuleHeader').innerText = title;
+            document.getElementById('gameplayDashboard').classList.remove('hidden');
+            document.getElementById('statusTelemetry').classList.remove('hidden');
+            document.getElementById('reviewAnalysisDashboard').classList.add('hidden');
+            
+            updateTelemetryDisplays();
+
+            // Extract Target Answers
+            let trackingPool = [];
+            let parserCounter = 0;
+            const updatedMarkup = text.replace(/\[(.*?)\]/g, (match, literalWord) => {
+                const target = literalWord.trim();
+                correctAnswersList.push(target.toLowerCase());
+                trackingPool.push(target);
+                return `<div class="drop-zone" data-zone-idx="${parserCounter++}" onclick="handleZoneInteraction(this)" ondragover="allowDrop(event)" ondrop="handleDropEvent(event)">?</div>`;
             });
 
-            document.getElementById('gameTextSpace').innerHTML = outputHTML;
-            displayLeaderboard();
+            document.getElementById('textSequenceBoard').innerHTML = updatedMarkup;
+
+            // Scramble Word Tokens for Left Container Inventory Bank
+            trackingPool.sort(() => Math.random() - 0.5);
+            const bank = document.getElementById('wordBankShelf');
+            bank.innerHTML = "";
+            trackingPool.forEach(word => {
+                const chip = document.createElement('div');
+                chip.className = "word-chip";
+                chip.innerText = word;
+                chip.setAttribute('draggable', 'true');
+                chip.onclick = () => selectWordChip(chip);
+                chip.ondragstart = (e) => {
+                    selectedChip = chip;
+                    e.dataTransfer.setData('text/plain', word);
+                };
+                bank.appendChild(chip);
+            });
+
+            // Start Countdown Tick
+            timerCountdownRef = setInterval(() => {
+                secondsRemaining--;
+                updateTelemetryDisplays();
+                if(secondsRemaining <= 0) {
+                    clearInterval(timerCountdownRef);
+                    AudioFX.fail();
+                    alert("Time Matrix Expired! Check performance matrix vectors.");
+                    evaluateBoardPerformance();
+                }
+            }, 1000);
+
+            renderActiveScoreboard();
         }
 
-        function checkAnswers() {
-            const name = document.getElementById('studentName').value.trim();
-            if(!name) return alert("Please type your name/nickname before submitting!");
+        function selectWordChip(chip) {
+            AudioFX.click();
+            if(document.querySelector('.word-chip.selected')) {
+                document.querySelector('.word-chip.selected').classList.remove('border-sky-400', 'bg-sky-950/40');
+            }
+            chip.classList.add('border-sky-400', 'bg-sky-950/40');
+            selectedChip = chip;
+        }
 
-            const inputs = document.querySelectorAll('.blank-input');
-            let accurateHits = 0;
+        function handleZoneInteraction(zone) {
+            if(!selectedChip) return;
+            AudioFX.click();
+            
+            // If field already held an alternative token, clear it out first
+            if(zone.getAttribute('data-assigned-word')) {
+                returnTokenToBank(zone.getAttribute('data-assigned-word'));
+            }
 
-            inputs.forEach(input => {
-                const idx = input.getAttribute('data-ans-idx');
-                const userVal = input.value.trim().toLowerCase();
-                if(userVal === currentAnswers[idx]) {
-                    accurateHits++;
-                    input.style.borderBottomColor = "#22c55e";
+            const activeWordValue = selectedChip.innerText;
+            zone.innerText = activeWordValue;
+            zone.classList.add('filled');
+            zone.setAttribute('data-assigned-word', activeWordValue);
+
+            selectedChip.classList.add('used');
+            selectedChip.classList.remove('border-sky-400', 'bg-sky-950/40');
+            selectedChip = null;
+            tallyLiveCompletionCount();
+        }
+
+        function allowDrop(e) { e.preventDefault(); }
+        function handleDropEvent(e) {
+            e.preventDefault();
+            if(!selectedChip) return;
+            handleZoneInteraction(e.currentTarget);
+        }
+
+        function returnTokenToBank(wordVal) {
+            const chips = document.querySelectorAll('.word-chip');
+            for(let c of chips) {
+                if(c.innerText === wordVal && c.classList.contains('used')) {
+                    c.classList.remove('used');
+                    break;
+                }
+            }
+        }
+
+        function tallyLiveCompletionCount() {
+            const filledCount = document.querySelectorAll('.drop-zone.filled').length;
+            document.getElementById('wordCountTracker').innerText = `${filledCount} / ${correctAnswersList.length}`;
+        }
+
+        function updateTelemetryDisplays() {
+            const min = Math.floor(secondsRemaining / 60).toString().padStart(2, '0');
+            const sec = (secondsRemaining % 60).toString().padStart(2, '0');
+            document.getElementById('clockTimerDisplay').innerText = `${min}:${sec}`;
+            document.getElementById('livesHeartDisplay').innerText = "❤️".repeat(remainingLives) || "💀 CRITICAL";
+            tallyLiveCompletionCount();
+        }
+
+        function evaluateBoardPerformance() {
+            clearInterval(timerCountdownRef);
+            const zones = document.querySelectorAll('.drop-zone');
+            const logsBox = document.getElementById('reviewLogsArea');
+            const logsDashboard = document.getElementById('reviewAnalysisDashboard');
+            
+            let accuratelyPlacedHits = 0;
+            logsBox.innerHTML = "";
+
+            zones.forEach(zone => {
+                const idx = parseInt(zone.getAttribute('data-zone-idx'));
+                const userString = (zone.getAttribute('data-assigned-word') || "").trim().toLowerCase();
+                const expectedString = correctAnswersList[idx];
+
+                if(userString === expectedString) {
+                    accuratelyPlacedHits++;
+                    zone.className = "drop-zone filled correct";
                 } else {
-                    input.style.borderBottomColor = "#ef4444";
+                    zone.className = "drop-zone filled wrong";
+                    remainingLives = Math.max(0, remainingLives - 1);
+                    
+                    const logRow = document.createElement('div');
+                    logRow.className = "p-3 bg-slate-950/60 border border-slate-800 rounded-lg flex justify-between items-center";
+                    logRow.innerHTML = `<span class="text-slate-400 font-medium">Blank Box #${idx + 1}</span>
+                        <span class="text-rose-400 font-semibold bg-rose-500/10 px-2 py-0.5 rounded">Your Entry: ${userString || 'Blank'}</span>
+                        <span class="text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded">NCERT Print Text: ${expectedString}</span>`;
+                    logsBox.appendChild(logRow);
                 }
             });
 
-            const rawPercent = Math.round((accurateHits / currentAnswers.length) * 100);
-            alert(`Your submission scored: ${rawPercent}% Accuracy! Check the leaderboard ranking below.`);
+            updateTelemetryDisplays();
+            const accuracyScoreCalculated = Math.round((accuratelyPlacedHits / correctAnswersList.length) * 100);
 
-            // Save Score Entry
-            const scores = JSON.parse(localStorage.getItem(`scores_${activeKey}`) || '[]');
-            scores.push({ name, score: rawPercent });
-            localStorage.setItem(`scores_${activeKey}`, JSON.stringify(scores));
+            if(accuracyScoreCalculated === 100) {
+                AudioFX.success();
+                alert(`🎯 Perfect Configuration Sequence! 100% Core Matrix Retention.`);
+            } else {
+                AudioFX.fail();
+                logsDashboard.classList.remove('hidden');
+                alert(`Assessment Finished. Accuracy Vectors: ${accuracyScoreCalculated}%`);
+            }
 
-            document.getElementById('studentName').value = "";
-            displayLeaderboard();
+            // Write metrics track out to client key repository vectors
+            const name = document.getElementById('identitySign').value.trim() || "Anonymous Aspirant";
+            const leaderboardPool = JSON.parse(localStorage.getItem(`arcade_scores_${activeModuleKey}`) || '[]');
+            leaderboardPool.push({ name, score: accuracyScoreCalculated });
+            localStorage.setItem(`arcade_scores_${activeModuleKey}`, JSON.stringify(leaderboardPool));
+            
+            document.getElementById('identitySign').value = "";
+            renderActiveScoreboard();
         }
 
-        function displayLeaderboard() {
-            const tbody = document.getElementById('leaderboardData');
-            document.getElementById('leaderboardZone').classList.remove('hidden');
+        function renderActiveScoreboard() {
+            const targetTbody = document.getElementById('scoreboardRenderList');
+            document.getElementById('scoreRankZone').classList.remove('hidden');
             
-            // Seed base baseline data mock strings to feel interactive instantly
-            let studentScores = JSON.parse(localStorage.getItem(`scores_${activeKey}`) || '[]');
-            if(studentScores.length === 0) {
-                studentScores = [
-                    { name: "AIIMS Delhi Dreamer", score: 95 },
-                    { name: "NEET Rank 1 Chaser", score: 90 },
-                    { name: "Bio NCERT Pro Max", score: 85 }
+            let scores = JSON.parse(localStorage.getItem(`arcade_scores_${activeModuleKey}`) || '[]');
+            if(scores.length === 0) {
+                scores = [
+                    { name: "AIIMS Delhi Core Team", score: 100 },
+                    { name: "NEET Rank 1 Trajectory", score: 92 },
+                    { name: "NCERT Revision Expert", score: 75 }
                 ];
             }
 
-            // Sort Highest to Lowest
-            studentScores.sort((a,b) => b.score - a.score);
-
-            tbody.innerHTML = "";
-            studentScores.slice(0, 10).forEach((entry, idx) => {
-                const row = `<tr class="border-b border-slate-800/40 text-xs">
-                    <td class="py-3 font-bold text-amber-500">#${idx + 1}</td>
+            scores.sort((x, y) => y.score - x.score);
+            targetTbody.innerHTML = "";
+            
+            scores.slice(0, 10).forEach((entry, idx) => {
+                const tr = `<tr class="border-b border-slate-800/60 text-xs">
+                    <td class="py-3 font-bold text-amber-500 font-mono">#${idx + 1}</td>
                     <td class="font-semibold text-slate-200">${entry.name}</td>
-                    <td class="text-right font-bold text-emerald-400">${entry.score}%</td>
+                    <td class="text-right font-bold text-emerald-400 arcade-font">${entry.score}%</td>
                 </tr>`;
-                tbody.innerHTML += row;
+                targetTbody.innerHTML += tr;
             });
         }
 
-        // Boot
-        loadChaptersList();
+        // Initialize Workspace Sequence System Inventory
+        syncInventoryCatalog();
     </script>
 </body>
 </html>
