@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NCERT BIOLOGY Game for NEET</title>
     <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Times+New+Roman&display=swap');
         
@@ -69,7 +71,7 @@
         .drop-zone.correct { border-color: #16a34a !important; color: #ffffff !important; background-color: #16a34a !important; box-shadow: 0 0 10px rgba(22, 163, 74, 0.3) !important; }
         .drop-zone.wrong { border-color: #dc2626 !important; color: #ffffff !important; background-color: #dc2626 !important; box-shadow: 0 0 10px rgba(220, 38, 38, 0.3) !important; }
 
-        /* Touch-Friendly Drag/Click Target Chips */
+        /* Touch-Friendly Drag/Click Target Chips with Gen Z Strike-through Effects */
         .word-chip { 
             display: inline-block; 
             padding: 12px 18px; 
@@ -79,7 +81,7 @@
             font-weight: 700; 
             color: #0f172a; 
             text-align: center; 
-            cursor: grab; 
+            cursor: pointer; 
             transition: all 0.2s ease; 
             user-select: none; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
@@ -87,12 +89,11 @@
         }
         .word-chip:hover { border-color: var(--ncert-accent); transform: translateY(-2px); }
         .word-chip.selected { border-color: #000000; background-color: var(--ncert-accent); color: #ffffff; box-shadow: 0 0 12px rgba(0,0,0,0.2); }
-        .word-chip.used { opacity: 0.15; cursor: default; pointer-events: none; transform: none !important; }
+        .word-chip.used { text-decoration: line-through; opacity: 0.25; cursor: default; pointer-events: none; background-color: #f1f5f9; }
 
         .hc-input { background-color: #ffffff !important; color: #000000 !important; font-weight: 700 !important; border: 2px solid #cbd5e1 !important; }
         .hc-input:focus { border-color: var(--ncert-accent) !important; outline: none; }
 
-        /* FIXED BOTTOM RIGHT ADMIN HUB PANEL LAYOUT DISPLAY CONTAINER */
         .admin-dock-tray {
             position: fixed;
             bottom: 16px;
@@ -120,13 +121,13 @@
     </div>
 
     <div id="introWelcomeScreen" class="max-w-4xl w-full mx-auto bg-white border border-slate-200 rounded-2xl p-6 mt-6 shadow-sm global-hide-node">
-        <h2 class="text-xl font-extrabold text-slate-800 mb-2"> Want to Become an NCERT Biology Master?</h2>
+        <h2 class="text-xl font-extrabold text-slate-800 mb-2">🎯 Want to Become an NCERT Biology Master?</h2>
         <p class="text-sm font-bold text-emerald-600 mb-3">You are at the right place!</p>
         <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
             <p>Play this game regularly and revise the entire NCERT Biology syllabus in a fun, engaging, and highly effective way. Every time you play, you strengthen your concepts, improve your memory, and sharpen your recall.</p>
             <p>By repeatedly playing this game, you will master NCERT Biology chapter by chapter and turn important facts into long-term memory. Daily practice will make your NCERT knowledge crystal clear and help you answer questions with greater speed and accuracy.</p>
             <p>The more you play, the fewer silly mistakes you'll make, the stronger your concepts will become, and the higher your chances of scoring excellent marks in both NEET and Board Exams.</p>
-            <p class="font-bold text-emerald-700 text-sm pt-1"> Play Daily. Revise Smartly. Master NCERT Biology. Crack NEET with Confidence.</p>
+            <p class="font-bold text-emerald-700 text-sm pt-1">🚀 Play Daily. Revise Smartly. Master NCERT Biology. Crack NEET with Confidence.</p>
         </div>
         <button onclick="dismissWelcomeBanner()" class="mt-4 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs transition uppercase tracking-wider shadow">
             Enter Game Arena & Select Chapter Below
@@ -138,20 +139,27 @@
         <div id="adminPanel" class="hidden lg:col-span-12 bg-white border-2 border-dashed border-emerald-500 rounded-2xl p-6 space-y-4 shadow-xl">
             <h2 class="text-md font-bold uppercase tracking-wider text-slate-700 border-b pb-2 flex justify-between items-center">
                 <span>NCERT Content Script Composer</span>
-                <button onclick="closeAdminPanel()" class="text-xs text-rose-500 font-bold border px-2 py-0.5 rounded bg-rose-50">Hide </button>
+                <button onclick="closeAdminPanel()" class="text-xs text-rose-500 font-bold border px-2 py-0.5 rounded bg-rose-50">Hide ✖</button>
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <select id="adminChapterSelection" class="hc-input rounded-xl p-3 text-sm outline-none font-bold" onchange="populateAdminPartsDropdown()">
+                <select id="adminChapterSelection" class="hc-input rounded-xl p-3 text-sm font-bold" onchange="populateAdminPartsDropdown()">
                     <option value="">-- Choose Chapter --</option>
                 </select>
-                <select id="adminPartSelection" class="hc-input rounded-xl p-3 text-sm outline-none font-bold">
+                <select id="adminPartSelection" class="hc-input rounded-xl p-3 text-sm font-bold">
                     <option value="">-- Choose Stage Destination --</option>
                 </select>
                 <input type="number" id="adminTimerConfig" value="180" placeholder="Timer (Secs)" class="hc-input rounded-xl p-2.5 text-sm w-full font-bold">
-                <button onclick="downloadStudentDatabaseCSV()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black rounded-xl py-2 transition shadow">📥 Download Student Database (Excel CSV)</button>
+                <button onclick="downloadStudentDatabaseCSV()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black rounded-xl py-2 transition shadow">📥 Export Database (Excel CSV)</button>
             </div>
             <textarea id="adminContentTextarea" rows="5" placeholder="Paste structural NCERT text prints sequences here wrapping keywords in [brackets]..." class="w-full hc-input rounded-xl p-4 text-sm"></textarea>
-            <button onclick="commitModuleConfigurationData()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow transition">Save and Publish Stage File</button>
+            <button onclick="commitModuleConfigurationData()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow transition">Save and Publish Stage File directly to Cloud</button>
+            
+            <div class="border-t pt-4">
+                <h3 class="text-xs font-bold text-indigo-600 uppercase mb-2">📬 Live Student Feedback & Improvement Streams</h3>
+                <div id="adminSuggestionsVault" class="space-y-2 max-h-40 overflow-y-auto text-xs">
+                    <p class="text-slate-400 italic">No feedback messages retrieved from database pipelines.</p>
+                </div>
+            </div>
         </div>
 
         <div class="col-span-1 lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-4 global-hide-node order-last lg:order-none">
@@ -180,14 +188,22 @@
                     </div>
                     <div class="text-center">
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Life</p>
-                        <p id="livesView" class="text-base font-bold text-rose-500">❤️❤️❤️</p>
+                        <p id="livesView" class="text-base font-bold text-rose-500">❤️❤️</p>
                     </div>
                     <div class="text-center">
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Terms</p>
                         <p id="tallyView" class="text-xl font-bold text-emerald-600 font-mono">0 / 0</p>
                     </div>
                 </div>
-                <button onclick="toggleFullscreenViewMode()" id="fullscreenTriggerButton" class="bg-slate-100 hover:bg-slate-200 border text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl transition">🖥️ Fullscreen Mode</button>
+                <div class="flex gap-2">
+                    <button onclick="generateViralWhatsAppMatchChallenge()" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:brightness-110 text-white text-xs font-black px-3 py-2.5 rounded-xl transition shadow-sm">⚔️ Challenge Friend</button>
+                    <button onclick="toggleFullscreenViewMode()" id="fullscreenTriggerButton" class="bg-slate-100 hover:bg-slate-200 border text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl transition">🖥️ Fullscreen Mode</button>
+                </div>
+            </div>
+
+            <div id="duelLiveTrackFeedOverlay" class="hidden bg-gradient-to-r from-amber-50 to-orange-50 border border-orange-200 rounded-2xl p-3 text-xs font-bold text-orange-800 flex justify-between items-center animate-pulse">
+                <span id="duelLiveTrackMessageString">⚔️ Match Duel Active! Connecting peer trajectory fields...</span>
+                <span id="duelOpponentMetricsRealtimeTracker" class="font-mono bg-orange-600 text-white px-2 py-0.5 rounded">0%</span>
             </div>
 
             <div id="gameplayDashboard" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hidden space-y-5">
@@ -206,8 +222,13 @@
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center border-b pb-2 mb-3">Word Inventory Bank</p>
                         <div id="wordBankShelf" class="flex flex-wrap md:flex-col gap-2 justify-center"></div>
                     </div>
-                    <div class="col-span-1 md:col-span-8">
+                    <div class="col-span-1 md:col-span-8 space-y-4">
                         <div id="textSequenceBoard" class="ncert-txt-container p-5 md:p-6 rounded-xl border border-slate-200 shadow-inner min-h-[160px]"></div>
+                        
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex gap-2 items-center">
+                            <input type="text" id="stealthFeedbackTextInputField" placeholder="💡 Found a textbook typo or broken line? Type here to alert the Master..." class="w-full text-xs p-2.5 rounded-lg border hc-input">
+                            <button onclick="dispatchStealthSuggestionToCloudVault()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition whitespace-nowrap">Report</button>
+                        </div>
                     </div>
                 </div>
 
@@ -278,6 +299,20 @@
     </div>
 
     <script>
+        // Premium Secured Integration Handshake Realtime Database Initialization Parameters
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOwNx86Isr-50HgMGv3IOpvOED7MGmv_U",
+            authDomain: "ncert-bio-game.firebaseapp.com",
+            projectId: "ncert-bio-game",
+            storageBucket: "ncert-bio-game.firebasestorage.app",
+            messagingSenderId: "1062936197306",
+            appId: "1:1062936197306:web:ab5d48a51925ae2d37aa83",
+            measurementId: "G-VZMXQQE9VP",
+            databaseURL: "https://ncert-bio-game-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const cloudDatabaseRef = firebase.database();
+
         let correctAnswersList = [];
         let activeModuleStorageCompositeKey = "";
         let selectedChipNodeRef = null;
@@ -285,6 +320,7 @@
         let secondsRemaining = 180;
         let remainingLivesCount = 3;
         let isAdminLoggedIn = false;
+        let activeDuelChallengeSessionId = null;
 
         const ChapterPagesMatrixConfig = {
             "11-1": 7, "11-2": 13, "11-3": 14, "11-4": 18, "11-5": 14, "11-6": 8, "11-7": 6, "11-8": 17, "11-9": 16, "11-10": 11, "11-11": 20, "11-12": 8, "11-13": 20, "11-14": 10, "11-15": 12, "11-16": 12, "11-17": 13, "11-18": 9, "11-19": 12,
@@ -356,6 +392,7 @@
                 let c12g = document.createElement('optgroup'); c12g.label = "Class 12 Chapters";
                 Object.keys(ChapterNamesMasterMatrix).filter(k => k.startsWith('12-')).forEach(k => { c12g.innerHTML += `<option value="${k}">${k.replace('12-', 'Ch ')}: ${ChapterNamesMasterMatrix[k]}</option>`; });
                 select.appendChild(c11g); select.appendChild(c12g);
+                syncAdminSuggestionsDashboard();
                 renderSyllabusSidebarMenus();
             } else { alert("Handshake authentication sequence failed."); }
         }
@@ -375,58 +412,69 @@
             const timerVal = parseInt(document.getElementById('adminTimerConfig').value) || 180;
             const textSeq = document.getElementById('adminContentTextarea').value.trim();
 
-            if(!chCode || !stageIdx || !textSeq) return alert("All profile sequence structural tokens must be filled!");
+            if(!chCode || !stageIdx || !textSeq) return alert("All profile parameters must be filled!");
 
             const storageKey = `arc_${chCode}_stg_${stageIdx}`;
             const package = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], stageIdx, timerVal, textSeq };
             
+            // Cloud Synchronization Handshake
+            cloudDatabaseRef.ref('stages/' + storageKey).set(package);
             localStorage.setItem(storageKey, JSON.stringify(package));
-            alert("Stage Data Committed Successfully!");
+            
+            alert("Stage Data Committed Successfully across Cloud Node!");
             document.getElementById('adminContentTextarea').value = "";
             renderSyllabusSidebarMenus();
         }
 
         function renderSyllabusSidebarMenus() {
-            const c11 = document.getElementById('c11_wrapper'); const c12 = document.getElementById('c12_wrapper');
-            c11.innerHTML = ""; c12.innerHTML = "";
+            // First Pull Entire Database Payload From Cloud for Global Sync Handshake
+            cloudDatabaseRef.ref('stages').once('value', (snapshot) => {
+                const cloudData = snapshot.val() || {};
+                
+                // Merge cloud entries back down to local structure layout frames
+                Object.keys(cloudData).forEach(k => localStorage.setItem(k, JSON.stringify(cloudData[k])));
 
-            Object.keys(ChapterNamesMasterMatrix).forEach(key => {
-                const isC11 = key.startsWith('11-'); const targetBox = isC11 ? c11 : c12;
-                const maxStages = ChapterPagesMatrixConfig[key] * 2;
+                const c11 = document.getElementById('c11_wrapper'); const c12 = document.getElementById('c12_wrapper');
+                c11.innerHTML = ""; c12.innerHTML = "";
 
-                const blockCard = document.createElement('div');
-                blockCard.className = "p-2 bg-slate-50 border rounded-xl mb-1";
-                blockCard.innerHTML = `<p class="text-[10px] font-black text-slate-400 uppercase tracking-wide border-b pb-0.5 mb-1">${ChapterNamesMasterMatrix[key]}</p>`;
+                Object.keys(ChapterNamesMasterMatrix).forEach(key => {
+                    const isC11 = key.startsWith('11-'); const targetBox = isC11 ? c11 : c12;
+                    const maxStages = ChapterPagesMatrixConfig[key] * 2;
 
-                let statesExist = false;
-                for(let s = 1; s <= maxStages; s++) {
-                    const record = localStorage.getItem(`arc_${key}_stg_${s}`);
-                    if(record) {
-                        statesExist = true; const data = JSON.parse(record);
-                        const row = document.createElement('div'); row.className = "flex justify-between items-center gap-1 mb-1";
-                        
-                        const actionBtn = document.createElement('button');
-                        actionBtn.className = "w-full text-left p-1.5 rounded bg-white hover:bg-emerald-50 text-xs font-bold text-slate-700 border transition truncate";
-                        actionBtn.innerText = `Stage ${s} of ${maxStages}`;
-                        actionBtn.onclick = () => launchActiveArcadeSession(data.storageKey);
-                        row.appendChild(actionBtn);
+                    const blockCard = document.createElement('div');
+                    blockCard.className = "p-2 bg-slate-50 border rounded-xl mb-1";
+                    blockCard.innerHTML = `<p class="text-[10px] font-black text-slate-400 uppercase tracking-wide border-b pb-0.5 mb-1">${ChapterNamesMasterMatrix[key]}</p>`;
 
-                        if(isAdminLoggedIn) {
-                            const editBtn = document.createElement('button');
-                            editBtn.className = "bg-amber-100 text-[9px] font-black text-amber-800 px-2 py-1 rounded border border-amber-200";
-                            editBtn.innerText = "Edit";
-                            editBtn.onclick = () => {
-                                document.getElementById('adminChapterSelection').value = data.chCode; populateAdminPartsDropdown();
-                                document.getElementById('adminPartSelection').value = data.stageIdx;
-                                document.getElementById('adminTimerConfig').value = data.timerVal;
-                                document.getElementById('adminContentTextarea').value = data.textSeq;
-                            };
-                            row.appendChild(editBtn);
+                    let statesExist = false;
+                    for(let s = 1; s <= maxStages; s++) {
+                        const record = localStorage.getItem(`arc_${key}_stg_${s}`);
+                        if(record) {
+                            statesExist = true; const data = JSON.parse(record);
+                            const row = document.createElement('div'); row.className = "flex justify-between items-center gap-1 mb-1";
+                            
+                            const actionBtn = document.createElement('button');
+                            actionBtn.className = "w-full text-left p-1.5 rounded bg-white hover:bg-emerald-50 text-xs font-bold text-slate-700 border transition truncate";
+                            actionBtn.innerText = `Stage ${s} of ${maxStages}`;
+                            actionBtn.onclick = () => launchActiveArcadeSession(data.storageKey);
+                            row.appendChild(actionBtn);
+
+                            if(isAdminLoggedIn) {
+                                const editBtn = document.createElement('button');
+                                editBtn.className = "bg-amber-100 text-[9px] font-black text-amber-800 px-2 py-1 rounded border border-amber-200";
+                                editBtn.innerText = "Edit";
+                                editBtn.onclick = () => {
+                                    document.getElementById('adminChapterSelection').value = data.chCode; populateAdminPartsDropdown();
+                                    document.getElementById('adminPartSelection').value = data.stageIdx;
+                                    document.getElementById('adminTimerConfig').value = data.timerVal;
+                                    document.getElementById('adminContentTextarea').value = data.textSeq;
+                                };
+                                row.appendChild(editBtn);
+                            }
+                            blockCard.appendChild(row);
                         }
-                        blockCard.appendChild(row);
                     }
-                }
-                if(statesExist) targetBox.appendChild(blockCard);
+                    if(statesExist) targetBox.appendChild(blockCard);
+                });
             });
         }
 
@@ -470,7 +518,9 @@
                 if(secondsRemaining <= 0) { clearInterval(countdownTimerIntervalRef); evaluateBoardPerformance(); }
             }, 1000);
 
-            syncDashboardDisplays(); renderScoreboardIndexListTable(); updateStateLeaderboardChart();
+            // Connect Realtime Duel Listener Interface Nodes if url challenge parameters exist
+            syncLiveDuelLobbySystemTrace();
+            syncDashboardDisplays(); refreshLiveCloudScoreboardEngine(); updateStateLeaderboardChart();
         }
 
         function selectWordChipComponent(node) {
@@ -488,7 +538,7 @@
                 for(let tc of chips) {
                     if(tc.innerText === textWordToRestore && tc.classList.contains('used')) { tc.classList.remove('used'); break; }
                 }
-                syncDashboardDisplays(); return;
+                syncDashboardDisplays(); transmitLiveDuelMetricsTelemetry(); return;
             }
 
             if(!selectedChipNodeRef) return;
@@ -497,7 +547,7 @@
             zone.setAttribute('data-assigned-literal-token', wordStringValue);
 
             selectedChipNodeRef.classList.add('used'); selectedChipNodeRef.classList.remove('selected');
-            selectedChipNodeRef = null; syncDashboardDisplays();
+            selectedChipNodeRef = null; syncDashboardDisplays(); transmitLiveDuelMetricsTelemetry();
         }
 
         function syncDashboardDisplays() {
@@ -505,6 +555,76 @@
             document.getElementById('livesView').innerText = "❤️".repeat(remainingLivesCount) || "💀 CRITICAL";
             const filledCount = document.querySelectorAll('.drop-zone.filled').length;
             document.getElementById('tallyView').innerText = `${filledCount} / ${correctAnswersList.length}`;
+        }
+
+        function generateViralWhatsAppMatchChallenge() {
+            SoundFX.click();
+            const challengeId = "duel_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+            const compiledMatchLinkUrl = `${window.location.origin}${window.location.pathname}?challengeId=${challengeId}&targetKey=${activeModuleStorageCompositeKey}`;
+            
+            // Seed Session Matrix Placeholder in Cloud Database
+            cloudDatabaseRef.ref('leaderboards/' + challengeId).set({ key: activeModuleStorageCompositeKey, creatorName: "Challenger Host", progress: 0 });
+
+            navigator.clipboard.writeText(compiledMatchLinkUrl);
+            alert("⚔️ DUEL LINK GENERATED: Copy link payload sent to your clipboard! Share it on WhatsApp with a classmate to go head-to-head live!");
+        }
+
+        function syncLiveDuelLobbySystemTrace() {
+            const params = new URLSearchParams(window.location.search);
+            const challengeId = params.get('challengeId');
+            if(!challengeId) return;
+
+            activeDuelChallengeSessionId = challengeId;
+            document.getElementById('duelLiveTrackFeedOverlay').classList.remove('hidden');
+
+            cloudDatabaseRef.ref('leaderboards/' + challengeId).on('value', (snapshot) => {
+                const data = snapshot.val();
+                if(data && data.opponentName) {
+                    document.getElementById('duelLiveTrackMessageString').innerText = `⚔️ Facing: ${data.opponentName} | Hearts Left: ${data.opponentLives || '3'}`;
+                    document.getElementById('duelOpponentMetricsRealtimeTracker').innerText = `${data.opponentProgress || 0}% Done`;
+                }
+            });
+        }
+
+        function transmitLiveDuelMetricsTelemetry() {
+            if(!activeDuelChallengeSessionId) return;
+            const filledCount = document.querySelectorAll('.drop-zone.filled').length;
+            const pct = Math.round((filledCount / correctAnswersList.length) * 100) || 0;
+            
+            cloudDatabaseRef.ref('leaderboards/' + activeDuelChallengeSessionId).update({
+                opponentName: document.getElementById('studentNicknameInput').value || "Opponent Racer",
+                opponentProgress: pct,
+                opponentLives: remainingLivesCount
+            });
+        }
+
+        function dispatchStealthSuggestionToCloudVault() {
+            const msg = document.getElementById('stealthFeedbackTextInputField').value.trim();
+            if(!msg) return;
+            
+            cloudDatabaseRef.ref('suggestions').push({
+                timestamp: Date.now(),
+                message: msg,
+                stage: activeModuleStorageCompositeKey
+            });
+
+            document.getElementById('stealthFeedbackTextInputField').value = "";
+            alert("📬 Feedback routed securely into the Master's Control Vault. Thank you!");
+        }
+
+        function syncAdminSuggestionsDashboard() {
+            cloudDatabaseRef.ref('suggestions').on('value', (snapshot) => {
+                const vault = document.getElementById('adminSuggestionsVault');
+                vault.innerHTML = "";
+                const data = snapshot.val();
+                if(!data) { vault.innerHTML = "<p class='italic text-slate-400'>No feedback messages inside container storage nodes.</p>"; return; }
+                
+                Object.keys(data).forEach(k => {
+                    vault.innerHTML += `<div class='p-2 bg-slate-100 rounded border-l-4 border-indigo-500 mb-1'>
+                        <strong>[${data[k].stage || 'General'}]</strong>: ${data[k].message}
+                    </div>`;
+                });
+            });
         }
 
         function evaluateBoardPerformance() {
@@ -547,12 +667,13 @@
             if(finalScorePercentage >= 90) SoundFX.achievement(); else SoundFX.failure();
             renderDynamicMotivationFeedbackBox(finalScorePercentage);
 
-            const scoreboardHistory = JSON.parse(localStorage.getItem(`scoreboard_v3_${activeModuleStorageCompositeKey}`) || '[]');
-            scoreboardHistory.push({ name, state, phone, correct: correctHits, incorrect: incorrectHits, left: skippedHits, pct: finalScorePercentage });
-            localStorage.setItem(`scoreboard_v3_${activeModuleStorageCompositeKey}`, JSON.stringify(scoreboardHistory));
+            const payloadPacket = { name, state, phone, correct: correctHits, incorrect: incorrectHits, left: skippedHits, pct: finalScorePercentage, timestamp: Date.now() };
+            
+            // Sync to Global Encrypted Cloud Pipeline Nodes
+            cloudDatabaseRef.ref('students/' + activeModuleStorageCompositeKey).push(payloadPacket);
 
             document.getElementById('studentNicknameInput').value = ""; document.getElementById('studentStateInput').value = ""; document.getElementById('studentPhoneInput').value = "";
-            syncDashboardDisplays(); renderScoreboardIndexListTable(); updateStateLeaderboardChart();
+            syncDashboardDisplays(); refreshLiveCloudScoreboardEngine(); updateStateLeaderboardChart();
         }
 
         function renderDynamicMotivationFeedbackBox(pct) {
@@ -578,97 +699,100 @@
             }
         }
 
-        function renderScoreboardIndexListTable() {
-            const tbody = document.getElementById('scoreboardRenderList'); document.getElementById('scoreRankZone').classList.remove('hidden');
-            let dataList = JSON.parse(localStorage.getItem(`scoreboard_v3_${activeModuleStorageCompositeKey}`) || '[]');
+        function refreshLiveCloudScoreboardEngine() {
+            cloudDatabaseRef.ref('students/' + activeModuleStorageCompositeKey).once('value', (snapshot) => {
+                const tbody = document.getElementById('scoreboardRenderList'); document.getElementById('scoreRankZone').classList.remove('hidden');
+                let dataList = [];
+                const snapshotVal = snapshot.val();
+                if(snapshotVal) { Object.keys(snapshotVal).forEach(k => dataList.push(snapshotVal[k])); }
 
-            if(dataList.length === 0) {
-                dataList = [
-                    { name: "AIIMS Delhi Scholar Core", state: "Delhi", correct: correctAnswersList.length || 10, incorrect: 0, left: 0, pct: 100 },
-                    { name: "NEET Rank 1 Trajectory", state: "Karnataka", correct: Math.max(0, (correctAnswersList.length || 10) - 1), incorrect: 1, left: 0, pct: 90 }
-                ];
-            }
-            dataList.sort((x, y) => y.pct - x.pct); tbody.innerHTML = "";
-            dataList.slice(0, 10).forEach((entry, idx) => {
-                tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition text-xs font-semibold text-slate-700">
-                    <td class="py-3 font-extrabold text-amber-500 text-sm pl-2">#${idx + 1}</td>
-                    <td class="font-bold text-slate-900">${entry.name}</td><td>${entry.state}</td>
-                    <td class="text-center font-bold text-emerald-600 bg-emerald-50/50">${entry.correct}</td>
-                    <td class="text-center font-bold text-rose-600 bg-rose-50/50">${entry.incorrect}</td>
-                    <td class="text-center font-bold text-amber-600 bg-amber-50/50">${entry.left}</td>
-                    <td class="text-right font-black text-slate-900 text-sm pr-2">${entry.pct}%</td>
-                </tr>`;
+                if(dataList.length === 0) {
+                    dataList = [
+                        { name: "AIIMS Delhi Scholar Core", state: "Delhi", correct: correctAnswersList.length || 10, incorrect: 0, left: 0, pct: 100 },
+                        { name: "NEET Rank 1 Trajectory", state: "Karnataka", correct: Math.max(0, (correctAnswersList.length || 10) - 1), incorrect: 1, left: 0, pct: 90 }
+                    ];
+                }
+                dataList.sort((x, y) => y.pct - x.pct); tbody.innerHTML = "";
+                dataList.slice(0, 10).forEach((entry, idx) => {
+                    tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition text-xs font-semibold text-slate-700">
+                        <td class="py-3 font-extrabold text-amber-500 text-sm pl-2">#${idx + 1}</td>
+                        <td class="font-bold text-slate-900">${entry.name}</td><td>${entry.state}</td>
+                        <td class="text-center font-bold text-emerald-600 bg-emerald-50/50">${entry.correct}</td>
+                        <td class="text-center font-bold text-rose-600 bg-rose-50/50">${entry.incorrect}</td>
+                        <td class="text-center font-bold text-amber-600 bg-amber-50/50">${entry.left}</td>
+                        <td class="text-right font-black text-slate-900 text-sm pr-2">${entry.pct}%</td>
+                    </tr>`;
+                });
             });
         }
 
         function updateStateLeaderboardChart() {
-            const container = document.getElementById('stateLeaderboardContainer'); if(!container) return;
-            let stateDataMap = {};
+            cloudDatabaseRef.ref('students').once('value', (snapshot) => {
+                const container = document.getElementById('stateLeaderboardContainer'); if(!container) return;
+                let stateDataMap = {};
+                const globalData = snapshot.val() || {};
 
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('scoreboard_v3_')) {
-                    try {
-                        const list = JSON.parse(localStorage.getItem(key)) || [];
-                        list.forEach(item => {
-                            if (item.state) {
-                                const stDisplay = item.state.trim().toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-                                if (!stateDataMap[stDisplay]) stateDataMap[stDisplay] = { totalPct: 0, count: 0 };
-                                stateDataMap[stDisplay].totalPct += parseInt(item.pct) || 0; stateDataMap[stDisplay].count += 1;
-                            }
-                        });
-                    } catch(e){}
+                Object.keys(globalData).forEach(moduleKey => {
+                    const records = globalData[moduleKey];
+                    Object.keys(records).forEach(rk => {
+                        const item = records[rk];
+                        if (item.state) {
+                            const stDisplay = item.state.trim().toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+                            if (!stateDataMap[stDisplay]) stateDataMap[stDisplay] = { totalPct: 0, count: 0 };
+                            stateDataMap[stDisplay].totalPct += parseInt(item.pct) || 0; stateDataMap[stDisplay].count += 1;
+                        }
+                    });
+                });
+
+                let chartArray = [];
+                Object.keys(stateDataMap).forEach(stName => { chartArray.push({ name: stName, average: Math.round(stateDataMap[stName].totalPct / stateDataMap[stName].count) }); });
+                chartArray.sort((a, b) => b.average - a.average);
+
+                if(chartArray.length === 0) {
+                    container.innerHTML = `<div class="text-xs text-slate-400 italic text-center p-2 border rounded-xl bg-slate-50 mb-3">No active state metrics compiled yet.</div>`;
+                    return;
                 }
-            }
-            let chartArray = [];
-            Object.keys(stateDataMap).forEach(stName => { chartArray.push({ name: stName, average: Math.round(stateDataMap[stName].totalPct / stateDataMap[stName].count) }); });
-            chartArray.sort((a, b) => b.average - a.average);
-
-            if(chartArray.length === 0) {
-                container.innerHTML = `<div class="text-xs text-slate-400 italic text-center p-2 border rounded-xl bg-slate-50 mb-3">No active state metrics compiled yet. Mock ranks index display active.</div>
-                <div class="mb-2"><div class="flex justify-between text-xs font-bold text-slate-700 mb-0.5"><span>Karnataka</span><span>88% Avg</span></div><div class="w-full bg-slate-100 h-2 rounded-full"><div class="bg-emerald-500 h-full" style="width: 88%"></div></div></div>
-                <div><div class="flex justify-between text-xs font-bold text-slate-700 mb-0.5"><span>Rajasthan</span><span>74% Avg</span></div><div class="w-full bg-slate-100 h-2 rounded-full"><div class="bg-sky-500 h-full" style="width: 74%"></div></div></div>`;
-                return;
-            }
-            container.innerHTML = "";
-            chartArray.forEach(item => {
-                let color = item.average >= 85 ? "bg-emerald-500" : (item.average >= 55 ? "bg-sky-500" : "bg-rose-500");
-                container.innerHTML += `<div class="mb-3">
-                    <div class="flex justify-between text-xs font-bold text-slate-700 mb-1"><span>${item.name}</span><span class="font-mono">${item.average}% Avg</span></div>
-                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200"><div class="${color} h-full transition-all" style="width: ${item.average}%"></div></div>
-                </div>`;
+                container.innerHTML = "";
+                chartArray.forEach(item => {
+                    let color = item.average >= 85 ? "bg-emerald-500" : (item.average >= 55 ? "bg-sky-500" : "bg-rose-500");
+                    container.innerHTML += `<div class="mb-3">
+                        <div class="flex justify-between text-xs font-bold text-slate-700 mb-1"><span>${item.name}</span><span class="font-mono">${item.average}% Avg</span></div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200"><div class="${color} h-full transition-all" style="width: ${item.average}%"></div></div>
+                    </div>`;
+                });
             });
         }
 
         function downloadStudentDatabaseCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,Student Name,State,WhatsApp Contact,Correct Matches,Incorrect Answers,Left Boxes,Accuracy Percentage\n";
-            let found = 0;
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('scoreboard_v3_')) {
-                    try {
-                        const list = JSON.parse(localStorage.getItem(key)) || [];
-                        list.forEach(item => {
-                            csvContent += `"${item.name||''}","${item.state||''}","${item.phone||''}",${item.correct||0},${item.incorrect||0},${item.left||0},${item.pct||0}\n`;
-                            found++;
-                        });
-                    } catch(e){}
-                }
-            }
-            if(found === 0) return alert("Database array container report is currently empty.");
-            const anchor = document.createElement("a"); anchor.setAttribute("href", encodeURI(csvContent));
-            anchor.setAttribute("download", "ADH_NEET_Aspirants_Database.csv");
-            document.body.appendChild(anchor); anchor.click(); document.body.removeChild(anchor);
+            cloudDatabaseRef.ref('students').once('value', (snapshot) => {
+                let csvContent = "data:text/csv;charset=utf-8,Student Name,State,WhatsApp Contact,Correct Matches,Incorrect Answers,Left Boxes,Accuracy Percentage\n";
+                let found = 0;
+                const globalData = snapshot.val() || {};
+
+                Object.keys(globalData).forEach(moduleKey => {
+                    const records = globalData[moduleKey];
+                    Object.keys(records).forEach(rk => {
+                        const item = records[rk];
+                        csvContent += `"${item.name||''}","${item.state||''}","${item.phone||''}",${item.correct||0},${item.incorrect||0},${item.left||0},${item.pct||0}\n`;
+                        found++;
+                    });
+                });
+
+                if(found === 0) return alert("Database dashboard data log repository is currently empty.");
+                const anchor = document.createElement("a"); anchor.setAttribute("href", encodeURI(csvContent));
+                anchor.setAttribute("download", "ADH_NEET_Aspirants_Roster.csv");
+                document.body.appendChild(anchor); anchor.click(); document.body.removeChild(anchor);
+            });
         }
 
         function exportDataBackup() {
             let backupMap = {};
             for (let i = 0; i < localStorage.length; i++) {
                 const k = localStorage.key(i);
-                if(k.startsWith('arc_') || k.startsWith('scoreboard_v3_')) backupMap[k] = localStorage.getItem(k);
+                if(k.startsWith('arc_')) backupMap[k] = localStorage.getItem(k);
             }
             const blob = new Blob([JSON.stringify(backupMap)], { type: 'text/json' });
-            const l = document.createElement('a'); l.download = "ADH_Syllabus_Master_Backup.txt";
+            const l = document.createElement('a'); l.download = "ADH_Syllabus_Local_Backup.txt";
             l.href = window.URL.createObjectURL(blob); l.click();
         }
 
@@ -677,14 +801,27 @@
             reader.onload = function() {
                 try {
                     const keys = JSON.parse(reader.result);
-                    Object.keys(keys).forEach(k => localStorage.setItem(k, keys[k]));
-                    alert("Database restored successfully!"); renderSyllabusSidebarMenus();
-                } catch(err) { alert("File corrupted or bad trace parsing mapping structure parameters."); }
+                    Object.keys(keys).forEach(k => {
+                        localStorage.setItem(k, keys[k]);
+                        cloudDatabaseRef.ref('stages/' + k).set(JSON.parse(keys[k]));
+                    });
+                    alert("Database backup mapped and synchronised cleanly to cloud vectors!"); renderSyllabusSidebarMenus();
+                } catch(err) { alert("File processing error: Check configuration format script alignments."); }
             };
             reader.readAsText(e.target.files[0]);
         }
 
+        // Automatic Duel Deep Link Handshake Interceptor Initializer
+        function checkIncomingChallengeRoutingHandshake() {
+            const params = new URLSearchParams(window.location.search);
+            const targetKey = params.get('targetKey');
+            if(targetKey) {
+                setTimeout(() => { launchActiveArcadeSession(targetKey); }, 1200);
+            }
+        }
+
         renderSyllabusSidebarMenus();
+        checkIncomingChallengeRoutingHandshake();
     </script>
 </body>
 </html>
