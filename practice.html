@@ -3,230 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCERT BIO Game for NEET</title>
+    <title>NCERT BIOLOGY Game for NEET</title>
     <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Times+New+Roman&display=swap');
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #f1f5f9; 
-            color: #1e293b; 
+            background-color: #f8fafc; 
+            color: #0f172a; 
             transition: all 0.3s ease; 
         }
 
-        /* High-Contrast Interactive Game Board Layout Elements */
+        /* NCERT Textbook Core Academic Design Adaptations */
+        .ncert-txt-container {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 20px;
+            line-height: 1.75;
+            color: #1e293b;
+            background-color: #ffffff;
+            border-left: 5px solid var(--ncert-accent, #008557);
+        }
+
+        body.class11-active { --ncert-accent: #008557; }
+        body.class12-active { --ncert-accent: #0284c7; }
+
+        /* Fullscreen Layout Viewport Mode Override */
+        body.fullscreen-mode {
+            background-color: #ffffff !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        body.fullscreen-mode .global-hide-node { display: none !important; }
+        body.fullscreen-mode .fullscreen-box-expand { max-width: 100% !important; width: 100% !important; border: none !important; border-radius: 0 !important; }
+
+        /* High-Contrast Interactive Blank Target Spaces */
         .drop-zone { 
             display: inline-flex; 
             align-items: center; 
             justify-content: center; 
-            min-width: 140px; 
-            height: 36px; 
-            border: 2px dashed #94a3b8; 
-            background-color: #ffffff; 
-            border-radius: 8px; 
+            min-width: 145px; 
+            height: 38px; 
+            border: 2px solid #64748b; 
+            background-color: #f1f5f9; 
+            border-radius: 6px; 
             margin: 4px 6px; 
             vertical-align: middle; 
             transition: all 0.2s ease; 
-            color: #0f172a; 
+            color: #000000; 
             font-weight: 700; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
             text-align: center; 
             cursor: pointer;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
-        .drop-zone.hovered { border-color: #22c55e; background-color: #f0fdf4; }
-        .drop-zone.filled { border-style: solid; border-color: #22c55e; background-color: #f8fafc; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .drop-zone.correct { border-color: #16a34a !important; color: #ffffff !important; background-color: #16a34a !important; box-shadow: 0 0 12px rgba(22, 163, 74, 0.3) !important; }
-        .drop-zone.wrong { border-color: #dc2626 !important; color: #ffffff !important; background-color: #dc2626 !important; box-shadow: 0 0 12px rgba(220, 38, 38, 0.3) !important; }
+        .drop-zone.hovered { border-color: var(--ncert-accent); background-color: #f0fdf4; }
+        .drop-zone.filled { border-style: solid; border-color: var(--ncert-accent); background-color: #ffffff; color: #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .drop-zone.correct { border-color: #16a34a !important; color: #ffffff !important; background-color: #16a34a !important; box-shadow: 0 0 10px rgba(22, 163, 74, 0.3) !important; }
+        .drop-zone.wrong { border-color: #dc2626 !important; color: #ffffff !important; background-color: #dc2626 !important; box-shadow: 0 0 10px rgba(220, 38, 38, 0.3) !important; }
 
-        /* Draggable & Clickable High-Contrast Word Chips */
+        /* Word Selection Chips */
         .word-chip { 
             display: inline-block; 
             padding: 10px 16px; 
             background-color: #ffffff; 
             border: 2px solid #cbd5e1; 
-            border-radius: 10px; 
+            border-radius: 8px; 
             font-weight: 700; 
             color: #0f172a; 
             text-align: center; 
             cursor: grab; 
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: all 0.2s ease; 
             user-select: none; 
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
         }
-        .word-chip:hover { border-color: #22c55e; transform: translateY(-2px); box-shadow: 0 6px 12px -1px rgba(0,0,0,0.1); }
-        .word-chip.selected { border-color: #15803d; background-color: #4ade80; color: #ffffff; box-shadow: 0 0 12px rgba(74, 222, 128, 0.5); }
-        .word-chip.used { opacity: 0.2; cursor: default; pointer-events: none; transform: none !important; box-shadow: none; }
+        .word-chip:hover { border-color: var(--ncert-accent); transform: translateY(-2px); }
+        .word-chip.selected { border-color: #000000; background-color: var(--ncert-accent); color: #ffffff; box-shadow: 0 0 12px rgba(0,0,0,0.2); }
+        .word-chip.used { opacity: 0.15; cursor: default; pointer-events: none; transform: none !important; }
 
-        .accordion-btn { transition: background-color 0.2s; }
-        .accordion-btn:hover { background-color: #e2e8f0; }
-
-        /* Custom Inversion Class Override for Admin Workspace Forms visibility layout controllers */
-        .hc-text-box { background-color: #ffffff !important; color: #000000 !important; font-weight: 700 !important; border: 2px solid #cbd5e1 !important; }
-        .hc-text-box:focus { border-color: #22c55e !important; outline: none; }
+        .hc-input { background-color: #ffffff !important; color: #000000 !important; font-weight: 700 !important; border: 2px solid #cbd5e1 !important; }
+        .hc-input:focus { border-color: var(--ncert-accent) !important; outline: none; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen class11-active">
 
-    <div class="bg-white border-b border-slate-200 shadow-sm p-4 sticky top-0 z-50">
+    <div class="bg-white border-b border-slate-200 shadow-sm p-4 sticky top-0 z-50 global-hide-node">
         <div class="max-w-7xl w-full mx-auto flex flex-wrap justify-between items-center">
             <div>
-                <h1 class="text-2xl font-extrabold tracking-tight text-emerald-600" id="mainHeaderLogo">NCERT BIO Game for NEET</h1>
-                <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mt-0.5" id="subHeaderTagline">Master the NCERT Bio by repeatedly playing this game</p>
+                <h1 class="text-2xl font-black tracking-tight text-emerald-700">NCERT BIOLOGY Game for NEET</h1>
+                <p class="text-xs text-slate-500 font-bold tracking-wide mt-0.5">Master the NCERT Biology by repeatedly playing this game & secure maximum marks in NEET</p>
             </div>
             <div class="flex gap-3 mt-2 sm:mt-0">
-                <div class="flex items-center bg-slate-100 rounded-xl p-1 border border-slate-200">
-                    <input type="file" id="importFileHandler" class="hidden" onchange="importDataBackup(event)">
-                    <button onclick="document.getElementById('importFileHandler').click()" class="text-slate-700 text-xs font-bold px-3 py-1.5 hover:bg-white rounded-lg transition">📥 Restore Data</button>
-                    <button onclick="exportDataBackup()" class="text-slate-700 text-xs font-bold px-3 py-1.5 hover:bg-white rounded-lg transition">💾 Backup Data</button>
-                </div>
-                <button onclick="triggerSecureAdminView()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow transition">
-                    ⚙️ Control Room (Add Text)
-                </button>
+                <input type="file" id="importHandler" class="hidden" onchange="importDataBackup(event)">
+                <button onclick="document.getElementById('importHandler').click()" class="text-slate-700 text-xs font-bold px-3 py-1.5 hover:bg-slate-100 rounded-lg transition border">📥 Restore</button>
+                <button onclick="exportDataBackup()" class="text-slate-700 text-xs font-bold px-3 py-1.5 hover:bg-slate-100 rounded-lg transition border">制造 Backup</button>
+                <button onclick="triggerSecureAdminView()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition">Control Room</button>
             </div>
         </div>
     </div>
 
-    <div id="introWelcomeScreen" class="max-w-4xl w-full mx-auto bg-white border border-slate-200 rounded-2xl p-6 mt-6 shadow-sm">
-        <h2 class="text-xl font-bold text-slate-800 mb-3 flex items-center gap-2">🎯 Want to Become an NCERT Biology Master?</h2>
-        <p class="text-sm text-slate-600 leading-relaxed mb-4 font-semibold text-emerald-700">You are at the right place!</p>
-        <div class="text-sm text-slate-600 space-y-3 leading-relaxed">
+    <div id="introWelcomeScreen" class="max-w-5xl w-full mx-auto bg-white border border-slate-200 rounded-2xl p-6 mt-6 shadow-sm global-hide-node">
+        <h2 class="text-xl font-extrabold text-slate-800 mb-2">🎯 Want to Become an NCERT Biology Master?</h2>
+        <p class="text-sm font-bold text-emerald-600 mb-3">You are at the right place!</p>
+        <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
             <p>Play this game regularly and revise the entire NCERT Biology syllabus in a fun, engaging, and highly effective way. Every time you play, you strengthen your concepts, improve your memory, and sharpen your recall.</p>
             <p>By repeatedly playing this game, you will master NCERT Biology chapter by chapter and turn important facts into long-term memory. Daily practice will make your NCERT knowledge crystal clear and help you answer questions with greater speed and accuracy.</p>
             <p>The more you play, the fewer silly mistakes you'll make, the stronger your concepts will become, and the higher your chances of scoring excellent marks in both NEET and Board Exams.</p>
-            <p class="font-bold text-emerald-600 pt-2">🚀 Play Daily. Revise Smartly. Master NCERT Biology. Crack NEET with Confidence.</p>
+            <p class="font-bold text-emerald-700 text-sm pt-1">🚀 Play Daily. Revise Smartly. Master NCERT Biology. Crack NEET with Confidence.</p>
         </div>
-        <button onclick="dismissWelcomeBanner()" class="mt-5 w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition uppercase tracking-wider">
-            Enter Game Arena Grid & Select Chapter Below
+        <button onclick="dismissWelcomeBanner()" class="mt-4 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs transition uppercase tracking-wider shadow">
+            Enter Game Arena & Choose Stage Below
         </button>
     </div>
 
     <div class="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 flex-grow items-start">
         
-        <div id="adminPanel" class="hidden lg:col-span-12 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-            <h2 class="text-lg font-bold text-slate-800 border-b pb-2 flex justify-between items-center">
-                <span>NCERT Content Script Insertion Matrix</span>
-                <button onclick="closeAdminPanel()" class="text-xs text-rose-500 font-bold border border-rose-200 px-2 py-1 rounded bg-rose-50">Close ✖</button>
+        <div id="adminPanel" class="hidden lg:col-span-12 bg-white border-2 border-dashed border-emerald-500 rounded-2xl p-6 space-y-4">
+            <h2 class="text-md font-bold uppercase tracking-wider text-slate-700 border-b pb-2 flex justify-between items-center">
+                <span>Script Manager Board Engine</span>
+                <button onclick="closeAdminPanel()" class="text-xs text-rose-500 font-bold border px-2 py-0.5 rounded bg-rose-50">Hide ✖</button>
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <select id="adminChapterSelection" class="hc-text-box rounded-xl p-3 text-sm outline-none" onchange="populateAdminPartsDropdown()">
-                    <option value="">-- Choose Target Chapter --</option>
-                    <optgroup label="Class 11 Chapters">
-                        <script>
-                            const ch11Names = ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Morphology of Flowering Plants", "Anatomy of Flowering Plants", "Structural Organisation in Animals", "Cell: The Unit of Life", "Biomolecules", "Cell Cycle and Cell Division", "Photosynthesis in Higher Plants", "Respiration in Plants", "Plant Growth and Development", "Breathing and Exchange of Gases", "Body Fluids and Circulation", "Excretory Products and their Elimination", "Locomotion and Movement", "Neural Control and Coordination", "Chemical Coordination and Integration"];
-                            ch11Names.forEach((n, idx) => document.write(`<option value="11-${idx+1}">Ch ${idx+1}: ${n}</option>`));
-                        </script>
-                    </optgroup>
-                    <optgroup label="Class 12 Chapters">
-                        <script>
-                            const ch12Names = ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"];
-                            ch12Names.forEach((n, idx) => document.write(`<option value="12-${idx+1}">Ch ${idx+1}: ${n}</option>`));
-                        </script>
-                    </optgroup>
+                <select id="adminChapterSelection" class="hc-input rounded-xl p-3 text-sm outline-none" onchange="populateAdminPartsDropdown()">
+                    <option value="">-- Select Target Chapter --</option>
+                    <optgroup label="Class 11 Chapters"></optgroup>
                 </select>
-                <select id="adminPartSelection" class="hc-text-box rounded-xl p-3 text-sm outline-none">
-                    <option value="">-- Choose Part Page Mapping --</option>
+                <select id="adminPartSelection" class="hc-input rounded-xl p-3 text-sm outline-none">
+                    <option value="">-- Choose Stage Destination --</option>
                 </select>
                 <div class="flex items-center gap-2">
-                    <label class="text-xs font-bold text-slate-500 whitespace-nowrap">Timer (Secs):</label>
-                    <input type="number" id="adminTimerConfig" value="180" class="hc-text-box rounded-xl p-2.5 text-sm w-full">
+                    <label class="text-xs font-bold text-slate-500 whitespace-nowrap">Timer (Seconds):</label>
+                    <input type="number" id="adminTimerConfig" value="180" class="hc-input rounded-xl p-2.5 text-sm w-full">
                 </div>
             </div>
-            <textarea id="adminContentTextarea" rows="6" placeholder="Paste NCERT book layout sentences here. Hide terms inside square brackets like [this]..." class="w-full hc-text-box rounded-xl p-4 text-sm"></textarea>
-            <button onclick="commitModuleConfigurationData()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow transition">
-                Deploy / Overwrite Page Component Data
-            </button>
+            <textarea id="adminContentTextarea" rows="5" placeholder="Paste raw text print layouts here. Wrap target words in square brackets like [keyword]..." class="w-full hc-input rounded-xl p-4 text-sm"></textarea>
+            <button onclick="commitModuleConfigurationData()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow transition">Deploy Stage Configuration Block</button>
         </div>
 
-        <div class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-4">
+        <div class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-4 global-hide-node">
             <h3 class="font-extrabold text-xs text-slate-400 uppercase tracking-widest border-b pb-2">NCERT Biology Syllabus</h3>
             
-            <div class="border border-slate-200 rounded-xl overflow-hidden">
-                <button onclick="toggleSidebarAccordion('c11_wrapper')" class="w-full bg-slate-50 p-3 flex justify-between items-center font-bold text-slate-700 text-sm accordion-btn">
+            <div class="border rounded-xl overflow-hidden">
+                <button onclick="toggleSidebarAccordion('c11_wrapper')" class="w-full bg-slate-50 p-3 flex justify-between items-center font-bold text-slate-700 text-sm">
                     <span>Class 11</span> <span id="c11_wrapper_indicator">🔽</span>
                 </button>
-                <div id="c11_wrapper" class="hidden p-2 bg-white space-y-2 max-h-[50vh] overflow-y-auto"></div>
+                <div id="c11_wrapper" class="hidden p-2 bg-white space-y-2 max-h-[45vh] overflow-y-auto"></div>
             </div>
 
-            <div class="border border-slate-200 rounded-xl overflow-hidden">
-                <button onclick="toggleSidebarAccordion('c12_wrapper')" class="w-full bg-slate-50 p-3 flex justify-between items-center font-bold text-slate-700 text-sm accordion-btn">
+            <div class="border rounded-xl overflow-hidden">
+                <button onclick="toggleSidebarAccordion('c12_wrapper')" class="w-full bg-slate-50 p-3 flex justify-between items-center font-bold text-slate-700 text-sm">
                     <span>Class 12</span> <span id="c12_wrapper_indicator">🔽</span>
                 </button>
-                <div id="c12_wrapper" class="hidden p-2 bg-white space-y-2 max-h-[50vh] overflow-y-auto"></div>
+                <div id="c12_wrapper" class="hidden p-2 bg-white space-y-2 max-h-[45vh] overflow-y-auto"></div>
             </div>
         </div>
 
-        <div class="lg:col-span-8 flex flex-col space-y-4">
+        <div class="lg:col-span-8 flex flex-col space-y-4 fullscreen-box-expand">
             
-            <div id="telemetryStatusHub" class="grid grid-cols-3 gap-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hidden">
-                <div class="text-center border-r">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Clock Matrix</p>
-                    <p id="clockView" class="text-xl font-bold text-amber-500 font-mono mt-0.5">00:00</p>
+            <div id="telemetryStatusHub" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hidden flex justify-between items-center">
+                <div class="flex items-center gap-6">
+                    <div class="text-center">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Clock Matrix</p>
+                        <p id="clockView" class="text-xl font-bold text-amber-500 font-mono">180</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Life</p>
+                        <p id="livesView" class="text-base font-bold text-rose-500 tracking-wide">❤️❤️❤️</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Terms</p>
+                        <p id="tallyView" class="text-xl font-bold text-emerald-600 font-mono">0 / 0</p>
+                    </div>
                 </div>
-                <div class="text-center border-r">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Shield Health</p>
-                    <p id="livesView" class="text-base font-bold mt-1 text-rose-500">❤️❤️❤️</p>
-                </div>
-                <div class="text-center">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Tally Completion</p>
-                    <p id="tallyView" class="text-xl font-bold text-emerald-600 font-mono mt-0.5">0 / 0</p>
-                </div>
+                <button onclick="toggleFullscreenViewMode()" id="fullscreenTriggerButton" class="bg-slate-100 hover:bg-slate-200 border text-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition">
+                    🖥️ Fullscreen Mode
+                </button>
             </div>
 
-            <div id="gameplayDashboard" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hidden space-y-6">
-                <div>
-                    <h2 id="displayChapterTitle" class="text-xl font-black text-slate-800"></h2>
-                    <p id="displayPartSubtitle" class="text-xs text-emerald-600 font-bold uppercase tracking-wider mt-0.5"></p>
+            <div id="gameplayDashboard" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hidden space-y-5">
+                <div class="border-b pb-2 flex justify-between items-start">
+                    <div>
+                        <h2 id="displayChapterTitle" class="text-lg font-black text-slate-800"></h2>
+                        <p id="displayPartSubtitle" class="text-xs font-bold uppercase tracking-wider text-emerald-600 mt-0.5"></p>
+                    </div>
+                    <div id="inlineFullscreenControls" class="hidden">
+                        <button onclick="toggleFullscreenViewMode()" class="text-xs font-bold text-rose-500 border px-2 py-1 bg-slate-50 rounded">Exit Fullscreen ✖</button>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                     <div class="md:col-span-4 bg-slate-50 border border-slate-200 rounded-xl p-3">
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center border-b pb-2 mb-3">Word Inventory Bank</p>
                         <div id="wordBankShelf" class="flex flex-wrap md:flex-col gap-2 justify-center"></div>
                     </div>
 
                     <div class="md:col-span-8">
-                        <div id="textSequenceBoard" class="leading-relaxed text-slate-800 text-lg bg-white border border-slate-200 p-5 rounded-xl shadow-inner min-h-[160px]"></div>
+                        <div id="textSequenceBoard" class="ncert-txt-container p-6 rounded-xl border border-slate-200 shadow-inner min-h-[160px]"></div>
                     </div>
                 </div>
 
-                <div class="border-t pt-4 flex flex-col sm:flex-row gap-4 items-center">
-                    <input type="text" id="studentNicknameInput" placeholder="ENTER STUDENT'S NAME BEFORE TESTING ACCURACY (MANDATORY)" class="hc-text-box w-full p-4 rounded-xl text-sm shadow-sm">
-                    <button onclick="evaluateBoardPerformance()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-6 py-4 rounded-xl shadow transition whitespace-nowrap w-full sm:w-auto uppercase tracking-wide">
-                        Check Accuracy Vectors
+                <div id="tierFeedbackCard" class="hidden border rounded-2xl p-4 text-center animate-scale-in">
+                    <p id="tierMotivationTextHeadline" class="text-sm font-black tracking-wide leading-relaxed mb-3"></p>
+                    <div class="flex justify-center gap-3" id="actionButtonContainerBox"></div>
+                </div>
+
+                <div id="submissionControlPanelSection" class="border-t pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+                    <input type="text" id="studentNicknameInput" placeholder="Student's Name" class="hc-input p-3 rounded-xl text-sm shadow-sm">
+                    <input type="text" id="studentStateInput" placeholder="State (e.g. Karnataka)" class="hc-input p-3 rounded-xl text-sm shadow-sm">
+                    <button onclick="evaluateBoardPerformance()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs p-4 rounded-xl shadow transition uppercase tracking-wide">
+                        Submit & check your score
                     </button>
                 </div>
             </div>
 
-            <div id="errorAnalysisDashboard" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hidden space-y-4">
-                <h3 class="text-sm font-bold text-rose-600 uppercase tracking-widest border-b pb-2 flex items-center gap-2">🔬 Diagnostic Resolution Log</h3>
-                
+            <div id="errorAnalysisDashboard" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hidden space-y-3">
+                <h3 class="text-xs font-black text-rose-600 uppercase tracking-widest border-b pb-2 flex items-center gap-2">🔬 Diagnosis</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs font-bold text-slate-500">
+                    <table class="w-full text-left text-xs font-bold">
                         <thead>
-                            <tr class="border-b text-slate-400 uppercase tracking-wider">
-                                <th class="pb-2">Box Number</th>
+                            <tr class="border-b text-slate-400 uppercase tracking-wider font-black">
+                                <th class="pb-2 w-28">Box Number</th>
                                 <th>Student's Answer</th>
                                 <th class="text-right">NCERT Answer</th>
                             </tr>
                         </thead>
-                        <tbody id="diagnosticLogsTableBody" class="divide-y text-slate-700"></tbody>
+                        <tbody id="diagnosticLogsTableBody" class="divide-y text-slate-800"></tbody>
                     </table>
                 </div>
             </div>
 
             <div id="scoreRankZone" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hidden">
-                <h3 class="font-extrabold text-sm text-amber-500 mb-4 uppercase tracking-wider border-b pb-2">🏆 Your Real-Time Rank</h3>
+                <h3 class="font-extrabold text-xs text-amber-500 mb-4 uppercase tracking-wider border-b pb-2">🏆 Your Real-Time Rank</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs font-bold text-slate-600">
                         <thead>
                             <tr class="border-b text-slate-400 uppercase tracking-widest pb-2 font-black">
-                                <th class="py-2">Rank</th>
+                                <th class="py-2 w-14">Rank</th>
                                 <th>Student's Name</th>
-                                <th class="text-center text-emerald-600">Correct</th>
-                                <th class="text-center text-rose-600">Incorrect</th>
-                                <th class="text-center text-amber-600">Left</th>
-                                <th class="text-right text-slate-800">Accuracy Percent %</th>
+                                <th class="w-20">State</th>
+                                <th class="text-center text-emerald-600 w-16">Correct</th>
+                                <th class="text-center text-rose-600 w-16">Incorrect</th>
+                                <th class="text-center text-amber-600 w-16">Left</th>
+                                <th class="text-right text-slate-900 text-xs tracking-wide">Accuracy Percent %</th>
                             </tr>
                         </thead>
                         <tbody id="scoreboardRenderList" class="divide-y text-slate-800 font-semibold text-sm"></tbody>
@@ -246,8 +264,7 @@
         let remainingLivesCount = 3;
         let isAdminLoggedIn = false;
 
-        // Custom High Contrast Structural Syllabus Part Quantities Limits Array Vector Configs
-        const ChapterPartsLimitsConfig = {
+        const ChapterPagesMatrixConfig = {
             "11-1": 7, "11-2": 13, "11-3": 14, "11-4": 18, "11-5": 14, "11-6": 8, "11-7": 6, "11-8": 17, "11-9": 16, "11-10": 11, "11-11": 20, "11-12": 8, "11-13": 20, "11-14": 10, "11-15": 12, "11-16": 12, "11-17": 13, "11-18": 9, "11-19": 12,
             "12-1": 21, "12-2": 23, "12-3": 8, "12-4": 26, "12-5": 31, "12-6": 17, "12-7": 20, "12-8": 14, "12-9": 14, "12-10": 11, "12-11": 15, "12-12": 11, "12-13": 12
         };
@@ -257,46 +274,109 @@
             "12-1": "Sexual Reproduction in Flowering Plants", "12-2": "Human Reproduction", "12-3": "Reproductive Health", "12-4": "Principles of Inheritance and Variation", "12-5": "Molecular Basis of Inheritance", "12-6": "Evolution", "12-7": "Human Health and Disease", "12-8": "Microbes in Human Welfare", "12-9": "Biotechnology: Principles and Processes", "12-10": "Biotechnology and its Applications", "12-11": "Organisms and Populations", "12-12": "Ecosystem", "12-13": "Biodiversity and Conservation"
         };
 
-        function dismissWelcomeBanner() { document.getElementById('introWelcomeScreen').classList.add('hidden'); }
-        function toggleSidebarAccordion(id) { document.getElementById(id).classList.toggle('hidden'); const ind = document.getElementById(id+'_indicator'); ind.innerText = document.getElementById(id).classList.contains('hidden') ? "🔽" : "🔼"; }
+        const PerformanceTierFeedbackPrompts = {
+            t0: "Keep your spirits up! NCERT contains hidden nuances. Let's reset your approach, carefully re-read the textbook page lines, and try this stage again to build your core foundation!",
+            t1: "A solid baseline attempt, but many high-yield medical terms were overlooked. Re-read the paragraphs, emphasize the bold keywords, and let's try again!",
+            t2: "You are beginning to recall the lines! Spend 10 more minutes actively scanning the chapter text, then leap back into this stage to push your score higher.",
+            t3: "Progressing steadily! NEET demands high text accuracy. Focus on matching spellings precisely with the print version and challenge this stage once more.",
+            t4: "Halfway there! Your conceptual retention is developing. Review the diagnostic breakdown sheet below, look at the terms you left blank, and try again.",
+            t5: "Good effort! You have memorized more than half the lines. A bit more focused active recall practice on this stage will help secure your grip.",
+            t6: "Strong performance! You are eliminating common silly errors. Review your wrong answers, jump back in, and break past the 80% boundary!",
+            t7: "Excellent grasp! You are outperforming many aspirants. Just a few more precise lines to polish. Play again to cross the competitive 90% mark!",
+            t8: "Superb recall! You are running parallel with top NEET rankers. Fix those last minor conceptual slips and secure absolute chapter mastery!",
+            t9: "Magnificent score! You have near-flawless mastery over this NCERT page space! You are fully prepared to answer any direct statement question from this section in NEET. Continue to the next stage!",
+            t10: "🏆 ABSOLUTE NCERT PYRAMID MASTERY! Perfect precision achieved. You have locked this page into your long-term memory. You are an unstoppable NEET champion. Advance proudly to the next stage!"
+        };
+
+        // Premium HTML5 Web Audio Synthesizer Node Engine Controls
+        const SoundFX = {
+            ctx: null,
+            init() { if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+            play(freq, type, duration, gainValue = 0.1) {
+                try {
+                    this.init();
+                    let osc = this.ctx.createOscillator();
+                    let gainNode = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gainNode.gain.setValueAtTime(gainValue, this.ctx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                    osc.connect(gainNode); gainNode.connect(this.ctx.destination);
+                    osc.start(); osc.stop(this.ctx.currentTime + duration);
+                } catch(e){}
+            },
+            click() { this.play(580, 'sine', 0.06, 0.12); },
+            slot() { this.play(840, 'triangle', 0.05, 0.08); },
+            tick() { this.play(1200, 'sine', 0.02, 0.05); },
+            chime() { this.play(440, 'sine', 0.1); setTimeout(() => this.play(554.37, 'sine', 0.12), 70); },
+            achievement() {
+                let scale = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
+                scale.forEach((f, i) => setTimeout(() => this.play(f, 'sine', 0.15, 0.12), i * 80));
+            },
+            failure() { this.play(180, 'sawtooth', 0.2, 0.15); setTimeout(() => this.play(130, 'sawtooth', 0.3), 120); }
+        };
+
+        function dismissWelcomeBanner() { SoundFX.click(); document.getElementById('introWelcomeScreen').classList.add('hidden'); }
+        function toggleSidebarAccordion(id) { SoundFX.click(); document.getElementById(id).classList.toggle('hidden'); const ind = document.getElementById(id+'_indicator'); ind.innerText = document.getElementById(id).classList.contains('hidden') ? "🔽" : "🔼"; }
         function closeAdminPanel() { document.getElementById('adminPanel').classList.add('hidden'); }
+        
+        function toggleFullscreenViewMode() {
+            SoundFX.click();
+            document.body.classList.toggle('fullscreen-mode');
+            const isFull = document.body.classList.contains('fullscreen-mode');
+            document.getElementById('inlineFullscreenControls').style.display = isFull ? 'block' : 'none';
+            document.getElementById('fullscreenTriggerButton').innerText = isFull ? "Exit Fullscreen Mode" : "🖥️ Fullscreen Mode";
+        }
 
         function triggerSecureAdminView() {
-            const pass = prompt("Enter Control Room Security Credential Verification Key:");
+            const pass = prompt("Enter Control Room Security Password Validation Key:");
             if(pass === "1234") {
                 isAdminLoggedIn = true;
                 document.getElementById('adminPanel').classList.remove('hidden');
+                // Programmatically populate options
+                const select = document.getElementById('adminChapterSelection');
+                select.innerHTML = '<option value="">-- Select Target Chapter --</option>';
+                
+                let class11Group = document.createElement('optgroup'); class11Group.label = "Class 11 Chapters";
+                Object.keys(ChapterNamesMasterMatrix).filter(k => k.startsWith('11-')).forEach(k => {
+                    class11Group.innerHTML += `<option value="${k}">${k.replace('11-', 'Ch ')}: ${ChapterNamesMasterMatrix[k]}</option>`;
+                });
+                let class12Group = document.createElement('optgroup'); class12Group.label = "Class 12 Chapters";
+                Object.keys(ChapterNamesMasterMatrix).filter(k => k.startsWith('12-')).forEach(k => {
+                    class12Group.innerHTML += `<option value="${k}">${k.replace('12-', 'Ch ')}: ${ChapterNamesMasterMatrix[k]}</option>`;
+                });
+                select.appendChild(class11Group); select.appendChild(class12Group);
                 renderSyllabusSidebarMenus();
             } else {
-                alert("ACCESS DENIED: Infallible security verification checkpoint handshake sequence trace failure!");
+                alert("HANDSHAKE TERMINATED: Invalid administrative execution signature.");
             }
         }
 
         function populateAdminPartsDropdown() {
             const chKey = document.getElementById('adminChapterSelection').value;
             const dropdown = document.getElementById('adminPartSelection');
-            dropdown.innerHTML = '<option value="">-- Choose Part Page Mapping --</option>';
+            dropdown.innerHTML = '<option value="">-- Choose Stage Destination --</option>';
             if(!chKey) return;
-            const limits = ChapterPartsLimitsConfig[chKey];
-            for(let i = 1; i <= limits; i++) {
-                dropdown.innerHTML += `<option value="${i}">Part ${i} of ${limits} Game</option>`;
+            // Rule 4: Quantities of game parts are exactly double the count of total pages
+            const totalStages = ChapterPagesMatrixConfig[chKey] * 2;
+            for(let i = 1; i <= totalStages; i++) {
+                dropdown.innerHTML += `<option value="${i}">Stage ${i} of ${totalStages}</option>`;
             }
         }
 
         function commitModuleConfigurationData() {
             const chCode = document.getElementById('adminChapterSelection').value;
-            const partIdx = document.getElementById('adminPartSelection').value;
+            const stageIdx = document.getElementById('adminPartSelection').value;
             const timerVal = parseInt(document.getElementById('adminTimerConfig').value) || 180;
-            const txtSeq = document.getElementById('adminContentTextarea').value.trim();
+            const textSeq = document.getElementById('adminContentTextarea').value.trim();
 
-            if(!chCode || !partIdx || !txtSeq) return alert("Validation Loop Fail: Ensure all structure mapping dropdowns and texts are loaded!");
+            if(!chCode || !stageIdx || !textSeq) return alert("All array configuration parameters must be filled!");
 
-            const storageKey = `seq_${chCode}_p_${partIdx}`;
-            const packet = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], partIdx, timerVal, txtSeq };
+            const storageKey = `arc_${chCode}_stg_${stageIdx}`;
+            const package = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], stageIdx, timerVal, textSeq };
             
-            localStorage.setItem(storageKey, JSON.stringify(packet));
-            alert("Dynamic Block Injected & Re-indexed Successfully!");
-            
+            localStorage.setItem(storageKey, JSON.stringify(package));
+            alert("Stage Deployment Array Committed to Internal System Registry Vectors!");
             document.getElementById('adminContentTextarea').value = "";
             renderSyllabusSidebarMenus();
         }
@@ -309,65 +389,55 @@
             Object.keys(ChapterNamesMasterMatrix).forEach(key => {
                 const isC11 = key.startsWith('11-');
                 const targetBox = isC11 ? c11 : c12;
-                const totalParts = ChapterPartsLimitsConfig[key];
+                const maxStages = ChapterPagesMatrixConfig[key] * 2;
 
                 const blockCard = document.createElement('div');
-                blockCard.className = "p-2 bg-slate-50 border rounded-lg space-y-1";
+                blockCard.className = "p-2 bg-slate-50 border rounded-xl mb-1";
                 blockCard.innerHTML = `<p class="text-[10px] font-black text-slate-400 uppercase tracking-wide border-b pb-0.5 mb-1">${ChapterNamesMasterMatrix[key]}</p>`;
 
-                let componentsFound = false;
-                for(let p = 1; p <= totalParts; p++) {
-                    const savedData = localStorage.getItem(`seq_${key}_p_${p}`);
-                    if(savedData) {
-                        componentsFound = true;
-                        const data = JSON.parse(savedData);
+                let statesExist = false;
+                for(let s = 1; s <= maxStages; s++) {
+                    const record = localStorage.getItem(`arc_${key}_stg_${s}`);
+                    if(record) {
+                        statesExist = true;
+                        const data = JSON.parse(record);
                         const row = document.createElement('div');
-                        row.className = "flex justify-between items-center gap-2 mb-1";
+                        row.className = "flex justify-between items-center gap-1.5 mb-1";
                         
-                        const playBtn = document.createElement('button');
-                        playBtn.className = "w-full text-left p-1.5 rounded bg-white hover:bg-emerald-50 text-xs font-bold text-slate-700 border transition hover:text-emerald-600 truncate";
-                        playBtn.innerText = `Part ${p} of ${totalParts} Game`;
-                        playBtn.onclick = () => launchActiveArcadeSession(data.storageKey);
-                        row.appendChild(playBtn);
+                        const actionBtn = document.createElement('button');
+                        actionBtn.className = "w-full text-left p-1.5 rounded bg-white hover:bg-emerald-50 text-xs font-bold text-slate-700 border transition truncate";
+                        actionBtn.innerText = `Stage ${s} of ${maxStages}`;
+                        actionBtn.onclick = () => launchActiveArcadeSession(data.storageKey);
+                        row.appendChild(actionBtn);
 
                         if(isAdminLoggedIn) {
                             const editBtn = document.createElement('button');
-                            editBtn.className = "bg-amber-100 hover:bg-amber-200 border border-amber-300 text-[10px] font-black text-amber-800 px-2 py-1 rounded transition whitespace-nowrap";
+                            editBtn.className = "bg-amber-100 hover:bg-amber-200 text-[10px] font-black text-amber-800 px-2 py-1 rounded border border-amber-300 transition";
                             editBtn.innerText = "✏️ Edit";
-                            editBtn.onclick = () => loadRecordToWorkspaceArea(data.storageKey);
+                            editBtn.onclick = () => {
+                                document.getElementById('adminChapterSelection').value = data.chCode;
+                                populateAdminPartsDropdown();
+                                document.getElementById('adminPartSelection').value = data.stageIdx;
+                                document.getElementById('adminTimerConfig').value = data.timerVal;
+                                document.getElementById('adminContentTextarea').value = data.textSeq;
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            };
                             row.appendChild(editBtn);
                         }
                         blockCard.appendChild(row);
                     }
                 }
-
-                // If admin is logged in, allow them to see structural part shells that haven't been created yet so they can select them to build
-                if(!componentsFound && isAdminLoggedIn) {
-                    blockCard.innerHTML += `<p class="text-[10px] text-slate-400 italic p-1">Empty Structural Container Page Node (Admin Ready)</p>`;
-                    componentsFound = true;
+                if(!statesExist && isAdminLoggedIn) {
+                    blockCard.innerHTML += `<p class="text-[9px] text-slate-400 italic p-1">Empty Chapter Target Node (Admin Map Ready)</p>`;
+                    statesExist = true;
                 }
-
-                if(componentsFound) targetBox.appendChild(blockCard);
+                if(statesExist) targetBox.appendChild(blockCard);
             });
-
-            if(!c11.innerHTML) c11.innerHTML = `<p class="text-xs text-slate-400 italic p-2 text-center">No active content modules published yet.</p>`;
-            if(!c12.innerHTML) c12.innerHTML = `<p class="text-xs text-slate-400 italic p-2 text-center">No active content modules published yet.</p>`;
-        }
-
-        function loadRecordToWorkspaceArea(key) {
-            const data = JSON.parse(localStorage.getItem(key));
-            document.getElementById('adminChapterSelection').value = data.chCode;
-            populateAdminPartsDropdown();
-            document.getElementById('adminPartSelection').value = data.partIdx;
-            document.getElementById('adminTimerConfig').value = data.timerVal;
-            document.getElementById('adminContentTextarea').value = data.txtSeq;
-            document.getElementById('adminPanel').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function launchActiveArcadeSession(key) {
-            dismissWelcomeBanner();
             clearInterval(countdownTimerIntervalRef);
+            document.getElementById('tierFeedbackCard').classList.add('hidden');
             const data = JSON.parse(localStorage.getItem(key));
             
             activeModuleStorageCompositeKey = key;
@@ -375,67 +445,69 @@
             remainingLivesCount = 3;
             secondsRemaining = data.timerVal || 180;
 
+            // Enforce High Contrast School Colors dynamically per class paradigm 
+            const is11 = data.chCode.startsWith('11-');
+            document.body.className = is11 ? "flex flex-col min-h-screen class11-active" : "flex flex-col min-h-screen class12-active";
+
             document.getElementById('displayChapterTitle').innerText = data.chName;
-            document.getElementById('displayPartSubtitle').innerText = `Part ${data.partIdx} of ${ChapterPartsLimitsConfig[data.chCode]} Game`;
+            document.getElementById('displayPartSubtitle').innerText = `Stage ${data.stageIdx} of ${ChapterPagesMatrixConfig[data.chCode] * 2}`;
             document.getElementById('gameplayDashboard').classList.remove('hidden');
             document.getElementById('telemetryStatusHub').classList.remove('hidden');
             document.getElementById('errorAnalysisDashboard').classList.add('hidden');
 
-            let chipScrambleArray = [];
-            let countingSlots = 0;
-            const interactiveMarkup = data.txtSeq.replace(/\[(.*?)\]/g, (match, wordStr) => {
-                const extraction = wordStr.trim();
-                correctAnswersList.push(extraction.toLowerCase());
-                chipScrambleArray.push(extraction);
-                return `<div class="drop-zone" data-slot-id-idx="${countingSlots++}" onclick="handleZoneInteraction(this)">?</div>`;
+            let scrambleTrayArray = [];
+            let itemIndexTracker = 0;
+            const updatedMarkupText = data.textSeq.replace(/\[(.*?)\]/g, (match, literalWord) => {
+                const innerWordClean = literalWord.trim();
+                correctAnswersList.push(innerWordClean.toLowerCase());
+                scrambleTrayArray.push(innerWordClean);
+                return `<div class="drop-zone" data-target-slot-idx="${itemIndexTracker++}" onclick="handleZoneInteraction(this)">?</div>`;
             });
 
-            document.getElementById('textSequenceBoard').innerHTML = interactiveMarkup;
+            document.getElementById('textSequenceBoard').innerHTML = updatedMarkupText;
 
-            // Scramble and Render Chips Tray Bank Layout
-            chipScrambleArray.sort(() => Math.random() - 0.5);
-            const shelf = document.getElementById('wordBankShelf');
-            shelf.innerHTML = "";
-            chipScrambleArray.forEach(word => {
-                const chip = document.createElement('div');
-                chip.className = "word-chip";
-                chip.innerText = word;
-                chip.setAttribute('draggable', 'true');
-                chip.onclick = () => selectWordChipBadge(chip);
-                chip.ondragstart = (e) => { selectWordChipBadge(chip); e.dataTransfer.setData('text/plain', word); };
-                shelf.appendChild(chip);
+            scrambleTrayArray.sort(() => Math.random() - 0.5);
+            const shelf = document.getElementById('wordBankShelf'); shelf.innerHTML = "";
+            scrambleTrayArray.forEach(word => {
+                const node = document.createElement('div');
+                node.className = "word-chip"; node.innerText = word;
+                node.setAttribute('draggable', 'true');
+                node.onclick = () => { SoundFX.click(); selectWordChipComponent(node); };
+                node.ondragstart = (e) => { selectWordChipComponent(node); e.dataTransfer.setData('text/plain', word); };
+                shelf.appendChild(node);
             });
 
             countdownTimerIntervalRef = setInterval(() => {
                 secondsRemaining--;
+                if(secondsRemaining <= 10 && secondsRemaining > 0) SoundFX.tick(); // Tick sound last 10 seconds
                 syncDashboardDisplays();
                 if(secondsRemaining <= 0) { clearInterval(countdownTimerIntervalRef); evaluateBoardPerformance(); }
             }, 1000);
 
             syncDashboardDisplays();
-            renderActiveScoreboardMetricsTable();
+            renderScoreboardIndexListTable();
         }
 
-        function selectWordChipBadge(chip) {
-            const activePrev = document.querySelector('.word-chip.selected');
-            if(activePrev) activePrev.classList.remove('selected');
-            chip.classList.add('selected');
-            selectedChipNodeRef = chip;
+        function selectWordChipComponent(node) {
+            const currentSelected = document.querySelector('.word-chip.selected');
+            if(currentSelected) currentSelected.classList.remove('selected');
+            node.classList.add('selected');
+            selectedChipNodeRef = node;
         }
 
         function handleZoneInteraction(zone) {
-            // Requirement 1: Click to remove word if field is already filled
-            if(zone.getAttribute('data-holding-literal-value')) {
-                const wordValueToReturn = zone.getAttribute('data-holding-literal-value');
+            // Rule 1: Click directly to remove dynamic filled tokens
+            if(zone.getAttribute('data-assigned-literal-token')) {
+                SoundFX.click();
+                const textWordToRestore = zone.getAttribute('data-assigned-literal-token');
                 zone.innerText = "?";
                 zone.className = "drop-zone";
-                zone.removeAttribute('data-holding-literal-value');
-                
-                // Unlock chip back in inventory shelf bank
+                zone.removeAttribute('data-assigned-literal-token');
+
                 const chips = document.querySelectorAll('.word-chip');
-                for(let node of chips) {
-                    if(node.innerText === wordValueToReturn && node.classList.contains('used')) {
-                        node.classList.remove('used');
+                for(let targetChip of chips) {
+                    if(targetChip.innerText === textWordToRestore && targetChip.classList.contains('used')) {
+                        targetChip.classList.remove('used');
                         break;
                     }
                 }
@@ -444,11 +516,12 @@
             }
 
             if(!selectedChipNodeRef) return;
+            SoundFX.slot();
 
-            const targetWordString = selectedChipNodeRef.innerText;
-            zone.innerText = targetWordString;
+            const wordStringValue = selectedChipNodeRef.innerText;
+            zone.innerText = wordStringValue;
             zone.className = "drop-zone filled";
-            zone.setAttribute('data-holding-literal-value', targetWordString);
+            zone.setAttribute('data-assigned-literal-token', wordStringValue);
 
             selectedChipNodeRef.classList.add('used');
             selectedChipNodeRef.classList.remove('selected');
@@ -457,123 +530,152 @@
         }
 
         function syncDashboardDisplays() {
-            const m = Math.floor(secondsRemaining / 60).toString().padStart(2, '0');
-            const s = (secondsRemaining % 60).toString().padStart(2, '0');
-            document.getElementById('clockView').innerText = `${m}:${s}`;
-            document.getElementById('livesView').innerText = "❤️".repeat(remainingLivesCount) || "💀 CRITICAL FAULT";
-            
-            const checkedCount = document.querySelectorAll('.drop-zone.filled').length;
-            document.getElementById('tallyView').innerText = `${checkedCount} / ${correctAnswersList.length}`;
+            document.getElementById('clockView').innerText = secondsRemaining;
+            document.getElementById('livesView').innerText = "❤️".repeat(remainingLivesCount) || "💀 LOSS";
+            const filledCount = document.querySelectorAll('.drop-zone.filled').length;
+            document.getElementById('tallyView').innerText = `${filledCount} / ${correctAnswersList.length}`;
         }
 
         function evaluateBoardPerformance() {
             clearInterval(countdownTimerIntervalRef);
-            const studentName = document.getElementById('studentNicknameInput').value.trim();
-            if(!studentName) return alert("Validation Loop Fail: Student's Name tracking identifier is mandatory before scoring performance parameters!");
+            const name = document.getElementById('studentNicknameInput').value.trim();
+            const state = document.getElementById('studentStateInput').value.trim();
 
+            if(!name || !state) return alert("Validation Matrix Error: Both Name and State entry inputs are completely required parameters!");
+
+            SoundFX.chime(); // Diagnosis chime sound
             const zones = document.querySelectorAll('.drop-zone');
-            const tableBody = document.getElementById('diagnosticLogsTableBody');
-            tableBody.innerHTML = "";
+            const tbody = document.getElementById('diagnosticLogsTableBody'); tbody.innerHTML = "";
 
-            let correctTrackerCount = 0;
-            let incorrectTrackerCount = 0;
-            let leftTrackerBlankCount = 0;
+            let correctHits = 0; let incorrectHits = 0; let skippedHits = 0;
 
             zones.forEach(zone => {
-                const idx = parseInt(zone.getAttribute('data-slot-id-idx'));
-                const studentValInput = (zone.getAttribute('data-holding-literal-value') || "").trim();
-                const expectedTextVal = correctAnswersList[idx];
+                const index = parseInt(zone.getAttribute('data-target-slot-idx'));
+                const studentSelection = (zone.getAttribute('data-assigned-literal-token') || "").trim();
+                const solutionText = correctAnswersList[index];
 
-                const rowTr = document.createElement('tr');
-                rowTr.className = "border-b text-xs font-bold";
+                const row = document.createElement('tr');
+                row.className = "border-b text-xs font-bold transition";
 
-                if(!studentValInput) {
-                    leftTrackerBlankCount++;
-                    zone.className = "drop-zone filled wrong";
-                    rowTr.innerHTML = `<td class="py-2 text-slate-400">Box ${idx + 1}</td><td class="text-amber-500 bg-amber-50 px-2">LEFT BLANK</td><td class="text-right text-emerald-600">${expectedTextVal}</td>`;
-                } else if(studentValInput.toLowerCase() === expectedTextVal) {
-                    correctTrackerCount++;
-                    zone.className = "drop-zone filled correct";
-                    rowTr.innerHTML = `<td class="py-2 text-slate-400">Box ${idx + 1}</td><td class="text-emerald-600 bg-emerald-50 px-2">${studentValInput}</td><td class="text-right text-emerald-600">${expectedTextVal}</td>`;
+                if(!studentSelection) {
+                    skippedHits++; zone.className = "drop-zone filled wrong";
+                    row.innerHTML = `<td class="py-2.5 text-slate-400 pl-2">Box ${index + 1}</td><td class="text-amber-600 bg-amber-50 px-2">LEFT BLANK</td><td class="text-right text-emerald-600 pr-2">${solutionText}</td>`;
+                } else if(studentSelection.toLowerCase() === solutionText) {
+                    correctHits++; zone.className = "drop-zone filled correct";
+                    row.innerHTML = `<td class="py-2.5 text-slate-400 pl-2">Box ${index + 1}</td><td class="text-emerald-600 bg-emerald-50 px-2">${studentSelection}</td><td class="text-right text-emerald-600 pr-2">${solutionText}</td>`;
                 } else {
-                    incorrectTrackerCount++;
-                    zone.className = "drop-zone filled wrong";
+                    incorrectHits++; zone.className = "drop-zone filled wrong";
                     remainingLivesCount = Math.max(0, remainingLivesCount - 1);
-                    rowTr.innerHTML = `<td class="py-2 text-slate-400">Box ${idx + 1}</td><td class="text-rose-600 bg-rose-50 px-2">${studentValInput}</td><td class="text-right text-emerald-600">${expectedTextVal}</td>`;
+                    row.innerHTML = `<td class="py-2.5 text-slate-400 pl-2">Box ${index + 1}</td><td class="text-rose-600 bg-rose-50 px-2">${studentSelection}</td><td class="text-right text-emerald-600 pr-2">${solutionText}</td>`;
                 }
-                tableBody.appendChild(rowTr);
+                tbody.appendChild(row);
             });
 
             document.getElementById('errorAnalysisDashboard').classList.remove('hidden');
-            const scorePercent = Math.round((correctTrackerCount / correctAnswersList.length) * 100);
-            
-            // Push structured tracking records metrics matrix out to data repositories arrays lists map
-            const scoreboardRecordsList = JSON.parse(localStorage.getItem(`re_scores_${activeModuleStorageCompositeKey}`) || '[]');
-            scoreboardRecordsList.push({ name: studentName, correct: correctTrackerCount, incorrect: incorrectTrackerCount, left: leftTrackerBlankCount, pct: scorePercent });
-            localStorage.setItem(`re_scores_${activeModuleStorageCompositeKey}`, JSON.stringify(scoreboardRecordsList));
+            const finalScorePercentage = Math.round((correctHits / correctAnswersList.length) * 100);
 
-            document.getElementById('studentNicknameInput').value = "";
+            // Execute Tier Synthesis Audio and Prompt Mechanics
+            if(finalScorePercentage >= 90) SoundFX.achievement(); else SoundFX.failure();
+            renderDynamicMotivationFeedbackBox(finalScorePercentage);
+
+            // Store metrics to localized index data tracking frameworks
+            const scoreboardHistory = JSON.parse(localStorage.getItem(`scoreboard_v3_${activeModuleStorageCompositeKey}`) || '[]');
+            scoreboardHistory.push({ name, state, correct: correctHits, incorrect: incorrectHits, left: skippedHits, pct: finalScorePercentage });
+            localStorage.setItem(`scoreboard_v3_${activeModuleHistory = activeModuleStorageCompositeKey}`, JSON.stringify(scoreboardHistory));
+
+            document.getElementById('studentNicknameInput').value = ""; document.getElementById('studentStateInput').value = "";
             syncDashboardDisplays();
-            renderActiveScoreboardMetricsTable();
+            renderScoreboardIndexListTable();
         }
 
-        function renderActiveScoreboardMetricsTable() {
+        function renderDynamicMotivationFeedbackBox(pct) {
+            const box = document.getElementById('tierFeedbackCard');
+            const textNode = document.getElementById('tierMotivationTextHeadline');
+            const actionContainer = document.getElementById('actionButtonContainerBox');
+
+            box.className = "border-2 rounded-2xl p-5 text-center animate-scale-in block mt-4 ";
+            actionContainer.innerHTML = "";
+
+            let tierIndex = Math.min(10, Math.floor(pct / 10));
+            textNode.innerText = PerformanceTierFeedbackPrompts[`t${tierIndex}`];
+
+            if(pct >= 100) {
+                box.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+            } else if(pct >= 90) {
+                box.classList.add('bg-green-50', 'border-green-400', 'text-green-900');
+            } else if(pct >= 50) {
+                box.classList.add('bg-amber-50', 'border-amber-400', 'text-amber-900');
+            } else {
+                box.classList.add('bg-rose-50', 'border-rose-400', 'text-rose-900');
+            }
+
+            // Rule 7: Play again or load next stage options
+            actionContainer.innerHTML = `<button onclick="launchActiveArcadeSession('${activeModuleStorageCompositeKey}')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-xl transition">Play again this stage</button>`;
+            
+            const currentRecordData = JSON.parse(localStorage.getItem(activeModuleStorageCompositeKey));
+            const nextStageComputedKey = parseInt(currentRecordData.stageIdx) + 1;
+            const targetNextLookupString = `arc_${currentRecordData.chCode}_stg_${nextStageComputedKey}`;
+            
+            if(localStorage.getItem(targetNextLookupString)) {
+                actionContainer.innerHTML += `<button onclick="launchActiveArcadeSession('${targetNextLookupString}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition">Play NEXT stage 🚀</button>`;
+            }
+        }
+
+        function renderScoreboardIndexListTable() {
             const tbody = document.getElementById('scoreboardRenderList');
             document.getElementById('scoreRankZone').classList.remove('hidden');
 
-            let dataList = JSON.parse(localStorage.getItem(`re_scores_${activeModuleStorageCompositeKey}`) || '[]');
-            if(dataList.length === 0) {
-                dataList = [
-                    { name: "AIIMS Delhi Core Competitor", correct: correctAnswersList.length || 10, incorrect: 0, left: 0, pct: 100 },
-                    { name: "NEET Top Rank Benchmark", correct: Math.max(0, (correctAnswersList.length || 10) - 1), incorrect: 1, left: 0, pct: 90 }
+            let historyDataset = JSON.parse(localStorage.getItem(`scoreboard_v3_${activeModuleStorageCompositeKey}`) || '[]');
+            if(historyDataset.length === 0) {
+                historyDataset = [
+                    { name: "AIIMS Delhi Core Competitor", state: "Delhi", correct: correctAnswersList.length || 12, incorrect: 0, left: 0, pct: 100 },
+                    { name: "NEET Rank 1 Challenger", state: "Karnataka", correct: Math.max(0, (correctAnswersList.length || 12) - 1), incorrect: 1, left: 0, pct: 92 }
                 ];
             }
 
-            dataList.sort((a, b) => b.pct - a.pct);
+            historyDataset.sort((x, y) => y.pct - x.pct);
             tbody.innerHTML = "";
-            
-            dataList.slice(0, 10).forEach((entry, index) => {
-                tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition text-xs">
-                    <td class="py-3 font-extrabold text-amber-500 text-sm">#${index + 1}</td>
-                    <td class="font-bold text-slate-700">${entry.name}</td>
-                    <td class="text-center font-bold text-emerald-600 bg-emerald-50/50">${entry.correct}</td>
-                    <td class="text-center font-bold text-rose-600 bg-rose-50/50">${entry.incorrect}</td>
-                    <td class="text-center font-bold text-amber-600 bg-amber-50/50">${entry.left}</td>
+
+            historyDataset.slice(0, 10).forEach((entry, idx) => {
+                tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition text-xs font-semibold text-slate-700">
+                    <td class="py-3 font-black text-amber-500 text-sm pl-2">#${idx + 1}</td>
+                    <td class="font-bold text-slate-900">${entry.name}</td>
+                    <td class="text-slate-500">${entry.state}</td>
+                    <td class="text-center font-bold text-emerald-600 bg-emerald-50/40">${entry.correct}</td>
+                    <td class="text-center font-bold text-rose-600 bg-rose-50/40">${entry.incorrect}</td>
+                    <td class="text-center font-bold text-amber-600 bg-amber-50/40">${entry.left}</td>
                     <td class="text-right font-black text-slate-900 text-sm pr-2">${entry.pct}%</td>
                 </tr>`;
             });
         }
 
         function exportDataBackup() {
-            let outputObjectMapStore = {};
+            let backupMap = {};
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if(key.startsWith('seq_') || key.startsWith('re_scores_')) {
-                    outputObjectMapStore[key] = localStorage.getItem(key);
+                if(key.startsWith('arc_') || key.startsWith('scoreboard_v3_')) {
+                    backupMap[key] = localStorage.getItem(key);
                 }
             }
-            const blob = new Blob([JSON.stringify(outputObjectMapStore)], { type: 'text/json' });
-            const anchor = document.createElement('a');
-            anchor.download = "ADH_NCERT_Arcade_Backup.txt";
-            anchor.href = window.URL.createObjectURL(blob);
-            anchor.click();
+            const blob = new Blob([JSON.stringify(backupMap)], { type: 'text/json' });
+            const link = document.createElement('a');
+            link.download = "ADH_NCERT_Syllabus_Backup.txt";
+            link.href = window.URL.createObjectURL(blob); link.click();
         }
 
         function importDataBackup(event) {
-            const inputField = event.target;
-            const fileReader = new FileReader();
-            fileReader.onload = function() {
+            const reader = new FileReader();
+            reader.onload = function() {
                 try {
-                    const parsedDataMap = JSON.parse(fileReader.result);
-                    Object.keys(parsedDataMap).forEach(k => localStorage.setItem(k, parsedDataMap[k]));
-                    alert("Backup Matrix Restored & Synchronized Successfully! Refreshing Layout Viewports.");
+                    const keys = JSON.parse(reader.result);
+                    Object.keys(keys).forEach(k => localStorage.setItem(k, keys[k]));
+                    alert("Syllabus Cluster Profiles Synced! Refreshing Interface Engines.");
                     renderSyllabusSidebarMenus();
-                } catch(e) { alert("File verification fail: Bad syntax block structural layout configuration!"); }
+                } catch(e) { alert("File processing error: Invalid content configuration trace sequence."); }
             };
-            fileReader.readAsText(inputField.files[0]);
+            reader.readAsText(event.target.files[0]);
         }
 
-        // Execution Start Phase Trigger
         renderSyllabusSidebarMenus();
     </script>
 </body>
