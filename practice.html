@@ -6,29 +6,30 @@
     <title>NCERT BIOLOGY Game for NEET</title>
     <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Times+New+Roman&display=swap');
+        @import url('https://fonts.googleapis.com/css2 family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Times+New+Roman&display=swap');
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #f8fafc; 
+            background-color: #f1f5f9; 
             color: #0f172a; 
             transition: all 0.3s ease; 
         }
 
-        /* NCERT Textbook Core Academic Design Adaptations */
+        /* NCERT Authentic Core Textbook Typography Emulations */
         .ncert-txt-container {
             font-family: 'Times New Roman', Times, serif;
             font-size: 20px;
-            line-height: 1.75;
+            line-height: 1.8;
             color: #1e293b;
             background-color: #ffffff;
-            border-left: 5px solid var(--ncert-accent, #008557);
+            border-left: 6px solid var(--ncert-accent, #15803d);
+            transition: font-size 0.2s ease;
         }
 
-        body.class11-active { --ncert-accent: #008557; }
+        body.class11-active { --ncert-accent: #15803d; }
         body.class12-active { --ncert-accent: #0284c7; }
 
-        /* Fullscreen Layout Viewport Mode Override */
+        /* FULLSCREEN READING ZOOM ORIENTATION OVERRIDES */
         body.fullscreen-mode {
             background-color: #ffffff !important;
             padding: 0 !important;
@@ -36,16 +37,22 @@
         }
         body.fullscreen-mode .global-hide-node { display: none !important; }
         body.fullscreen-mode .fullscreen-box-expand { max-width: 100% !important; width: 100% !important; border: none !important; border-radius: 0 !important; }
+        body.fullscreen-mode .ncert-txt-container {
+            font-size: 24px !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            border-left-width: 8px !important;
+        }
 
-        /* High-Contrast Interactive Blank Target Spaces */
+        /* High-Contrast Blank Input Box Target Vectors */
         .drop-zone { 
             display: inline-flex; 
             align-items: center; 
             justify-content: center; 
-            min-width: 145px; 
-            height: 38px; 
-            border: 2px solid #64748b; 
-            background-color: #f1f5f9; 
+            min-width: 140px; 
+            height: 36px; 
+            border: 2px dashed #64748b; 
+            background-color: #f8fafc; 
             border-radius: 6px; 
             margin: 4px 6px; 
             vertical-align: middle; 
@@ -62,10 +69,10 @@
         .drop-zone.correct { border-color: #16a34a !important; color: #ffffff !important; background-color: #16a34a !important; box-shadow: 0 0 10px rgba(22, 163, 74, 0.3) !important; }
         .drop-zone.wrong { border-color: #dc2626 !important; color: #ffffff !important; background-color: #dc2626 !important; box-shadow: 0 0 10px rgba(220, 38, 38, 0.3) !important; }
 
-        /* Word Selection Chips */
+        /* Touch-Friendly Drag/Click Target Chips */
         .word-chip { 
             display: inline-block; 
-            padding: 10px 16px; 
+            padding: 12px 18px; 
             background-color: #ffffff; 
             border: 2px solid #cbd5e1; 
             border-radius: 8px; 
@@ -76,6 +83,7 @@
             transition: all 0.2s ease; 
             user-select: none; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            touch-action: manipulation;
         }
         .word-chip:hover { border-color: var(--ncert-accent); transform: translateY(-2px); }
         .word-chip.selected { border-color: #000000; background-color: var(--ncert-accent); color: #ffffff; box-shadow: 0 0 12px rgba(0,0,0,0.2); }
@@ -83,6 +91,21 @@
 
         .hc-input { background-color: #ffffff !important; color: #000000 !important; font-weight: 700 !important; border: 2px solid #cbd5e1 !important; }
         .hc-input:focus { border-color: var(--ncert-accent) !important; outline: none; }
+
+        /* FIXED BOTTOM RIGHT ADMIN HUB PANEL LAYOUT DISPLAY CONTAINER */
+        .admin-dock-tray {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 10000;
+            display: flex;
+            gap: 8px;
+            background-color: rgba(15, 23, 42, 0.9);
+            padding: 8px;
+            border-radius: 14px;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen class11-active">
@@ -93,63 +116,52 @@
                 <h1 class="text-2xl font-black tracking-tight text-emerald-700">NCERT BIOLOGY Game for NEET</h1>
                 <p class="text-xs text-slate-500 font-bold tracking-wide mt-0.5">Master the NCERT Biology by repeatedly playing this game & secure maximum marks in NEET</p>
             </div>
-            <div class="flex gap-3 mt-2 sm:mt-0">
-                <input type="file" id="importHandler" class="hidden" onchange="importDataBackup(event)">
-                <button onclick="document.getElementById('importHandler').click()" class="text-slate-700 text-xs font-bold px-3 py-1.5 hover:bg-slate-100 rounded-lg transition border">📥 Restore</button>
-                <button onclick="exportDataBackup()" class="text-slate-700 text-xs font-bold px-3 py-1.5 hover:bg-slate-100 rounded-lg transition border">制造 Backup</button>
-                <button onclick="triggerSecureAdminView()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition">Control Room</button>
-            </div>
         </div>
     </div>
 
-    <div id="introWelcomeScreen" class="max-w-5xl w-full mx-auto bg-white border border-slate-200 rounded-2xl p-6 mt-6 shadow-sm global-hide-node">
-        <h2 class="text-xl font-extrabold text-slate-800 mb-2">🎯 Want to Become an NCERT Biology Master?</h2>
+    <div id="introWelcomeScreen" class="max-w-4xl w-full mx-auto bg-white border border-slate-200 rounded-2xl p-6 mt-6 shadow-sm global-hide-node">
+        <h2 class="text-xl font-extrabold text-slate-800 mb-2"> Want to Become an NCERT Biology Master?</h2>
         <p class="text-sm font-bold text-emerald-600 mb-3">You are at the right place!</p>
         <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
             <p>Play this game regularly and revise the entire NCERT Biology syllabus in a fun, engaging, and highly effective way. Every time you play, you strengthen your concepts, improve your memory, and sharpen your recall.</p>
             <p>By repeatedly playing this game, you will master NCERT Biology chapter by chapter and turn important facts into long-term memory. Daily practice will make your NCERT knowledge crystal clear and help you answer questions with greater speed and accuracy.</p>
             <p>The more you play, the fewer silly mistakes you'll make, the stronger your concepts will become, and the higher your chances of scoring excellent marks in both NEET and Board Exams.</p>
-            <p class="font-bold text-emerald-700 text-sm pt-1">🚀 Play Daily. Revise Smartly. Master NCERT Biology. Crack NEET with Confidence.</p>
+            <p class="font-bold text-emerald-700 text-sm pt-1"> Play Daily. Revise Smartly. Master NCERT Biology. Crack NEET with Confidence.</p>
         </div>
         <button onclick="dismissWelcomeBanner()" class="mt-4 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs transition uppercase tracking-wider shadow">
-            Enter Game Arena & Choose Stage Below
+            Enter Game Arena & Select Chapter Below
         </button>
     </div>
 
     <div class="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 flex-grow items-start">
         
-        <div id="adminPanel" class="hidden lg:col-span-12 bg-white border-2 border-dashed border-emerald-500 rounded-2xl p-6 space-y-4">
+        <div id="adminPanel" class="hidden lg:col-span-12 bg-white border-2 border-dashed border-emerald-500 rounded-2xl p-6 space-y-4 shadow-xl">
             <h2 class="text-md font-bold uppercase tracking-wider text-slate-700 border-b pb-2 flex justify-between items-center">
-                <span>Script Manager Board Engine</span>
-                <button onclick="closeAdminPanel()" class="text-xs text-rose-500 font-bold border px-2 py-0.5 rounded bg-rose-50">Hide ✖</button>
+                <span>NCERT Content Script Composer</span>
+                <button onclick="closeAdminPanel()" class="text-xs text-rose-500 font-bold border px-2 py-0.5 rounded bg-rose-50">Hide </button>
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <select id="adminChapterSelection" class="hc-input rounded-xl p-3 text-sm outline-none" onchange="populateAdminPartsDropdown()">
-                    <option value="">-- Select Target Chapter --</option>
-                    <optgroup label="Class 11 Chapters"></optgroup>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <select id="adminChapterSelection" class="hc-input rounded-xl p-3 text-sm outline-none font-bold" onchange="populateAdminPartsDropdown()">
+                    <option value="">-- Choose Chapter --</option>
                 </select>
-                <select id="adminPartSelection" class="hc-input rounded-xl p-3 text-sm outline-none">
+                <select id="adminPartSelection" class="hc-input rounded-xl p-3 text-sm outline-none font-bold">
                     <option value="">-- Choose Stage Destination --</option>
                 </select>
-                <div class="flex items-center gap-2">
-                    <label class="text-xs font-bold text-slate-500 whitespace-nowrap">Timer (Seconds):</label>
-                    <input type="number" id="adminTimerConfig" value="180" class="hc-input rounded-xl p-2.5 text-sm w-full">
-                </div>
+                <input type="number" id="adminTimerConfig" value="180" placeholder="Timer (Secs)" class="hc-input rounded-xl p-2.5 text-sm w-full font-bold">
+                <button onclick="downloadStudentDatabaseCSV()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black rounded-xl py-2 transition shadow">📥 Download Student Database (Excel CSV)</button>
             </div>
-            <textarea id="adminContentTextarea" rows="5" placeholder="Paste raw text print layouts here. Wrap target words in square brackets like [keyword]..." class="w-full hc-input rounded-xl p-4 text-sm"></textarea>
-            <button onclick="commitModuleConfigurationData()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow transition">Deploy Stage Configuration Block</button>
+            <textarea id="adminContentTextarea" rows="5" placeholder="Paste structural NCERT text prints sequences here wrapping keywords in [brackets]..." class="w-full hc-input rounded-xl p-4 text-sm"></textarea>
+            <button onclick="commitModuleConfigurationData()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow transition">Save and Publish Stage File</button>
         </div>
 
-        <div class="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-4 global-hide-node">
+        <div class="col-span-1 lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-4 global-hide-node order-last lg:order-none">
             <h3 class="font-extrabold text-xs text-slate-400 uppercase tracking-widest border-b pb-2">NCERT Biology Syllabus</h3>
-            
-            <div class="border rounded-xl overflow-hidden">
+            <div class="border rounded-xl overflow-hidden mb-2">
                 <button onclick="toggleSidebarAccordion('c11_wrapper')" class="w-full bg-slate-50 p-3 flex justify-between items-center font-bold text-slate-700 text-sm">
                     <span>Class 11</span> <span id="c11_wrapper_indicator">🔽</span>
                 </button>
                 <div id="c11_wrapper" class="hidden p-2 bg-white space-y-2 max-h-[45vh] overflow-y-auto"></div>
             </div>
-
             <div class="border rounded-xl overflow-hidden">
                 <button onclick="toggleSidebarAccordion('c12_wrapper')" class="w-full bg-slate-50 p-3 flex justify-between items-center font-bold text-slate-700 text-sm">
                     <span>Class 12</span> <span id="c12_wrapper_indicator">🔽</span>
@@ -158,9 +170,9 @@
             </div>
         </div>
 
-        <div class="lg:col-span-8 flex flex-col space-y-4 fullscreen-box-expand">
+        <div class="col-span-1 lg:col-span-8 flex flex-col space-y-4 fullscreen-box-expand">
             
-            <div id="telemetryStatusHub" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hidden flex justify-between items-center">
+            <div id="telemetryStatusHub" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hidden flex justify-between items-center flex-wrap gap-4">
                 <div class="flex items-center gap-6">
                     <div class="text-center">
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Clock Matrix</p>
@@ -168,16 +180,14 @@
                     </div>
                     <div class="text-center">
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Life</p>
-                        <p id="livesView" class="text-base font-bold text-rose-500 tracking-wide">❤️❤️❤️</p>
+                        <p id="livesView" class="text-base font-bold text-rose-500">❤️❤️•</p>
                     </div>
                     <div class="text-center">
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Terms</p>
                         <p id="tallyView" class="text-xl font-bold text-emerald-600 font-mono">0 / 0</p>
                     </div>
                 </div>
-                <button onclick="toggleFullscreenViewMode()" id="fullscreenTriggerButton" class="bg-slate-100 hover:bg-slate-200 border text-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition">
-                    🖥️ Fullscreen Mode
-                </button>
+                <button onclick="toggleFullscreenViewMode()" id="fullscreenTriggerButton" class="bg-slate-100 hover:bg-slate-200 border text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl transition">🖥️ Fullscreen Mode</button>
             </div>
 
             <div id="gameplayDashboard" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hidden space-y-5">
@@ -187,44 +197,44 @@
                         <p id="displayPartSubtitle" class="text-xs font-bold uppercase tracking-wider text-emerald-600 mt-0.5"></p>
                     </div>
                     <div id="inlineFullscreenControls" class="hidden">
-                        <button onclick="toggleFullscreenViewMode()" class="text-xs font-bold text-rose-500 border px-2 py-1 bg-slate-50 rounded">Exit Fullscreen ✖</button>
+                        <button onclick="toggleFullscreenViewMode()" class="text-xs font-bold text-rose-500 border px-3 py-1.5 bg-slate-50 rounded-lg shadow-sm">Exit Fullscreen ✖</button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
-                    <div class="md:col-span-4 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                    <div class="col-span-1 md:col-span-4 bg-slate-50 border border-slate-200 rounded-xl p-3 order-first md:order-none">
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center border-b pb-2 mb-3">Word Inventory Bank</p>
                         <div id="wordBankShelf" class="flex flex-wrap md:flex-col gap-2 justify-center"></div>
                     </div>
-
-                    <div class="md:col-span-8">
-                        <div id="textSequenceBoard" class="ncert-txt-container p-6 rounded-xl border border-slate-200 shadow-inner min-h-[160px]"></div>
+                    <div class="col-span-1 md:col-span-8">
+                        <div id="textSequenceBoard" class="ncert-txt-container p-5 md:p-6 rounded-xl border border-slate-200 shadow-inner min-h-[160px]"></div>
                     </div>
                 </div>
 
-                <div id="tierFeedbackCard" class="hidden border rounded-2xl p-4 text-center animate-scale-in">
-                    <p id="tierMotivationTextHeadline" class="text-sm font-black tracking-wide leading-relaxed mb-3"></p>
-                    <div class="flex justify-center gap-3" id="actionButtonContainerBox"></div>
+                <div id="tierFeedbackCard" class="hidden border rounded-2xl p-5 text-center animate-scale-in">
+                    <p id="tierMotivationTextHeadline" class="text-sm font-black tracking-wide leading-relaxed mb-4"></p>
+                    <div class="flex justify-center gap-3 flex-wrap" id="actionButtonContainerBox"></div>
                 </div>
 
-                <div id="submissionControlPanelSection" class="border-t pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
-                    <input type="text" id="studentNicknameInput" placeholder="Student's Name" class="hc-input p-3 rounded-xl text-sm shadow-sm">
-                    <input type="text" id="studentStateInput" placeholder="State (e.g. Karnataka)" class="hc-input p-3 rounded-xl text-sm shadow-sm">
-                    <button onclick="evaluateBoardPerformance()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs p-4 rounded-xl shadow transition uppercase tracking-wide">
+                <div id="submissionControlPanelSection" class="border-t pt-4 grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+                    <input type="text" id="studentNicknameInput" placeholder="Student's Name" class="hc-input p-3 rounded-xl text-xs shadow-sm">
+                    <input type="text" id="studentStateInput" placeholder="State (e.g. Karnataka)" class="hc-input p-3 rounded-xl text-xs shadow-sm">
+                    <input type="text" id="studentPhoneInput" placeholder="WhatsApp Number" class="hc-input p-3 rounded-xl text-xs shadow-sm">
+                    <button onclick="evaluateBoardPerformance()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3.5 px-2 rounded-xl shadow transition uppercase tracking-wide whitespace-nowrap">
                         Submit & check your score
                     </button>
                 </div>
             </div>
 
             <div id="errorAnalysisDashboard" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hidden space-y-3">
-                <h3 class="text-xs font-black text-rose-600 uppercase tracking-widest border-b pb-2 flex items-center gap-2">🔬 Diagnosis</h3>
+                <h3 class="text-xs font-black text-rose-600 uppercase tracking-widest border-b pb-1.5 flex items-center gap-2">🔬 Diagnosis</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs font-bold">
                         <thead>
                             <tr class="border-b text-slate-400 uppercase tracking-wider font-black">
-                                <th class="pb-2 w-28">Box Number</th>
+                                <th class="pb-2 w-28 pl-2">Box Number</th>
                                 <th>Student's Answer</th>
-                                <th class="text-right">NCERT Answer</th>
+                                <th class="text-right pr-2">NCERT Answer</th>
                             </tr>
                         </thead>
                         <tbody id="diagnosticLogsTableBody" class="divide-y text-slate-800"></tbody>
@@ -232,19 +242,19 @@
                 </div>
             </div>
 
-            <div id="scoreRankZone" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hidden">
+            <div id="scoreRankZone" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hidden">
                 <h3 class="font-extrabold text-xs text-amber-500 mb-4 uppercase tracking-wider border-b pb-2">🏆 Your Real-Time Rank</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs font-bold text-slate-600">
                         <thead>
                             <tr class="border-b text-slate-400 uppercase tracking-widest pb-2 font-black">
-                                <th class="py-2 w-14">Rank</th>
+                                <th class="py-2 pl-2">Rank</th>
                                 <th>Student's Name</th>
-                                <th class="w-20">State</th>
-                                <th class="text-center text-emerald-600 w-16">Correct</th>
-                                <th class="text-center text-rose-600 w-16">Incorrect</th>
-                                <th class="text-center text-amber-600 w-16">Left</th>
-                                <th class="text-right text-slate-900 text-xs tracking-wide">Accuracy Percent %</th>
+                                <th>State</th>
+                                <th class="text-center text-emerald-600">Correct</th>
+                                <th class="text-center text-rose-600">Incorrect</th>
+                                <th class="text-center text-amber-600">Left</th>
+                                <th class="text-right pr-2 text-slate-900">Accuracy Percent %</th>
                             </tr>
                         </thead>
                         <tbody id="scoreboardRenderList" class="divide-y text-slate-800 font-semibold text-sm"></tbody>
@@ -252,7 +262,18 @@
                 </div>
             </div>
 
+            <div id="stateLeaderboardDashboardZone" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hidden">
+                <h3 class="font-extrabold text-xs text-indigo-600 mb-4 uppercase tracking-wider border-b pb-2 flex items-center gap-2">📊 All-India State Metrics Summary</h3>
+                <div id="stateLeaderboardContainer" class="space-y-3"></div>
+            </div>
+
         </div>
+    </div>
+
+    <div class="admin-dock-tray global-hide-node">
+        <button onclick="document.getElementById('importHandler').click()" class="text-slate-300 text-[10px] font-bold px-2.5 py-1.5 hover:bg-slate-800 rounded-md transition border border-slate-700">Restore</button>
+        <button onclick="exportDataBackup()" class="text-slate-300 text-[10px] font-bold px-2.5 py-1.5 hover:bg-slate-800 rounded-md transition border border-slate-700">Backup</button>
+        <button onclick="triggerSecureAdminView()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black px-3 py-1.5 rounded-md transition">Control Room</button>
     </div>
 
     <script>
@@ -285,35 +306,28 @@
             t7: "Excellent grasp! You are outperforming many aspirants. Just a few more precise lines to polish. Play again to cross the competitive 90% mark!",
             t8: "Superb recall! You are running parallel with top NEET rankers. Fix those last minor conceptual slips and secure absolute chapter mastery!",
             t9: "Magnificent score! You have near-flawless mastery over this NCERT page space! You are fully prepared to answer any direct statement question from this section in NEET. Continue to the next stage!",
-            t10: "🏆 ABSOLUTE NCERT PYRAMID MASTERY! Perfect precision achieved. You have locked this page into your long-term memory. You are an unstoppable NEET champion. Advance proudly to the next stage!"
+            t10: " ABSOLUTE NCERT PYRAMID MASTERY! Perfect precision achieved. You have locked this page into your long-term memory. You are an unstoppable NEET champion. Advance proudly to the next stage!"
         };
 
-        // Premium HTML5 Web Audio Synthesizer Node Engine Controls
         const SoundFX = {
             ctx: null,
             init() { if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
             play(freq, type, duration, gainValue = 0.1) {
                 try {
-                    this.init();
-                    let osc = this.ctx.createOscillator();
-                    let gainNode = this.ctx.createGain();
-                    osc.type = type;
-                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    this.init(); let osc = this.ctx.createOscillator(); let gainNode = this.ctx.createGain();
+                    osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
                     gainNode.gain.setValueAtTime(gainValue, this.ctx.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
                     osc.connect(gainNode); gainNode.connect(this.ctx.destination);
                     osc.start(); osc.stop(this.ctx.currentTime + duration);
                 } catch(e){}
             },
-            click() { this.play(580, 'sine', 0.06, 0.12); },
+            click() { this.play(580, 'sine', 0.06, 0.1); },
             slot() { this.play(840, 'triangle', 0.05, 0.08); },
-            tick() { this.play(1200, 'sine', 0.02, 0.05); },
+            tick() { this.play(1200, 'sine', 0.02, 0.04); },
             chime() { this.play(440, 'sine', 0.1); setTimeout(() => this.play(554.37, 'sine', 0.12), 70); },
-            achievement() {
-                let scale = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
-                scale.forEach((f, i) => setTimeout(() => this.play(f, 'sine', 0.15, 0.12), i * 80));
-            },
-            failure() { this.play(180, 'sawtooth', 0.2, 0.15); setTimeout(() => this.play(130, 'sawtooth', 0.3), 120); }
+            achievement() { let scale = [523.25, 587.33, 659.25, 783.99, 1046.50]; scale.forEach((f, i) => setTimeout(() => this.play(f, 'sine', 0.15, 0.1), i * 80)); },
+            failure() { this.play(180, 'sawtooth', 0.2, 0.12); }
         };
 
         function dismissWelcomeBanner() { SoundFX.click(); document.getElementById('introWelcomeScreen').classList.add('hidden'); }
@@ -325,31 +339,24 @@
             document.body.classList.toggle('fullscreen-mode');
             const isFull = document.body.classList.contains('fullscreen-mode');
             document.getElementById('inlineFullscreenControls').style.display = isFull ? 'block' : 'none';
-            document.getElementById('fullscreenTriggerButton').innerText = isFull ? "Exit Fullscreen Mode" : "🖥️ Fullscreen Mode";
+            document.getElementById('fullscreenTriggerButton').innerText = isFull ? "Exit Fullscreen" : "🖥️ Fullscreen Mode";
         }
 
         function triggerSecureAdminView() {
-            const pass = prompt("Enter Control Room Security Password Validation Key:");
+            const pass = prompt("Enter Control Room Password Verification Key:");
             if(pass === "1234") {
                 isAdminLoggedIn = true;
                 document.getElementById('adminPanel').classList.remove('hidden');
-                // Programmatically populate options
                 const select = document.getElementById('adminChapterSelection');
-                select.innerHTML = '<option value="">-- Select Target Chapter --</option>';
+                select.innerHTML = '<option value="">-- Choose Chapter --</option>';
                 
-                let class11Group = document.createElement('optgroup'); class11Group.label = "Class 11 Chapters";
-                Object.keys(ChapterNamesMasterMatrix).filter(k => k.startsWith('11-')).forEach(k => {
-                    class11Group.innerHTML += `<option value="${k}">${k.replace('11-', 'Ch ')}: ${ChapterNamesMasterMatrix[k]}</option>`;
-                });
-                let class12Group = document.createElement('optgroup'); class12Group.label = "Class 12 Chapters";
-                Object.keys(ChapterNamesMasterMatrix).filter(k => k.startsWith('12-')).forEach(k => {
-                    class12Group.innerHTML += `<option value="${k}">${k.replace('12-', 'Ch ')}: ${ChapterNamesMasterMatrix[k]}</option>`;
-                });
-                select.appendChild(class11Group); select.appendChild(class12Group);
+                let c11g = document.createElement('optgroup'); c11g.label = "Class 11 Chapters";
+                Object.keys(ChapterNamesMasterMatrix).filter(k => k.startsWith('11-')).forEach(k => { c11g.innerHTML += `<option value="${k}">${k.replace('11-', 'Ch ')}: ${ChapterNamesMasterMatrix[k]}</option>`; });
+                let c12g = document.createElement('optgroup'); c12g.label = "Class 12 Chapters";
+                Object.keys(ChapterNamesMasterMatrix).filter(k => k.startsWith('12-')).forEach(k => { c12g.innerHTML += `<option value="${k}">${k.replace('12-', 'Ch ')}: ${ChapterNamesMasterMatrix[k]}</option>`; });
+                select.appendChild(c11g); select.appendChild(c12g);
                 renderSyllabusSidebarMenus();
-            } else {
-                alert("HANDSHAKE TERMINATED: Invalid administrative execution signature.");
-            }
+            } else { alert("Handshake authentication sequence failed."); }
         }
 
         function populateAdminPartsDropdown() {
@@ -357,11 +364,8 @@
             const dropdown = document.getElementById('adminPartSelection');
             dropdown.innerHTML = '<option value="">-- Choose Stage Destination --</option>';
             if(!chKey) return;
-            // Rule 4: Quantities of game parts are exactly double the count of total pages
             const totalStages = ChapterPagesMatrixConfig[chKey] * 2;
-            for(let i = 1; i <= totalStages; i++) {
-                dropdown.innerHTML += `<option value="${i}">Stage ${i} of ${totalStages}</option>`;
-            }
+            for(let i = 1; i <= totalStages; i++) { dropdown.innerHTML += `<option value="${i}">Stage ${i} of ${totalStages}</option>`; }
         }
 
         function commitModuleConfigurationData() {
@@ -370,25 +374,23 @@
             const timerVal = parseInt(document.getElementById('adminTimerConfig').value) || 180;
             const textSeq = document.getElementById('adminContentTextarea').value.trim();
 
-            if(!chCode || !stageIdx || !textSeq) return alert("All array configuration parameters must be filled!");
+            if(!chCode || !stageIdx || !textSeq) return alert("All profile sequence structural tokens must be filled!");
 
             const storageKey = `arc_${chCode}_stg_${stageIdx}`;
             const package = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], stageIdx, timerVal, textSeq };
             
             localStorage.setItem(storageKey, JSON.stringify(package));
-            alert("Stage Deployment Array Committed to Internal System Registry Vectors!");
+            alert("Stage Data Committed Successfully!");
             document.getElementById('adminContentTextarea').value = "";
             renderSyllabusSidebarMenus();
         }
 
         function renderSyllabusSidebarMenus() {
-            const c11 = document.getElementById('c11_wrapper');
-            const c12 = document.getElementById('c12_wrapper');
+            const c11 = document.getElementById('c11_wrapper'); const c12 = document.getElementById('c12_wrapper');
             c11.innerHTML = ""; c12.innerHTML = "";
 
             Object.keys(ChapterNamesMasterMatrix).forEach(key => {
-                const isC11 = key.startsWith('11-');
-                const targetBox = isC11 ? c11 : c12;
+                const isC11 = key.startsWith('11-'); const targetBox = isC11 ? c11 : c12;
                 const maxStages = ChapterPagesMatrixConfig[key] * 2;
 
                 const blockCard = document.createElement('div');
@@ -399,10 +401,8 @@
                 for(let s = 1; s <= maxStages; s++) {
                     const record = localStorage.getItem(`arc_${key}_stg_${s}`);
                     if(record) {
-                        statesExist = true;
-                        const data = JSON.parse(record);
-                        const row = document.createElement('div');
-                        row.className = "flex justify-between items-center gap-1.5 mb-1";
+                        statesExist = true; const data = JSON.parse(record);
+                        const row = document.createElement('div'); row.className = "flex justify-between items-center gap-1 mb-1";
                         
                         const actionBtn = document.createElement('button');
                         actionBtn.className = "w-full text-left p-1.5 rounded bg-white hover:bg-emerald-50 text-xs font-bold text-slate-700 border transition truncate";
@@ -412,24 +412,18 @@
 
                         if(isAdminLoggedIn) {
                             const editBtn = document.createElement('button');
-                            editBtn.className = "bg-amber-100 hover:bg-amber-200 text-[10px] font-black text-amber-800 px-2 py-1 rounded border border-amber-300 transition";
-                            editBtn.innerText = "✏️ Edit";
+                            editBtn.className = "bg-amber-100 text-[9px] font-black text-amber-800 px-2 py-1 rounded border border-amber-200";
+                            editBtn.innerText = "Edit";
                             editBtn.onclick = () => {
-                                document.getElementById('adminChapterSelection').value = data.chCode;
-                                populateAdminPartsDropdown();
+                                document.getElementById('adminChapterSelection').value = data.chCode; populateAdminPartsDropdown();
                                 document.getElementById('adminPartSelection').value = data.stageIdx;
                                 document.getElementById('adminTimerConfig').value = data.timerVal;
                                 document.getElementById('adminContentTextarea').value = data.textSeq;
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
                             };
                             row.appendChild(editBtn);
                         }
                         blockCard.appendChild(row);
                     }
-                }
-                if(!statesExist && isAdminLoggedIn) {
-                    blockCard.innerHTML += `<p class="text-[9px] text-slate-400 italic p-1">Empty Chapter Target Node (Admin Map Ready)</p>`;
-                    statesExist = true;
                 }
                 if(statesExist) targetBox.appendChild(blockCard);
             });
@@ -440,12 +434,9 @@
             document.getElementById('tierFeedbackCard').classList.add('hidden');
             const data = JSON.parse(localStorage.getItem(key));
             
-            activeModuleStorageCompositeKey = key;
-            correctAnswersList = [];
-            remainingLivesCount = 3;
-            secondsRemaining = data.timerVal || 180;
+            activeModuleStorageCompositeKey = key; correctAnswersList = [];
+            remainingLivesCount = 3; secondsRemaining = data.timerVal || 180;
 
-            // Enforce High Contrast School Colors dynamically per class paradigm 
             const is11 = data.chCode.startsWith('11-');
             document.body.className = is11 ? "flex flex-col min-h-screen class11-active" : "flex flex-col min-h-screen class12-active";
 
@@ -455,12 +446,10 @@
             document.getElementById('telemetryStatusHub').classList.remove('hidden');
             document.getElementById('errorAnalysisDashboard').classList.add('hidden');
 
-            let scrambleTrayArray = [];
-            let itemIndexTracker = 0;
-            const updatedMarkupText = data.textSeq.replace(/\[(.*?)\]/g, (match, literalWord) => {
-                const innerWordClean = literalWord.trim();
-                correctAnswersList.push(innerWordClean.toLowerCase());
-                scrambleTrayArray.push(innerWordClean);
+            let scrambleTrayArray = []; let itemIndexTracker = 0;
+            const updatedMarkupText = data.textSeq.replace(/\[(.*?)\]/g, (match, wordStr) => {
+                const extraction = wordStr.trim(); correctAnswersList.push(extraction.toLowerCase());
+                scrambleTrayArray.push(extraction);
                 return `<div class="drop-zone" data-target-slot-idx="${itemIndexTracker++}" onclick="handleZoneInteraction(this)">?</div>`;
             });
 
@@ -469,69 +458,50 @@
             scrambleTrayArray.sort(() => Math.random() - 0.5);
             const shelf = document.getElementById('wordBankShelf'); shelf.innerHTML = "";
             scrambleTrayArray.forEach(word => {
-                const node = document.createElement('div');
-                node.className = "word-chip"; node.innerText = word;
-                node.setAttribute('draggable', 'true');
+                const node = document.createElement('div'); node.className = "word-chip"; node.innerText = word;
                 node.onclick = () => { SoundFX.click(); selectWordChipComponent(node); };
-                node.ondragstart = (e) => { selectWordChipComponent(node); e.dataTransfer.setData('text/plain', word); };
                 shelf.appendChild(node);
             });
 
             countdownTimerIntervalRef = setInterval(() => {
-                secondsRemaining--;
-                if(secondsRemaining <= 10 && secondsRemaining > 0) SoundFX.tick(); // Tick sound last 10 seconds
+                secondsRemaining--; if(secondsRemaining <= 10 && secondsRemaining > 0) SoundFX.tick();
                 syncDashboardDisplays();
                 if(secondsRemaining <= 0) { clearInterval(countdownTimerIntervalRef); evaluateBoardPerformance(); }
             }, 1000);
 
-            syncDashboardDisplays();
-            renderScoreboardIndexListTable();
+            syncDashboardDisplays(); renderScoreboardIndexListTable(); updateStateLeaderboardChart();
         }
 
         function selectWordChipComponent(node) {
             const currentSelected = document.querySelector('.word-chip.selected');
             if(currentSelected) currentSelected.classList.remove('selected');
-            node.classList.add('selected');
-            selectedChipNodeRef = node;
+            node.classList.add('selected'); selectedChipNodeRef = node;
         }
 
         function handleZoneInteraction(zone) {
-            // Rule 1: Click directly to remove dynamic filled tokens
             if(zone.getAttribute('data-assigned-literal-token')) {
-                SoundFX.click();
-                const textWordToRestore = zone.getAttribute('data-assigned-literal-token');
-                zone.innerText = "?";
-                zone.className = "drop-zone";
-                zone.removeAttribute('data-assigned-literal-token');
+                SoundFX.click(); const textWordToRestore = zone.getAttribute('data-assigned-literal-token');
+                zone.innerText = "?"; zone.className = "drop-zone"; zone.removeAttribute('data-assigned-literal-token');
 
                 const chips = document.querySelectorAll('.word-chip');
-                for(let targetChip of chips) {
-                    if(targetChip.innerText === textWordToRestore && targetChip.classList.contains('used')) {
-                        targetChip.classList.remove('used');
-                        break;
-                    }
+                for(let tc of chips) {
+                    if(tc.innerText === textWordToRestore && tc.classList.contains('used')) { tc.classList.remove('used'); break; }
                 }
-                syncDashboardDisplays();
-                return;
+                syncDashboardDisplays(); return;
             }
 
             if(!selectedChipNodeRef) return;
-            SoundFX.slot();
-
-            const wordStringValue = selectedChipNodeRef.innerText;
-            zone.innerText = wordStringValue;
-            zone.className = "drop-zone filled";
+            SoundFX.slot(); const wordStringValue = selectedChipNodeRef.innerText;
+            zone.innerText = wordStringValue; zone.className = "drop-zone filled";
             zone.setAttribute('data-assigned-literal-token', wordStringValue);
 
-            selectedChipNodeRef.classList.add('used');
-            selectedChipNodeRef.classList.remove('selected');
-            selectedChipNodeRef = null;
-            syncDashboardDisplays();
+            selectedChipNodeRef.classList.add('used'); selectedChipNodeRef.classList.remove('selected');
+            selectedChipNodeRef = null; syncDashboardDisplays();
         }
 
         function syncDashboardDisplays() {
             document.getElementById('clockView').innerText = secondsRemaining;
-            document.getElementById('livesView').innerText = "❤️".repeat(remainingLivesCount) || "💀 LOSS";
+            document.getElementById('livesView').innerText = "❤️".repeat(remainingLivesCount) || "💀 CRITICAL";
             const filledCount = document.querySelectorAll('.drop-zone.filled').length;
             document.getElementById('tallyView').innerText = `${filledCount} / ${correctAnswersList.length}`;
         }
@@ -540,11 +510,11 @@
             clearInterval(countdownTimerIntervalRef);
             const name = document.getElementById('studentNicknameInput').value.trim();
             const state = document.getElementById('studentStateInput').value.trim();
+            const phone = document.getElementById('studentPhoneInput').value.trim();
 
-            if(!name || !state) return alert("Validation Matrix Error: Both Name and State entry inputs are completely required parameters!");
+            if(!name || !state || !phone) return alert("Validation Matrix Error: Name, State, and WhatsApp are required before checking score parameters!");
 
-            SoundFX.chime(); // Diagnosis chime sound
-            const zones = document.querySelectorAll('.drop-zone');
+            SoundFX.chime(); const zones = document.querySelectorAll('.drop-zone');
             const tbody = document.getElementById('diagnosticLogsTableBody'); tbody.innerHTML = "";
 
             let correctHits = 0; let incorrectHits = 0; let skippedHits = 0;
@@ -554,62 +524,48 @@
                 const studentSelection = (zone.getAttribute('data-assigned-literal-token') || "").trim();
                 const solutionText = correctAnswersList[index];
 
-                const row = document.createElement('tr');
-                row.className = "border-b text-xs font-bold transition";
+                const row = document.createElement('tr'); row.className = "border-b text-xs font-bold transition";
 
                 if(!studentSelection) {
                     skippedHits++; zone.className = "drop-zone filled wrong";
-                    row.innerHTML = `<td class="py-2.5 text-slate-400 pl-2">Box ${index + 1}</td><td class="text-amber-600 bg-amber-50 px-2">LEFT BLANK</td><td class="text-right text-emerald-600 pr-2">${solutionText}</td>`;
+                    row.innerHTML = `<td class="py-2 pl-2 text-slate-400">Box ${index + 1}</td><td class="text-amber-600 bg-amber-50 px-2">LEFT BLANK</td><td class="text-right text-emerald-600 pr-2">${solutionText}</td>`;
                 } else if(studentSelection.toLowerCase() === solutionText) {
                     correctHits++; zone.className = "drop-zone filled correct";
-                    row.innerHTML = `<td class="py-2.5 text-slate-400 pl-2">Box ${index + 1}</td><td class="text-emerald-600 bg-emerald-50 px-2">${studentSelection}</td><td class="text-right text-emerald-600 pr-2">${solutionText}</td>`;
+                    row.innerHTML = `<td class="py-2 pl-2 text-slate-400">Box ${index + 1}</td><td class="text-emerald-600 bg-emerald-50 px-2">${studentSelection}</td><td class="text-right text-emerald-600 pr-2">${solutionText}</td>`;
                 } else {
-                    incorrectHits++; zone.className = "drop-zone filled wrong";
-                    remainingLivesCount = Math.max(0, remainingLivesCount - 1);
-                    row.innerHTML = `<td class="py-2.5 text-slate-400 pl-2">Box ${index + 1}</td><td class="text-rose-600 bg-rose-50 px-2">${studentSelection}</td><td class="text-right text-emerald-600 pr-2">${solutionText}</td>`;
+                    incorrectHits++; zone.className = "drop-zone filled wrong"; remainingLivesCount = Math.max(0, remainingLivesCount - 1);
+                    row.innerHTML = `<td class="py-2 pl-2 text-slate-400">Box ${index + 1}</td><td class="text-rose-600 bg-rose-50 px-2">${studentSelection}</td><td class="text-right text-emerald-600 pr-2">${solutionText}</td>`;
                 }
                 tbody.appendChild(row);
             });
 
             document.getElementById('errorAnalysisDashboard').classList.remove('hidden');
+            document.getElementById('stateLeaderboardDashboardZone').classList.remove('hidden');
             const finalScorePercentage = Math.round((correctHits / correctAnswersList.length) * 100);
 
-            // Execute Tier Synthesis Audio and Prompt Mechanics
             if(finalScorePercentage >= 90) SoundFX.achievement(); else SoundFX.failure();
             renderDynamicMotivationFeedbackBox(finalScorePercentage);
 
-            // Store metrics to localized index data tracking frameworks
             const scoreboardHistory = JSON.parse(localStorage.getItem(`scoreboard_v3_${activeModuleStorageCompositeKey}`) || '[]');
-            scoreboardHistory.push({ name, state, correct: correctHits, incorrect: incorrectHits, left: skippedHits, pct: finalScorePercentage });
-            localStorage.setItem(`scoreboard_v3_${activeModuleHistory = activeModuleStorageCompositeKey}`, JSON.stringify(scoreboardHistory));
+            scoreboardHistory.push({ name, state, phone, correct: correctHits, incorrect: incorrectHits, left: skippedHits, pct: finalScorePercentage });
+            localStorage.setItem(`scoreboard_v3_${activeModuleStorageCompositeKey}`, JSON.stringify(scoreboardHistory));
 
-            document.getElementById('studentNicknameInput').value = ""; document.getElementById('studentStateInput').value = "";
-            syncDashboardDisplays();
-            renderScoreboardIndexListTable();
+            document.getElementById('studentNicknameInput').value = ""; document.getElementById('studentStateInput').value = ""; document.getElementById('studentPhoneInput').value = "";
+            syncDashboardDisplays(); renderScoreboardIndexListTable(); updateStateLeaderboardChart();
         }
 
         function renderDynamicMotivationFeedbackBox(pct) {
-            const box = document.getElementById('tierFeedbackCard');
-            const textNode = document.getElementById('tierMotivationTextHeadline');
+            const box = document.getElementById('tierFeedbackCard'); const textNode = document.getElementById('tierMotivationTextHeadline');
             const actionContainer = document.getElementById('actionButtonContainerBox');
 
-            box.className = "border-2 rounded-2xl p-5 text-center animate-scale-in block mt-4 ";
-            actionContainer.innerHTML = "";
+            box.className = "border border-2 rounded-2xl p-5 text-center block mt-4 "; actionContainer.innerHTML = "";
+            let tierIndex = Math.min(10, Math.floor(pct / 10)); textNode.innerText = PerformanceTierFeedbackPrompts[`t${tierIndex}`];
 
-            let tierIndex = Math.min(10, Math.floor(pct / 10));
-            textNode.innerText = PerformanceTierFeedbackPrompts[`t${tierIndex}`];
+            if(pct >= 100) box.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+            else if(pct >= 90) box.classList.add('bg-green-50', 'border-green-400', 'text-green-900');
+            else if(pct >= 50) box.classList.add('bg-amber-50', 'border-amber-400', 'text-amber-900');
+            else box.classList.add('bg-rose-50', 'border-rose-400', 'text-rose-900');
 
-            if(pct >= 100) {
-                box.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
-            } else if(pct >= 90) {
-                box.classList.add('bg-green-50', 'border-green-400', 'text-green-900');
-            } else if(pct >= 50) {
-                box.classList.add('bg-amber-50', 'border-amber-400', 'text-amber-900');
-            } else {
-                box.classList.add('bg-rose-50', 'border-rose-400', 'text-rose-900');
-            }
-
-            // Rule 7: Play again or load next stage options
             actionContainer.innerHTML = `<button onclick="launchActiveArcadeSession('${activeModuleStorageCompositeKey}')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-xl transition">Play again this stage</button>`;
             
             const currentRecordData = JSON.parse(localStorage.getItem(activeModuleStorageCompositeKey));
@@ -622,58 +578,109 @@
         }
 
         function renderScoreboardIndexListTable() {
-            const tbody = document.getElementById('scoreboardRenderList');
-            document.getElementById('scoreRankZone').classList.remove('hidden');
+            const tbody = document.getElementById('scoreboardRenderList'); document.getElementById('scoreRankZone').classList.remove('hidden');
+            let dataList = JSON.parse(localStorage.getItem(`scoreboard_v3_${activeModuleStorageCompositeKey}`) || '[]');
 
-            let historyDataset = JSON.parse(localStorage.getItem(`scoreboard_v3_${activeModuleStorageCompositeKey}`) || '[]');
-            if(historyDataset.length === 0) {
-                historyDataset = [
-                    { name: "AIIMS Delhi Core Competitor", state: "Delhi", correct: correctAnswersList.length || 12, incorrect: 0, left: 0, pct: 100 },
-                    { name: "NEET Rank 1 Challenger", state: "Karnataka", correct: Math.max(0, (correctAnswersList.length || 12) - 1), incorrect: 1, left: 0, pct: 92 }
+            if(dataList.length === 0) {
+                dataList = [
+                    { name: "AIIMS Delhi Scholar Core", state: "Delhi", correct: correctAnswersList.length || 10, incorrect: 0, left: 0, pct: 100 },
+                    { name: "NEET Rank 1 Trajectory", state: "Karnataka", correct: Math.max(0, (correctAnswersList.length || 10) - 1), incorrect: 1, left: 0, pct: 90 }
                 ];
             }
-
-            historyDataset.sort((x, y) => y.pct - x.pct);
-            tbody.innerHTML = "";
-
-            historyDataset.slice(0, 10).forEach((entry, idx) => {
+            dataList.sort((x, y) => y.pct - x.pct); tbody.innerHTML = "";
+            dataList.slice(0, 10).forEach((entry, idx) => {
                 tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition text-xs font-semibold text-slate-700">
-                    <td class="py-3 font-black text-amber-500 text-sm pl-2">#${idx + 1}</td>
-                    <td class="font-bold text-slate-900">${entry.name}</td>
-                    <td class="text-slate-500">${entry.state}</td>
-                    <td class="text-center font-bold text-emerald-600 bg-emerald-50/40">${entry.correct}</td>
-                    <td class="text-center font-bold text-rose-600 bg-rose-50/40">${entry.incorrect}</td>
-                    <td class="text-center font-bold text-amber-600 bg-amber-50/40">${entry.left}</td>
+                    <td class="py-3 font-extrabold text-amber-500 text-sm pl-2">#${idx + 1}</td>
+                    <td class="font-bold text-slate-900">${entry.name}</td><td>${entry.state}</td>
+                    <td class="text-center font-bold text-emerald-600 bg-emerald-50/50">${entry.correct}</td>
+                    <td class="text-center font-bold text-rose-600 bg-rose-50/50">${entry.incorrect}</td>
+                    <td class="text-center font-bold text-amber-600 bg-amber-50/50">${entry.left}</td>
                     <td class="text-right font-black text-slate-900 text-sm pr-2">${entry.pct}%</td>
                 </tr>`;
             });
         }
 
+        function updateStateLeaderboardChart() {
+            const container = document.getElementById('stateLeaderboardContainer'); if(!container) return;
+            let stateDataMap = {};
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('scoreboard_v3_')) {
+                    try {
+                        const list = JSON.parse(localStorage.getItem(key)) || [];
+                        list.forEach(item => {
+                            if (item.state) {
+                                const stDisplay = item.state.trim().toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+                                if (!stateDataMap[stDisplay]) stateDataMap[stDisplay] = { totalPct: 0, count: 0 };
+                                stateDataMap[stDisplay].totalPct += parseInt(item.pct) || 0; stateDataMap[stDisplay].count += 1;
+                            }
+                        });
+                    } catch(e){}
+                }
+            }
+            let chartArray = [];
+            Object.keys(stateDataMap).forEach(stName => { chartArray.push({ name: stName, average: Math.round(stateDataMap[stName].totalPct / stateDataMap[stName].count) }); });
+            chartArray.sort((a, b) => b.average - a.average);
+
+            if(chartArray.length === 0) {
+                container.innerHTML = `<div class="text-xs text-slate-400 italic text-center p-2 border rounded-xl bg-slate-50 mb-3">No active state metrics compiled yet. Mock ranks index display active.</div>
+                <div class="mb-2"><div class="flex justify-between text-xs font-bold text-slate-700 mb-0.5"><span>Karnataka</span><span>88% Avg</span></div><div class="w-full bg-slate-100 h-2 rounded-full"><div class="bg-emerald-500 h-full" style="width: 88%"></div></div></div>
+                <div><div class="flex justify-between text-xs font-bold text-slate-700 mb-0.5"><span>Rajasthan</span><span>74% Avg</span></div><div class="w-full bg-slate-100 h-2 rounded-full"><div class="bg-sky-500 h-full" style="width: 74%"></div></div></div>`;
+                return;
+            }
+            container.innerHTML = "";
+            chartArray.forEach(item => {
+                let color = item.average >= 85 ? "bg-emerald-500" : (item.average >= 55 ? "bg-sky-500" : "bg-rose-500");
+                container.innerHTML += `<div class="mb-3">
+                    <div class="flex justify-between text-xs font-bold text-slate-700 mb-1"><span>${item.name}</span><span class="font-mono">${item.average}% Avg</span></div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200"><div class="${color} h-full transition-all" style="width: ${item.average}%"></div></div>
+                </div>`;
+            });
+        }
+
+        function downloadStudentDatabaseCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Student Name,State,WhatsApp Contact,Correct Matches,Incorrect Answers,Left Boxes,Accuracy Percentage\n";
+            let found = 0;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('scoreboard_v3_')) {
+                    try {
+                        const list = JSON.parse(localStorage.getItem(key)) || [];
+                        list.forEach(item => {
+                            csvContent += `"${item.name||''}","${item.state||''}","${item.phone||''}",${item.correct||0},${item.incorrect||0},${item.left||0},${item.pct||0}\n`;
+                            found++;
+                        });
+                    } catch(e){}
+                }
+            }
+            if(found === 0) return alert("Database array container report is currently empty.");
+            const anchor = document.createElement("a"); anchor.setAttribute("href", encodeURI(csvContent));
+            anchor.setAttribute("download", "ADH_NEET_Aspirants_Database.csv");
+            document.body.appendChild(anchor); anchor.click(); document.body.removeChild(anchor);
+        }
+
         function exportDataBackup() {
             let backupMap = {};
             for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if(key.startsWith('arc_') || key.startsWith('scoreboard_v3_')) {
-                    backupMap[key] = localStorage.getItem(key);
-                }
+                const k = localStorage.key(i);
+                if(k.startsWith('arc_') || k.startsWith('scoreboard_v3_')) backupMap[k] = localStorage.getItem(k);
             }
             const blob = new Blob([JSON.stringify(backupMap)], { type: 'text/json' });
-            const link = document.createElement('a');
-            link.download = "ADH_NCERT_Syllabus_Backup.txt";
-            link.href = window.URL.createObjectURL(blob); link.click();
+            const l = document.createElement('a'); l.download = "ADH_Syllabus_Master_Backup.txt";
+            l.href = window.URL.createObjectURL(blob); l.click();
         }
 
-        function importDataBackup(event) {
+        function importDataBackup(e) {
             const reader = new FileReader();
             reader.onload = function() {
                 try {
                     const keys = JSON.parse(reader.result);
                     Object.keys(keys).forEach(k => localStorage.setItem(k, keys[k]));
-                    alert("Syllabus Cluster Profiles Synced! Refreshing Interface Engines.");
-                    renderSyllabusSidebarMenus();
-                } catch(e) { alert("File processing error: Invalid content configuration trace sequence."); }
+                    alert("Database restored successfully!"); renderSyllabusSidebarMenus();
+                } catch(err) { alert("File corrupted or bad trace parsing mapping structure parameters."); }
             };
-            reader.readAsText(event.target.files[0]);
+            reader.readAsText(e.target.files[0]);
         }
 
         renderSyllabusSidebarMenus();
