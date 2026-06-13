@@ -12,7 +12,7 @@
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #eedfcc; /* Soft aesthetic Educaplay outer background base */
+            background-color: #eedfcc; 
             color: #0f172a; 
             transition: all 0.3s ease; 
         }
@@ -54,7 +54,7 @@
             min-width: 145px; 
             height: 38px; 
             border: 2px solid #7cb62f; 
-            background-color: #ffffff; 
+            background-color: #f1f5f9; 
             border-radius: 8px; 
             margin: 4px 6px; 
             vertical-align: middle; 
@@ -94,45 +94,46 @@
         .hc-input { background-color: #ffffff !important; color: #000000 !important; font-weight: 700 !important; border: 2px solid #cbd5e1 !important; }
         .hc-input:focus { border-color: #7cb62f !important; outline: none; }
 
-        .admin-dock-tray {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
-            z-index: 10000;
+        /* Centered Submit Action Node Circle Element Wrapper styles */
+        .check-action-node-wrapper {
             display: flex;
-            gap: 8px;
-            background-color: rgba(15, 23, 42, 0.95);
-            padding: 8px;
-            border-radius: 14px;
-            border: 1px solid #334155;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            gap: 6px;
         }
-
-        /* Circular Check Button Action Nodes styling overlays */
         .check-action-btn {
-            width: 72px;
-            height: 72px;
+            width: 68px;
+            height: 68px;
             background-color: #7cb62f;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 6px 16px rgba(124, 182, 47, 0.4);
+            box-shadow: 0 6px 14px rgba(124, 182, 47, 0.35);
             cursor: pointer;
             transition: transform 0.2s, background-color 0.2s;
-            margin: 0 auto;
         }
-        .check-action-btn:hover { transform: scale(1.08); background-color: #8bc34a; }
+        .check-action-btn:hover { transform: scale(1.06); background-color: #8bc34a; }
+        .check-action-label { font-size: 13px; font-weight: 800; color: #7cb62f; tracking-wider: uppercase; }
+
+        /* Sticky Desk Desktop Orientation Side-Drawer Constraints overrides */
+        @media (min-width: 1024px) {
+            .desktop-sticky-bank {
+                position: sticky !important;
+                top: 96px;
+                z-index: 40;
+            }
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <div class="ep-green-bg p-4 sticky top-0 z-50 global-hide-node shadow-md text-white">
-        <div class="max-w-7xl w-full mx-auto flex flex-wrap justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-black tracking-tight">NCERT BIOLOGY Game for NEET</h1>
-                <p class="text-xs text-slate-100 font-medium tracking-wide mt-0.5">Master the NCERT Biology by repeatedly playing this game & secure maximum marks in NEET</p>
-            </div>
+    <div class="ep-green-bg p-5 sticky top-0 z-50 global-hide-node shadow-md text-white text-center">
+        <div class="max-w-7xl w-full mx-auto">
+            <h1 class="text-2xl font-black tracking-tight">NCERT BIOLOGY Game for NEET</h1>
+            <p class="text-xs text-slate-100 font-medium tracking-wide mt-1">Master the NCERT Biology by repeatedly playing this game & secure maximum marks in NEET</p>
         </div>
     </div>
 
@@ -204,7 +205,7 @@
                     </div>
                     <div class="text-center">
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Life</p>
-                        <p id="livesView" class="text-base font-bold text-rose-500">❤️❤️</p>
+                        <p id="livesView" class="text-base font-bold text-rose-500">❤️❤️❤️</p>
                     </div>
                     <div class="text-center">
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Terms</p>
@@ -234,22 +235,23 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
-                    <div class="col-span-1 md:col-span-4 ep-light-green-bg rounded-xl p-3 order-first md:order-none shadow-sm">
+                    <div class="col-span-1 md:col-span-4 ep-light-green-bg rounded-xl p-3 order-first md:order-none shadow-sm desktop-sticky-bank">
                         <p class="text-[10px] font-bold text-slate-700 uppercase tracking-widest text-center border-b border-green-600/30 pb-2 mb-3">Word Inventory Bank</p>
                         <div id="wordBankShelf" class="flex flex-wrap md:flex-col gap-2 justify-center"></div>
                     </div>
                     <div class="col-span-1 md:col-span-8 space-y-4">
                         <div id="textSequenceBoard" class="ncert-txt-container p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm min-h-[160px]"></div>
                         
-                        <div class="py-2">
-                            <div onclick="evaluateBoardPerformance()" class="check-action-btn" title="Submit & check your score">
-                                <svg class="w-8 h-7 text-white" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        <div class="check-action-node-wrapper">
+                            <div onclick="evaluateBoardPerformance()" class="check-action-btn">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="4.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                             </div>
+                            <span class="check-action-label">SUBMIT</span>
                         </div>
 
                         <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex gap-2 items-center">
-                            <input type="text" id="stealthFeedbackTextInputField" placeholder="Write your Suggestions" class="w-full text-xs p-2.5 rounded-lg border hc-input">
-                            <button onclick="dispatchStealthSuggestionToCloudVault()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition whitespace-nowrap">Report</button>
+                            <input type="text" id="stealthFeedbackTextInputField" placeholder="Write your Suggestions" class="w-full text-xs p-2.5 rounded-lg border h-11 hc-input">
+                            <button onclick="dispatchStealthSuggestionToCloudVault()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-4 h-11 rounded-lg transition whitespace-nowrap">Submit your suggestion</button>
                         </div>
                     </div>
                 </div>
@@ -260,9 +262,9 @@
                 </div>
 
                 <div id="submissionControlPanelSection" class="border-t pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
-                    <input type="text" id="studentNicknameInput" placeholder="Student's Name" class="hc-input p-3 rounded-xl text-xs shadow-sm">
-                    <input type="text" id="studentStateInput" placeholder="State (e.g. Karnataka)" class="hc-input p-3 rounded-xl text-xs shadow-sm">
-                    <input type="text" id="studentPhoneInput" placeholder="WhatsApp Number" class="hc-input p-3 rounded-xl text-xs shadow-sm">
+                    <input type="text" id="studentNicknameInput" placeholder="Student's Name" class="hc-input p-3 rounded-xl text-xs shadow-sm h-11">
+                    <input type="text" id="studentStateInput" placeholder="State (e.g. Karnataka)" class="hc-input p-3 rounded-xl text-xs shadow-sm h-11">
+                    <input type="text" id="studentPhoneInput" placeholder="WhatsApp Number" class="hc-input p-3 rounded-xl text-xs shadow-sm h-11">
                 </div>
             </div>
 
@@ -288,13 +290,13 @@
                     <table class="w-full text-left text-xs font-bold text-slate-600">
                         <thead>
                             <tr class="border-b text-slate-400 uppercase tracking-widest pb-2 font-black">
-                                <th class="py-2 pl-2">Rank</th>
-                                <th>Student's Name</th>
-                                <th>State</th>
-                                <th class="text-center text-emerald-600">Correct</th>
-                                <th class="text-center text-rose-600">Incorrect</th>
-                                <th class="text-center text-amber-600">Left</th>
-                                <th class="text-right pr-2 text-slate-900">Accuracy Percent %</th>
+                                <th class="py-2 pl-2">RANK</th>
+                                <th>STUDENT'S NAME</th>
+                                <th>STATE</th>
+                                <th class="text-center text-emerald-600">CORRECT</th>
+                                <th class="text-center text-rose-600">INCORRECT</th>
+                                <th class="text-center text-amber-600">LEFT</th>
+                                <th class="text-right pr-2 text-slate-900">ACCURACY PERCENT %</th>
                             </tr>
                         </thead>
                         <tbody id="scoreboardRenderList" class="divide-y text-slate-800 font-semibold text-sm"></tbody>
@@ -307,14 +309,14 @@
                 <div id="stateLeaderboardContainer" class="space-y-3"></div>
             </div>
 
-        </div>
-    </div>
+            <div class="bg-slate-900 text-white rounded-2xl p-4 flex flex-wrap justify-end gap-3 items-center global-hide-node mt-4">
+                <input type="file" id="mobileImportInputHandler" class="hidden" accept=".txt,.json" onchange="importDataBackup(event)">
+                <button onclick="document.getElementById('mobileImportInputHandler').click(); SoundFX.click();" class="text-slate-300 text-[11px] font-bold px-3 py-2 hover:bg-slate-800 rounded-xl transition border border-slate-700">Restore</button>
+                <button onclick="exportDataBackup()" class="text-slate-300 text-[11px] font-bold px-3 py-2 hover:bg-slate-800 rounded-xl transition border border-slate-700">Backup</button>
+                <button onclick="triggerSecureAdminView()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-black px-4 py-2 rounded-xl transition">Control Room</button>
+            </div>
 
-    <div class="admin-dock-tray global-hide-node">
-        <input type="file" id="mobileImportInputHandler" class="hidden" accept=".txt,.json" onchange="importDataBackup(event)">
-        <button onclick="document.getElementById('mobileImportInputHandler').click(); SoundFX.click();" class="text-slate-300 text-[10px] font-bold px-2.5 py-1.5 hover:bg-slate-800 rounded-md transition border border-slate-700">Restore</button>
-        <button onclick="exportDataBackup()" class="text-slate-300 text-[10px] font-bold px-2.5 py-1.5 hover:bg-slate-800 rounded-md transition border border-slate-700">Backup</button>
-        <button onclick="triggerSecureAdminView()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black px-3 py-1.5 rounded-md transition">Control Room</button>
+        </div>
     </div>
 
     <script>
@@ -435,7 +437,6 @@
             const storageKey = `arc_${chCode}_stg_${stageIdx}`;
             const package = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], stageIdx, timerVal, textSeq };
             
-            // Cloud Sync
             cloudDatabaseRef.ref('stages/' + storageKey).set(package);
             localStorage.setItem(storageKey, JSON.stringify(package));
             
@@ -445,10 +446,7 @@
         }
 
         function renderSyllabusSidebarMenus() {
-            // FIX: Draw from local storage first to prevent mobile layout blockages while cloud is fetching
             generateMenuHTMLDOMStructure();
-
-            // Then fetch from cloud asynchronously
             cloudDatabaseRef.ref('stages').once('value', (snapshot) => {
                 const cloudData = snapshot.val() || {};
                 Object.keys(cloudData).forEach(k => localStorage.setItem(k, JSON.stringify(cloudData[k])));
@@ -733,10 +731,11 @@
                 dataList.slice(0, 10).forEach((entry, idx) => {
                     tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition text-xs font-semibold text-slate-700">
                         <td class="py-3 font-extrabold text-amber-500 text-sm pl-2">#${idx + 1}</td>
-                        <td class="font-bold text-slate-900">${entry.name}</td><td>${entry.state}</td>
-                        <td class="text-center font-bold text-emerald-600 bg-emerald-50/50">${entry.correct}</td>
-                        <td class="text-center font-bold text-rose-600 bg-rose-50/50">${entry.incorrect}</td>
-                        <td class="text-center font-bold text-amber-600 bg-amber-50/50">${entry.left}</td>
+                        <td class="font-bold text-slate-900">${entry.name}</td>
+                        <td>${entry.state || 'N/A'}</td>
+                        <td class="text-center font-bold text-emerald-600 bg-emerald-50/50">${entry.correct || 0}</td>
+                        <td class="text-center font-bold text-rose-600 bg-rose-50/50">${entry.incorrect || 0}</td>
+                        <td class="text-center font-bold text-amber-600 bg-amber-50/50">${entry.left || 0}</td>
                         <td class="text-right font-black text-slate-900 text-sm pr-2">${entry.pct}%</td>
                     </tr>`;
                 });
@@ -813,7 +812,6 @@
             l.href = window.URL.createObjectURL(blob); l.click();
         }
 
-        // Backup parsing engine mapping structures profiles trigger node configuration handlers
         function importDataBackup(e) {
             const reader = new FileReader();
             reader.onload = function() {
@@ -836,7 +834,6 @@
             if(targetKey) { setTimeout(() => { launchActiveArcadeSession(targetKey); }, 1200); }
         }
 
-        // Run system rendering boot mechanics on startup loop configurations
         renderSyllabusSidebarMenus();
         checkIncomingChallengeRoutingHandshake();
     </script>
