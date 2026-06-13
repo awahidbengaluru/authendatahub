@@ -12,7 +12,7 @@
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #f1f5f9; 
+            background-color: #eedfcc; /* Soft aesthetic Educaplay outer background base */
             color: #0f172a; 
             transition: all 0.3s ease; 
         }
@@ -20,16 +20,17 @@
         /* NCERT Authentic Core Textbook Typography Emulations */
         .ncert-txt-container {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 20px;
+            font-size: 21px;
             line-height: 1.8;
-            color: #1e293b;
+            color: #000000;
             background-color: #ffffff;
-            border-left: 6px solid var(--ncert-accent, #15803d);
             transition: font-size 0.2s ease;
         }
 
-        body.class11-active { --ncert-accent: #15803d; }
-        body.class12-active { --ncert-accent: #0284c7; }
+        /* Educaplay Thematic Color Overrides */
+        .ep-green-bg { background-color: #7cb62f !important; }
+        .ep-light-green-bg { background-color: #a2d949 !important; }
+        .ep-accent-border { border-color: #7cb62f !important; }
 
         /* FULLSCREEN READING ZOOM ORIENTATION OVERRIDES */
         body.fullscreen-mode {
@@ -40,10 +41,9 @@
         body.fullscreen-mode .global-hide-node { display: none !important; }
         body.fullscreen-mode .fullscreen-box-expand { max-width: 100% !important; width: 100% !important; border: none !important; border-radius: 0 !important; }
         body.fullscreen-mode .ncert-txt-container {
-            font-size: 24px !important;
+            font-size: 25px !important;
             max-width: 100% !important;
             width: 100% !important;
-            border-left-width: 8px !important;
         }
 
         /* High-Contrast Blank Input Box Target Vectors */
@@ -51,11 +51,11 @@
             display: inline-flex; 
             align-items: center; 
             justify-content: center; 
-            min-width: 140px; 
-            height: 36px; 
-            border: 2px dashed #64748b; 
-            background-color: #f8fafc; 
-            border-radius: 6px; 
+            min-width: 145px; 
+            height: 38px; 
+            border: 2px solid #7cb62f; 
+            background-color: #ffffff; 
+            border-radius: 8px; 
             margin: 4px 6px; 
             vertical-align: middle; 
             transition: all 0.2s ease; 
@@ -66,33 +66,33 @@
             cursor: pointer;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
-        .drop-zone.hovered { border-color: var(--ncert-accent); background-color: #f0fdf4; }
-        .drop-zone.filled { border-style: solid; border-color: var(--ncert-accent); background-color: #ffffff; color: #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .drop-zone.correct { border-color: #16a34a !important; color: #ffffff !important; background-color: #16a34a !important; box-shadow: 0 0 10px rgba(22, 163, 74, 0.3) !important; }
+        .drop-zone.hovered { border-color: #a2d949; background-color: #f4fbc7; }
+        .drop-zone.filled { border-style: solid; border-color: #7cb62f; background-color: #ffffff; color: #000000; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .drop-zone.correct { border-color: #7cb62f !important; color: #ffffff !important; background-color: #7cb62f !important; box-shadow: 0 0 10px rgba(124, 182, 47, 0.4) !important; }
         .drop-zone.wrong { border-color: #dc2626 !important; color: #ffffff !important; background-color: #dc2626 !important; box-shadow: 0 0 10px rgba(220, 38, 38, 0.3) !important; }
 
         /* Touch-Friendly Drag/Click Target Chips with Gen Z Strike-through Effects */
         .word-chip { 
             display: inline-block; 
-            padding: 12px 18px; 
+            padding: 10px 16px; 
             background-color: #ffffff; 
-            border: 2px solid #cbd5e1; 
-            border-radius: 8px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 10px; 
             font-weight: 700; 
-            color: #0f172a; 
+            color: #2d3748; 
             text-align: center; 
             cursor: pointer; 
             transition: all 0.2s ease; 
             user-select: none; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08); 
             touch-action: manipulation;
         }
-        .word-chip:hover { border-color: var(--ncert-accent); transform: translateY(-2px); }
-        .word-chip.selected { border-color: #000000; background-color: var(--ncert-accent); color: #ffffff; box-shadow: 0 0 12px rgba(0,0,0,0.2); }
-        .word-chip.used { text-decoration: line-through; opacity: 0.25; cursor: default; pointer-events: none; background-color: #f1f5f9; }
+        .word-chip:hover { border-color: #7cb62f; transform: translateY(-2px); }
+        .word-chip.selected { border-color: #000000; background-color: #a2d949; color: #ffffff; box-shadow: 0 0 12px rgba(0,0,0,0.15); }
+        .word-chip.used { text-decoration: line-through; opacity: 0.2; cursor: default; pointer-events: none; background-color: #e2e8f0; }
 
         .hc-input { background-color: #ffffff !important; color: #000000 !important; font-weight: 700 !important; border: 2px solid #cbd5e1 !important; }
-        .hc-input:focus { border-color: var(--ncert-accent) !important; outline: none; }
+        .hc-input:focus { border-color: #7cb62f !important; outline: none; }
 
         .admin-dock-tray {
             position: fixed;
@@ -101,21 +101,37 @@
             z-index: 10000;
             display: flex;
             gap: 8px;
-            background-color: rgba(15, 23, 42, 0.9);
+            background-color: rgba(15, 23, 42, 0.95);
             padding: 8px;
             border-radius: 14px;
             border: 1px solid #334155;
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
         }
+
+        /* Circular Check Button Action Nodes styling overlays */
+        .check-action-btn {
+            width: 72px;
+            height: 72px;
+            background-color: #7cb62f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(124, 182, 47, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            margin: 0 auto;
+        }
+        .check-action-btn:hover { transform: scale(1.08); background-color: #8bc34a; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen class11-active">
+<body class="flex flex-col min-h-screen">
 
-    <div class="bg-white border-b border-slate-200 shadow-sm p-4 sticky top-0 z-50 global-hide-node">
+    <div class="ep-green-bg p-4 sticky top-0 z-50 global-hide-node shadow-md text-white">
         <div class="max-w-7xl w-full mx-auto flex flex-wrap justify-between items-center">
             <div>
-                <h1 class="text-2xl font-black tracking-tight text-emerald-700">NCERT BIOLOGY Game for NEET</h1>
-                <p class="text-xs text-slate-500 font-bold tracking-wide mt-0.5">Master the NCERT Biology by repeatedly playing this game & secure maximum marks in NEET</p>
+                <h1 class="text-2xl font-black tracking-tight">NCERT BIOLOGY Game for NEET</h1>
+                <p class="text-xs text-slate-100 font-medium tracking-wide mt-0.5">Master the NCERT Biology by repeatedly playing this game & secure maximum marks in NEET</p>
             </div>
         </div>
     </div>
@@ -129,7 +145,7 @@
             <p>The more you play, the fewer silly mistakes you'll make, the stronger your concepts will become, and the higher your chances of scoring excellent marks in both NEET and Board Exams.</p>
             <p class="font-bold text-emerald-700 text-sm pt-1">🚀 Play Daily. Revise Smartly. Master NCERT Biology. Crack NEET with Confidence.</p>
         </div>
-        <button onclick="dismissWelcomeBanner()" class="mt-4 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs transition uppercase tracking-wider shadow">
+        <button onclick="dismissWelcomeBanner()" class="mt-4 w-full ep-green-bg text-white font-bold py-3 rounded-xl text-xs transition uppercase tracking-wider shadow">
             Enter Game Arena & Select Chapter Below
         </button>
     </div>
@@ -152,7 +168,7 @@
                 <button onclick="downloadStudentDatabaseCSV()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black rounded-xl py-2 transition shadow">📥 Export Database (Excel CSV)</button>
             </div>
             <textarea id="adminContentTextarea" rows="5" placeholder="Paste structural NCERT text prints sequences here wrapping keywords in [brackets]..." class="w-full hc-input rounded-xl p-4 text-sm"></textarea>
-            <button onclick="commitModuleConfigurationData()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow transition">Save and Publish Stage File directly to Cloud</button>
+            <button onclick="commitModuleConfigurationData()" class="w-full ep-green-bg text-white font-bold py-3 rounded-xl shadow transition">Save and Publish Stage File directly to Cloud</button>
             
             <div class="border-t pt-4">
                 <h3 class="text-xs font-bold text-indigo-600 uppercase mb-2">📬 Live Student Feedback & Improvement Streams</h3>
@@ -218,15 +234,21 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
-                    <div class="col-span-1 md:col-span-4 bg-slate-50 border border-slate-200 rounded-xl p-3 order-first md:order-none">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center border-b pb-2 mb-3">Word Inventory Bank</p>
+                    <div class="col-span-1 md:col-span-4 ep-light-green-bg rounded-xl p-3 order-first md:order-none shadow-sm">
+                        <p class="text-[10px] font-bold text-slate-700 uppercase tracking-widest text-center border-b border-green-600/30 pb-2 mb-3">Word Inventory Bank</p>
                         <div id="wordBankShelf" class="flex flex-wrap md:flex-col gap-2 justify-center"></div>
                     </div>
                     <div class="col-span-1 md:col-span-8 space-y-4">
-                        <div id="textSequenceBoard" class="ncert-txt-container p-5 md:p-6 rounded-xl border border-slate-200 shadow-inner min-h-[160px]"></div>
+                        <div id="textSequenceBoard" class="ncert-txt-container p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm min-h-[160px]"></div>
                         
+                        <div class="py-2">
+                            <div onclick="evaluateBoardPerformance()" class="check-action-btn" title="Submit & check your score">
+                                <svg class="w-8 h-7 text-white" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                        </div>
+
                         <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex gap-2 items-center">
-                            <input type="text" id="stealthFeedbackTextInputField" placeholder="💡 Found a textbook typo or broken line? Type here to alert the Master..." class="w-full text-xs p-2.5 rounded-lg border hc-input">
+                            <input type="text" id="stealthFeedbackTextInputField" placeholder="Write your Suggestions" class="w-full text-xs p-2.5 rounded-lg border hc-input">
                             <button onclick="dispatchStealthSuggestionToCloudVault()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition whitespace-nowrap">Report</button>
                         </div>
                     </div>
@@ -237,13 +259,10 @@
                     <div class="flex justify-center gap-3 flex-wrap" id="actionButtonContainerBox"></div>
                 </div>
 
-                <div id="submissionControlPanelSection" class="border-t pt-4 grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+                <div id="submissionControlPanelSection" class="border-t pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
                     <input type="text" id="studentNicknameInput" placeholder="Student's Name" class="hc-input p-3 rounded-xl text-xs shadow-sm">
                     <input type="text" id="studentStateInput" placeholder="State (e.g. Karnataka)" class="hc-input p-3 rounded-xl text-xs shadow-sm">
                     <input type="text" id="studentPhoneInput" placeholder="WhatsApp Number" class="hc-input p-3 rounded-xl text-xs shadow-sm">
-                    <button onclick="evaluateBoardPerformance()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3.5 px-2 rounded-xl shadow transition uppercase tracking-wide whitespace-nowrap">
-                        Submit & check your score
-                    </button>
                 </div>
             </div>
 
@@ -299,7 +318,6 @@
     </div>
 
     <script>
-        // Premium Secured Integration Handshake Realtime Database Initialization Parameters
         const firebaseConfig = {
             apiKey: "AIzaSyAOwNx86Isr-50HgMGv3IOpvOED7MGmv_U",
             authDomain: "ncert-bio-game.firebaseapp.com",
@@ -417,7 +435,7 @@
             const storageKey = `arc_${chCode}_stg_${stageIdx}`;
             const package = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], stageIdx, timerVal, textSeq };
             
-            // Cloud Synchronization Handshake
+            // Cloud Sync
             cloudDatabaseRef.ref('stages/' + storageKey).set(package);
             localStorage.setItem(storageKey, JSON.stringify(package));
             
@@ -427,54 +445,59 @@
         }
 
         function renderSyllabusSidebarMenus() {
-            // First Pull Entire Database Payload From Cloud for Global Sync Handshake
+            // FIX: Draw from local storage first to prevent mobile layout blockages while cloud is fetching
+            generateMenuHTMLDOMStructure();
+
+            // Then fetch from cloud asynchronously
             cloudDatabaseRef.ref('stages').once('value', (snapshot) => {
                 const cloudData = snapshot.val() || {};
-                
-                // Merge cloud entries back down to local structure layout frames
                 Object.keys(cloudData).forEach(k => localStorage.setItem(k, JSON.stringify(cloudData[k])));
+                generateMenuHTMLDOMStructure();
+            });
+        }
 
-                const c11 = document.getElementById('c11_wrapper'); const c12 = document.getElementById('c12_wrapper');
-                c11.innerHTML = ""; c12.innerHTML = "";
+        function generateMenuHTMLDOMStructure() {
+            const c11 = document.getElementById('c11_wrapper'); const c12 = document.getElementById('c12_wrapper');
+            if(!c11 || !c12) return;
+            c11.innerHTML = ""; c12.innerHTML = "";
 
-                Object.keys(ChapterNamesMasterMatrix).forEach(key => {
-                    const isC11 = key.startsWith('11-'); const targetBox = isC11 ? c11 : c12;
-                    const maxStages = ChapterPagesMatrixConfig[key] * 2;
+            Object.keys(ChapterNamesMasterMatrix).forEach(key => {
+                const isC11 = key.startsWith('11-'); const targetBox = isC11 ? c11 : c12;
+                const maxStages = ChapterPagesMatrixConfig[key] * 2;
 
-                    const blockCard = document.createElement('div');
-                    blockCard.className = "p-2 bg-slate-50 border rounded-xl mb-1";
-                    blockCard.innerHTML = `<p class="text-[10px] font-black text-slate-400 uppercase tracking-wide border-b pb-0.5 mb-1">${ChapterNamesMasterMatrix[key]}</p>`;
+                const blockCard = document.createElement('div');
+                blockCard.className = "p-2 bg-slate-50 border rounded-xl mb-1";
+                blockCard.innerHTML = `<p class="text-[10px] font-black text-slate-400 uppercase tracking-wide border-b pb-0.5 mb-1">${ChapterNamesMasterMatrix[key]}</p>`;
 
-                    let statesExist = false;
-                    for(let s = 1; s <= maxStages; s++) {
-                        const record = localStorage.getItem(`arc_${key}_stg_${s}`);
-                        if(record) {
-                            statesExist = true; const data = JSON.parse(record);
-                            const row = document.createElement('div'); row.className = "flex justify-between items-center gap-1 mb-1";
-                            
-                            const actionBtn = document.createElement('button');
-                            actionBtn.className = "w-full text-left p-1.5 rounded bg-white hover:bg-emerald-50 text-xs font-bold text-slate-700 border transition truncate";
-                            actionBtn.innerText = `Stage ${s} of ${maxStages}`;
-                            actionBtn.onclick = () => launchActiveArcadeSession(data.storageKey);
-                            row.appendChild(actionBtn);
+                let statesExist = false;
+                for(let s = 1; s <= maxStages; s++) {
+                    const record = localStorage.getItem(`arc_${key}_stg_${s}`);
+                    if(record) {
+                        statesExist = true; const data = JSON.parse(record);
+                        const row = document.createElement('div'); row.className = "flex justify-between items-center gap-1 mb-1";
+                        
+                        const actionBtn = document.createElement('button');
+                        actionBtn.className = "w-full text-left p-1.5 rounded bg-white hover:bg-emerald-50 text-xs font-bold text-slate-700 border transition truncate";
+                        actionBtn.innerText = `Stage ${s} of ${maxStages}`;
+                        actionBtn.onclick = () => launchActiveArcadeSession(data.storageKey);
+                        row.appendChild(actionBtn);
 
-                            if(isAdminLoggedIn) {
-                                const editBtn = document.createElement('button');
-                                editBtn.className = "bg-amber-100 text-[9px] font-black text-amber-800 px-2 py-1 rounded border border-amber-200";
-                                editBtn.innerText = "Edit";
-                                editBtn.onclick = () => {
-                                    document.getElementById('adminChapterSelection').value = data.chCode; populateAdminPartsDropdown();
-                                    document.getElementById('adminPartSelection').value = data.stageIdx;
-                                    document.getElementById('adminTimerConfig').value = data.timerVal;
-                                    document.getElementById('adminContentTextarea').value = data.textSeq;
-                                };
-                                row.appendChild(editBtn);
-                            }
-                            blockCard.appendChild(row);
+                        if(isAdminLoggedIn) {
+                            const editBtn = document.createElement('button');
+                            editBtn.className = "bg-amber-100 text-[9px] font-black text-amber-800 px-2 py-1 rounded border border-amber-200";
+                            editBtn.innerText = "Edit";
+                            editBtn.onclick = () => {
+                                document.getElementById('adminChapterSelection').value = data.chCode; populateAdminPartsDropdown();
+                                document.getElementById('adminPartSelection').value = data.stageIdx;
+                                document.getElementById('adminTimerConfig').value = data.timerVal;
+                                document.getElementById('adminContentTextarea').value = data.textSeq;
+                            };
+                            row.appendChild(editBtn);
                         }
+                        blockCard.appendChild(row);
                     }
-                    if(statesExist) targetBox.appendChild(blockCard);
-                });
+                }
+                if(statesExist) targetBox.appendChild(blockCard);
             });
         }
 
@@ -518,7 +541,6 @@
                 if(secondsRemaining <= 0) { clearInterval(countdownTimerIntervalRef); evaluateBoardPerformance(); }
             }, 1000);
 
-            // Connect Realtime Duel Listener Interface Nodes if url challenge parameters exist
             syncLiveDuelLobbySystemTrace();
             syncDashboardDisplays(); refreshLiveCloudScoreboardEngine(); updateStateLeaderboardChart();
         }
@@ -562,9 +584,7 @@
             const challengeId = "duel_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
             const compiledMatchLinkUrl = `${window.location.origin}${window.location.pathname}?challengeId=${challengeId}&targetKey=${activeModuleStorageCompositeKey}`;
             
-            // Seed Session Matrix Placeholder in Cloud Database
             cloudDatabaseRef.ref('leaderboards/' + challengeId).set({ key: activeModuleStorageCompositeKey, creatorName: "Challenger Host", progress: 0 });
-
             navigator.clipboard.writeText(compiledMatchLinkUrl);
             alert("⚔️ DUEL LINK GENERATED: Copy link payload sent to your clipboard! Share it on WhatsApp with a classmate to go head-to-head live!");
         }
@@ -609,7 +629,7 @@
             });
 
             document.getElementById('stealthFeedbackTextInputField').value = "";
-            alert("📬 Feedback routed securely into the Master's Control Vault. Thank you!");
+            alert("📬 Suggestions captured cleanly inside system records vault!");
         }
 
         function syncAdminSuggestionsDashboard() {
@@ -668,11 +688,8 @@
             renderDynamicMotivationFeedbackBox(finalScorePercentage);
 
             const payloadPacket = { name, state, phone, correct: correctHits, incorrect: incorrectHits, left: skippedHits, pct: finalScorePercentage, timestamp: Date.now() };
-            
-            // Sync to Global Encrypted Cloud Pipeline Nodes
             cloudDatabaseRef.ref('students/' + activeModuleStorageCompositeKey).push(payloadPacket);
 
-            document.getElementById('studentNicknameInput').value = ""; document.getElementById('studentStateInput').value = ""; document.getElementById('studentPhoneInput').value = "";
             syncDashboardDisplays(); refreshLiveCloudScoreboardEngine(); updateStateLeaderboardChart();
         }
 
@@ -754,7 +771,7 @@
                 }
                 container.innerHTML = "";
                 chartArray.forEach(item => {
-                    let color = item.average >= 85 ? "bg-emerald-500" : (item.average >= 55 ? "bg-sky-500" : "bg-rose-500");
+                    let color = "ep-green-bg";
                     container.innerHTML += `<div class="mb-3">
                         <div class="flex justify-between text-xs font-bold text-slate-700 mb-1"><span>${item.name}</span><span class="font-mono">${item.average}% Avg</span></div>
                         <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200"><div class="${color} h-full transition-all" style="width: ${item.average}%"></div></div>
@@ -796,6 +813,7 @@
             l.href = window.URL.createObjectURL(blob); l.click();
         }
 
+        // Backup parsing engine mapping structures profiles trigger node configuration handlers
         function importDataBackup(e) {
             const reader = new FileReader();
             reader.onload = function() {
@@ -805,21 +823,20 @@
                         localStorage.setItem(k, keys[k]);
                         cloudDatabaseRef.ref('stages/' + k).set(JSON.parse(keys[k]));
                     });
-                    alert("Database backup mapped and synchronised cleanly to cloud vectors!"); renderSyllabusSidebarMenus();
+                    alert("Database backup mapped and synchronised cleanly to cloud vectors!"); 
+                    generateMenuHTMLDOMStructure();
                 } catch(err) { alert("File processing error: Check configuration format script alignments."); }
             };
             reader.readAsText(e.target.files[0]);
         }
 
-        // Automatic Duel Deep Link Handshake Interceptor Initializer
         function checkIncomingChallengeRoutingHandshake() {
             const params = new URLSearchParams(window.location.search);
             const targetKey = params.get('targetKey');
-            if(targetKey) {
-                setTimeout(() => { launchActiveArcadeSession(targetKey); }, 1200);
-            }
+            if(targetKey) { setTimeout(() => { launchActiveArcadeSession(targetKey); }, 1200); }
         }
 
+        // Run system rendering boot mechanics on startup loop configurations
         renderSyllabusSidebarMenus();
         checkIncomingChallengeRoutingHandshake();
     </script>
