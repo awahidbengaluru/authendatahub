@@ -61,6 +61,35 @@
         }
         #textSequenceBoard.blurred, #altModeBoard.blurred { filter: blur(7px); pointer-events: none; user-select: none; }
 
+        /* ---------- LABEL-THE-DIAGRAM PINS ---------- */
+        .diagram-pin {
+            position: absolute; transform: translate(-50%, -50%);
+            min-width: 26px; height: 26px; padding: 0 5px;
+            border-radius: 999px; background: var(--ep-green); color: #fff;
+            border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+            font-size: 13px; font-weight: 800; line-height: 22px; text-align: center;
+            cursor: pointer; user-select: none; z-index: 2; white-space: nowrap;
+        }
+        .diagram-pin.done   { background: #2563eb; }
+        .diagram-pin.right  { background: #3B6D11; }
+        .diagram-pin.wrong  { background: #A32D2D; }
+        .diagram-pin .pin-tag { font-size: 11px; font-weight: 700; margin-left: 4px; }
+        .diagram-pin-admin { background: #6366f1; }
+        .diagram-pin-remove {
+            position: absolute; transform: translate(40%, -120%);
+            width: 18px; height: 18px; border-radius: 999px; background: #dc2626; color: #fff;
+            font-size: 12px; line-height: 16px; text-align: center; cursor: pointer; border: 1px solid #fff; z-index: 3;
+        }
+        .diagram-row {
+            display: flex; align-items: center; gap: 8px;
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 10px; cursor: pointer;
+        }
+        body.dark .diagram-row { background: #1e293b; border-color: #334155; }
+        .diagram-row .num {
+            min-width: 24px; height: 24px; border-radius: 999px; background: var(--ep-green); color: #fff;
+            font-weight: 800; font-size: 12px; line-height: 24px; text-align: center; flex-shrink: 0;
+        }
+
         /* ---------- TUTORIAL (#23) ---------- */
         #tutorialOverlay {
             position: fixed; inset: 0; z-index: 7000;
@@ -293,7 +322,8 @@
                     <div id="xpBar" class="h-full rounded-full" style="width:0%; background:#7cb62f;"></div>
                 </div>
                 <p id="xpLabel" class="text-[11px] text-slate-400 text-right">0 XP</p>
-                <button onclick="startDailyChallenge()" id="dailyChallengeBtn" class="w-full mt-3 text-white text-xs font-extrabold py-2.5 rounded-xl" style="background:#7c3aed;">⭐ Daily Challenge (2× XP)</button>
+                <button onclick="showMyProgress()" id="myProgressBtn" class="w-full mt-3 text-white text-xs font-extrabold py-2.5 rounded-xl" style="background:#475569;">📈 My progress</button>
+                <button onclick="startDailyChallenge()" id="dailyChallengeBtn" class="w-full mt-2 text-white text-xs font-extrabold py-2.5 rounded-xl" style="background:#7c3aed;">⭐ Daily Challenge (2× XP)</button>
                 <button onclick="startReviewSession()" id="reviewMistakesBtn" class="w-full mt-2 text-white text-xs font-extrabold py-2.5 rounded-xl" style="background:#0ea5e9;">🧠 Review my mistakes (0 due)</button>
             </div>
 
@@ -508,7 +538,7 @@
                         <option value="">-- Choose chapter --</option>
                     </select>
                     <select id="adminPartSelection" class="hc-input rounded-xl p-3 text-sm">
-                        <option value="">-- Choose stage --</option>
+                        <option value="">-- Choose part --</option>
                     </select>
                     <input type="number" id="adminTimerConfig" value="180" placeholder="Timer (sec)" class="hc-input rounded-xl p-3 text-sm">
                     <button onclick="downloadStudentDatabaseCSV()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl px-3">⬇️ Export students CSV</button>
@@ -520,9 +550,32 @@
                         <option value="arrange">Arrange in correct order</option>
                         <option value="match">Match the pairs</option>
                         <option value="truefalse">True / False statements</option>
+                        <option value="imgmatch">Label the diagram (NCERT)</option>
                     </select>
                 </div>
                 <div id="adminFormatHint" class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800 mb-3 leading-relaxed"></div>
+
+                <!-- LABEL-THE-DIAGRAM VISUAL BUILDER (shown only for the diagram type) -->
+                <div id="diagramBuilder" class="is-hidden border border-emerald-300 rounded-xl p-3 mb-3 bg-emerald-50">
+                    <p class="text-xs text-slate-700 mb-2 leading-relaxed">
+                        <strong>1.</strong> Paste your diagram image link and tap <strong>Load</strong>.
+                        <strong>2.</strong> Tap each part on the image to drop a numbered pin.
+                        <strong>3.</strong> Type the correct label for each pin below.
+                        Students will see the pins and have to label them.
+                    </p>
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="diagramUrlInput" placeholder="https://your-site/heart.png" class="hc-input flex-1 rounded-lg px-3 py-2 text-xs">
+                        <button type="button" onclick="loadDiagramImage()" class="ep-green-bg text-white text-xs font-bold px-4 rounded-lg">Load image</button>
+                    </div>
+                    <div id="diagramStageWrap" class="is-hidden">
+                        <div id="diagramCanvas" style="position:relative; display:inline-block; max-width:100%; border-radius:10px; overflow:hidden; border:2px dashed #94a3b8; cursor:crosshair;">
+                            <img id="diagramCanvasImg" src="" alt="diagram" style="display:block; max-width:100%; height:auto;">
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1">Tap anywhere on the image to add a pin. Tap a pin's red ✕ to remove it.</p>
+                        <div id="diagramPinList" class="space-y-2 mt-2"></div>
+                    </div>
+                </div>
+
                 <textarea id="adminContentTextarea" rows="6" placeholder="Paste content here." class="hc-input w-full rounded-xl p-3 text-sm mb-2"></textarea>
                 <button onclick="autoSuggestBlanks()" id="autoSuggestBtn" class="text-xs font-bold text-indigo-600 mb-3">✨ Auto-bracket likely keywords (fill type)</button>
                 <input type="text" id="adminDistractorInput" placeholder="Distractor words (fill type only), comma-separated — e.g. ribosome, lysosome" class="hc-input w-full rounded-xl p-3 text-sm mb-3">
@@ -530,7 +583,7 @@
 
                 <div class="border-t pt-4 mt-4">
                     <h3 class="text-xs font-bold text-emerald-600 uppercase mb-2">📦 Bulk add many stages at once</h3>
-                    <p class="text-[11px] text-slate-500 mb-2 leading-relaxed">Paste multiple stages separated by a line with just <code class="bg-slate-100 px-1 rounded">---</code>. Start each block with a header line: <code class="bg-slate-100 px-1 rounded">11-1 | 1 | fill | 180</code> (chapter | stage | type | timer), then the content lines. Great for building the whole syllabus fast.</p>
+                    <p class="text-[11px] text-slate-500 mb-2 leading-relaxed">Paste multiple games separated by a line with just <code class="bg-slate-100 px-1 rounded">---</code>. Start each block with a header line: <code class="bg-slate-100 px-1 rounded">11-1 | 1 | fill | 180</code> (chapter | part | type | timer), then the content lines. Type can be fill, truefalse, arrange, or match. Great for building all 4 varieties of every part fast.</p>
                     <textarea id="bulkImportTextarea" rows="5" placeholder="11-1 | 1 | fill | 180&#10;The [mitochondria] is the powerhouse of the cell.&#10;---&#10;11-1 | 2 | truefalse | 120&#10;T: DNA is double stranded.&#10;F: RNA is double stranded." class="hc-input w-full rounded-xl p-3 text-sm mb-2"></textarea>
                     <button onclick="bulkImportStages()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 rounded-xl">Import all stages</button>
                 </div>
@@ -768,18 +821,81 @@
         rbtn.style.background = due > 0 ? "#0ea5e9" : "#94a3b8";
     }
 
+    // detailed personal progress dashboard
+    function showMyProgress() {
+        SoundFX.click();
+        const info = getLevelInfo(playerProfile.xp || 0);
+        const passed = playerProfile.passed || {};
+        const stars = playerProfile.stars || {};
+        const gamesCleared = Object.keys(passed).length;
+        const totalStars = Object.values(stars).reduce((a, b) => a + b, 0);
+        const threeStarCount = Object.values(stars).filter(s => s === 3).length;
+        const dueNow = getDueMistakes().length;
+        const trackedMistakes = Object.keys(playerProfile.mistakes || {}).length;
+
+        // per-chapter completion among unlocked+seeded chapters
+        const chapterRows = [];
+        Object.keys(ChapterNamesMasterMatrix).forEach(ch => {
+            let total = 0, done = 0;
+            for(let pPart = 1; pPart <= maxStagesFor(); pPart++) {
+                VARIETY_TYPES.forEach(t => {
+                    const k = partTypeKey(ch, pPart, t);
+                    if(localStorage.getItem(k)) { total++; if(passed[k]) done++; }
+                });
+            }
+            if(total > 0) chapterRows.push({ name: ChapterNamesMasterMatrix[ch], done, total });
+        });
+
+        const stat = (val, label, color) => `<div style="flex:1; min-width:90px; background:var(--ep-bg); border-radius:12px; padding:10px; text-align:center;">
+            <div style="font-size:22px; font-weight:800; color:${color};">${val}</div>
+            <div style="font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.04em;">${label}</div></div>`;
+
+        let html = `
+            <div style="text-align:center; margin-bottom:14px;">
+                <div style="font-size:15px; font-weight:800; color:#5e8c22;">Lv ${info.level} · ${info.title}</div>
+                <div style="font-size:12px; color:#94a3b8;">${playerProfile.xp || 0} XP ${info.next ? '· ' + (info.next.min - (playerProfile.xp||0)) + ' to ' + info.next.title : '· max level!'}</div>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+                ${stat('🔥 ' + (playerProfile.streak||0), 'Day streak', '#d97706')}
+                ${stat(gamesCleared, 'Games cleared', '#16a34a')}
+                ${stat('★ ' + totalStars, 'Stars earned', '#f59e0b')}
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+                ${stat(threeStarCount, '3-star games', '#7c3aed')}
+                ${stat(dueNow, 'Reviews due', '#0ea5e9')}
+                ${stat(trackedMistakes, 'Words tracked', '#dc2626')}
+            </div>`;
+
+        if(chapterRows.length) {
+            html += `<p style="font-size:11px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Chapter completion</p>`;
+            chapterRows.forEach(r => {
+                const pct = Math.round((r.done / r.total) * 100);
+                html += `<div style="margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#475569; margin-bottom:2px;"><span>${r.name}</span><span>${r.done}/${r.total}</span></div>
+                    <div style="width:100%; background:#e2e8f0; height:7px; border-radius:99px; overflow:hidden;"><div style="width:${pct}%; height:100%; background:${pct===100?'#16a34a':'#7cb62f'};"></div></div>
+                </div>`;
+            });
+        } else {
+            html += `<p style="font-size:12px; color:#94a3b8; font-style:italic;">Play a few games to see your chapter progress build up here.</p>`;
+        }
+
+        document.getElementById('progressBody').innerHTML = html;
+        document.getElementById('progressOverlay').classList.remove('is-hidden');
+    }
+
     // deterministic stage-of-the-day from all existing, unlocked stages
     function getDailyChallengeKey() {
         const all = [];
         Object.keys(ChapterNamesMasterMatrix).forEach(ch => {
             if(!isChapterUnlocked(ch)) return;
-            for(let s = 1; s <= maxStagesFor(); s++) {
-                const k = `arc_${ch}_stg_${s}`;
-                if(localStorage.getItem(k)) all.push(k);
+            for(let p = 1; p <= maxStagesFor(); p++) {
+                VARIETY_TYPES.forEach(type => {
+                    const k = partTypeKey(ch, p, type);
+                    if(localStorage.getItem(k)) all.push(k);
+                });
             }
         });
         if(all.length === 0) return null;
-        // seed from the date so it's stable all day
         const seed = todayStr().split('-').reduce((a, b) => a + parseInt(b), 0);
         return all[seed % all.length];
     }
@@ -952,14 +1068,6 @@
         return false;
     }
 
-    // progression: a stage is playable if it's stage 1, or the previous stage was passed (>=70%), or admin
-    function isStagePlayable(chCode, stageIdx) {
-        if(isAdminLoggedIn) return true;
-        if(parseInt(stageIdx) <= 1) return true;
-        const prevKey = `arc_${chCode}_stg_${parseInt(stageIdx) - 1}`;
-        return !!(playerProfile.passed && playerProfile.passed[prevKey]);
-    }
-
     function openUnlockModal(chCode) {
         SoundFX.click();
         chapterToUnlock = chCode;
@@ -1052,6 +1160,100 @@
 
     // generous stage allowance per chapter (you can use as many or as few as you like)
     function maxStagesFor() { return 40; }
+
+    const VARIETY_TYPES = ['fill', 'truefalse', 'arrange', 'match', 'imgmatch'];
+    const VARIETY_META = {
+        fill:      { icon: '✏️', label: 'Fill' },
+        truefalse: { icon: '✓✗', label: 'T/F' },
+        arrange:   { icon: '🔢', label: 'Arrange' },
+        match:     { icon: '🔗', label: 'Match' },
+        imgmatch:  { icon: '📍', label: 'Diagram' }
+    };
+    function partTypeKey(chCode, part, type) { return `arc_${chCode}_p${part}_${type}`; }
+
+    // convert any old "arc_X_stg_N" (single type) → new "arc_X_pN_<type>" (runs whenever legacy keys appear)
+    function migrateOldStageKeys() {
+        const toMigrate = [];
+        for(let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if(/^arc_\d+-\d+_stg_\d+$/.test(k)) toMigrate.push(k);
+        }
+        toMigrate.forEach(oldKey => {
+            try {
+                const data = JSON.parse(localStorage.getItem(oldKey));
+                const type = data.stageType || 'fill';
+                const newKey = partTypeKey(data.chCode, data.stageIdx, type);
+                data.storageKey = newKey;
+                data.part = data.stageIdx;
+                if(!localStorage.getItem(newKey)) {
+                    localStorage.setItem(newKey, JSON.stringify(data));
+                    if(cloudReady) cloudDatabaseRef.ref('stages/' + newKey).set(data);
+                }
+                localStorage.removeItem(oldKey);                          // remove legacy copy
+                if(cloudReady) cloudDatabaseRef.ref('stages/' + oldKey).remove();
+            } catch(e){}
+        });
+    }
+
+    // seed ready-to-play sample content for the FREE demo chapters (runs once)
+    function seedSampleContentOnce() {
+        if(localStorage.getItem('neet_sample_seeded_v3')) return;
+        const samples = [
+            // ---- Class 11, Chapter 1: The Living World ----
+            { ch:"11-1", part:1, type:"fill", timer:180,
+              text:"All living organisms show [growth], [reproduction] and the ability to [sense] their surroundings. The sum total of all chemical reactions in the body is called [metabolism]. The defining property of living systems that distinguishes them from non-living is [self-consciousness] only at the highest level, but [metabolism] is a defining feature of all living organisms without exception.",
+              distractors:["respiration","excretion","digestion","mutation"] },
+            { ch:"11-1", part:1, type:"truefalse", timer:120,
+              text:"T: Growth and reproduction are characteristics of living organisms.\nF: All living organisms can reproduce.\nT: Metabolism is the sum of all chemical reactions in the body.\nF: Non-living objects can show consciousness.\nT: Cellular organisation is a defining feature of all living organisms." },
+            { ch:"11-1", part:1, type:"arrange", timer:120,
+              text:"Species\nGenus\nFamily\nOrder\nClass\nPhylum\nKingdom" },
+            { ch:"11-1", part:1, type:"match", timer:120,
+              text:"Taxonomy = Classification of organisms\nNomenclature = Naming of organisms\nIdentification = Finding correct name & place\nSystematics = Study of diversity & relationships" },
+
+            // ---- Class 12, Chapter 1: Sexual Reproduction in Flowering Plants ----
+            { ch:"12-1", part:1, type:"fill", timer:180,
+              text:"The [androecium] is the male reproductive part of a flower and consists of [stamens]. Each anther is usually [bilobed] and contains [pollen] grains. The [gynoecium] represents the female reproductive part and the ovules are present inside the [ovary].",
+              distractors:["sepal","petal","nectar","filament"] },
+            { ch:"12-1", part:1, type:"truefalse", timer:120,
+              text:"T: The stamen is the male reproductive organ of a flower.\nF: Pollen grains develop inside the ovary.\nT: The gynoecium is the female reproductive part.\nF: Double fertilisation occurs in gymnosperms.\nT: The ovule develops into a seed after fertilisation." },
+            { ch:"12-1", part:1, type:"arrange", timer:120,
+              text:"Pollination\nGermination of pollen on stigma\nGrowth of pollen tube\nEntry into ovule\nFertilisation\nFormation of seed" },
+            { ch:"12-1", part:1, type:"match", timer:120,
+              text:"Anther = Produces pollen grains\nStigma = Receptive surface for pollen\nOvary = Contains ovules\nPollen tube = Carries male gametes" },
+
+            // ---- Class 11, Chapter 1, PART 2: Nomenclature & taxonomic aids ----
+            { ch:"11-1", part:2, type:"fill", timer:180,
+              text:"Biological names are generally in [Latin]. The first word in a biological name represents the [genus] while the second word denotes the [species]. This two-word naming system is called [binomial] nomenclature, a practice popularised by [Linnaeus].",
+              distractors:["Greek","family","order","Darwin"] },
+            { ch:"11-1", part:2, type:"truefalse", timer:120,
+              text:"T: The first word in a biological name represents the genus.\nF: Biological names are usually written in English.\nT: The species name is written after the genus name.\nF: A herbarium is a place where living plants are grown.\nT: Botanical gardens maintain collections of living plants for reference." },
+            { ch:"11-1", part:2, type:"arrange", timer:120,
+              text:"Organelle\nCell\nTissue\nOrgan\nOrgan system\nOrganism" },
+            { ch:"11-1", part:2, type:"match", timer:120,
+              text:"Herbarium = Sheets of pressed, dried plant specimens\nBotanical garden = Living plant collection for study\nMuseum = Preserved plant and animal specimens\nZoological park = Wild animals in protected conditions\nKey = Identification tool using contrasting characters" },
+
+            // ---- Class 12, Chapter 1, PART 2: Pre-fertilisation structures ----
+            { ch:"12-1", part:2, type:"fill", timer:180,
+              text:"Formation of microspores from a pollen mother cell through [meiosis] is called [microsporogenesis]. The pollen grain represents the [male] gametophyte. The female gametophyte is also called the [embryo sac], which at maturity is typically 8-nucleate and [7]-celled.",
+              distractors:["mitosis","megasporogenesis","female","nucellus"] },
+            { ch:"12-1", part:2, type:"truefalse", timer:120,
+              text:"T: Microspores are formed by meiosis of the pollen mother cell.\nF: The pollen grain is the female gametophyte.\nT: A typical embryo sac is 8-nucleate and 7-celled.\nF: The megaspore mother cell divides by mitosis to form megaspores.\nT: The central cell of the embryo sac contains two polar nuclei." },
+            { ch:"12-1", part:2, type:"arrange", timer:120,
+              text:"Megaspore mother cell\nMeiosis\nFunctional megaspore\nThree mitotic divisions\n8-nucleate stage\n7-celled embryo sac" },
+            { ch:"12-1", part:2, type:"match", timer:120,
+              text:"Synergids = Guide the pollen tube via filiform apparatus\nEgg cell = The female gamete\nAntipodal cells = Three cells at the chalazal end\nCentral cell = Contains two polar nuclei" }
+        ];
+        samples.forEach(s => {
+            const key = partTypeKey(s.ch, s.part, s.type);
+            if(localStorage.getItem(key)) return;   // never overwrite the teacher's own content
+            const pkg = { storageKey:key, chCode:s.ch, chName:ChapterNamesMasterMatrix[s.ch],
+                stageIdx:String(s.part), part:String(s.part), timerVal:s.timer, textSeq:s.text,
+                distractors:s.distractors||[], stageType:s.type };
+            localStorage.setItem(key, JSON.stringify(pkg));
+            if(cloudReady) cloudDatabaseRef.ref('stages/' + key).set(pkg);
+        });
+        localStorage.setItem('neet_sample_seeded_v3', '1');
+    }
 
     const PerformanceTierFeedbackPrompts = {
         t0: "Keep your spirits up! NCERT has hidden nuances. Reset and try this stage again.",
@@ -1166,17 +1368,18 @@
     function populateAdminPartsDropdown() {
         const chKey = document.getElementById('adminChapterSelection').value;
         const dropdown = document.getElementById('adminPartSelection');
-        dropdown.innerHTML = '<option value="">-- Choose stage --</option>';
+        dropdown.innerHTML = '<option value="">-- Choose part --</option>';
         if(!chKey) return;
         for(let i = 1; i <= maxStagesFor(); i++) {
-            dropdown.innerHTML += `<option value="${i}">Stage ${i}</option>`;
+            dropdown.innerHTML += `<option value="${i}">Part ${i}</option>`;
         }
     }
     const ADMIN_FORMAT_HINTS = {
         fill: 'Paste an NCERT paragraph and wrap answer words in [brackets]. Example:<br><code class="bg-white px-1 rounded">The [mitochondria] is the powerhouse of the cell.</code>',
         arrange: 'Type the items <strong>in the correct order</strong>, one per line. The game will scramble them for the student to re-order. Example:<br><code class="bg-white px-1 rounded">Prophase<br>Metaphase<br>Anaphase<br>Telophase</code>',
         match: 'Type one pair per line as <strong>Left = Right</strong>. The right side gets scrambled for the student to match. Example:<br><code class="bg-white px-1 rounded">Insulin = Beta cells<br>Glucagon = Alpha cells</code>',
-        truefalse: 'Type one statement per line, starting with <strong>T:</strong> if true or <strong>F:</strong> if false. Example:<br><code class="bg-white px-1 rounded">T: Mitochondria is the powerhouse of the cell.<br>F: DNA is single stranded.</code>'
+        truefalse: 'Type one statement per line, starting with <strong>T:</strong> if true or <strong>F:</strong> if false. Example:<br><code class="bg-white px-1 rounded">T: Mitochondria is the powerhouse of the cell.<br>F: DNA is single stranded.</code>',
+        imgmatch: 'Upload <strong>one NCERT diagram</strong> (with the original labels removed) to your GitHub repo or any public host, paste its link below, and tap <strong>Load</strong>. Then tap each part on the picture to drop a numbered pin and type its correct label. Students will see the diagram with the pins and must label every point.'
     };
     function updateAdminFormatHint() {
         const type = document.getElementById('adminStageType').value;
@@ -1184,6 +1387,131 @@
         const dist = document.getElementById('adminDistractorInput');
         dist.style.display = (type === 'fill') ? 'block' : 'none';
         document.getElementById('autoSuggestBtn').style.display = (type === 'fill') ? 'inline' : 'none';
+        // for the diagram type, hide the raw textarea and show the visual pin builder
+        const isDiagram = (type === 'imgmatch');
+        document.getElementById('diagramBuilder').classList.toggle('is-hidden', !isDiagram);
+        document.getElementById('adminContentTextarea').style.display = isDiagram ? 'none' : 'block';
+        if(isDiagram) {
+            // if the textarea already holds diagram content (e.g. re-editing), restore it into the builder
+            const existing = parseDiagramContent(document.getElementById('adminContentTextarea').value);
+            if(existing && existing.img) {
+                diagramImgUrl = existing.img;
+                diagramPins = existing.pins;
+                document.getElementById('diagramUrlInput').value = existing.img;
+                loadDiagramImage(true);
+            }
+        }
+    }
+
+    /* ============================================================
+       LABEL-THE-DIAGRAM — admin pin builder
+       Stored format in textSeq:
+         line 1            = image URL
+         each later line   = "xPercent,yPercent = Label"
+       ============================================================ */
+    let diagramPins = [];      // [{x, y, label}]  x,y are percentages 0-100
+    let diagramImgUrl = "";
+
+    // parse stored diagram content → {img, pins} (or null if not the new format)
+    function parseDiagramContent(text) {
+        const lines = (text || "").split('\n').map(l => l.trim()).filter(Boolean);
+        if(!lines.length) return null;
+        // first line must be a bare URL (no "=")
+        const first = lines[0];
+        if(first.includes('=') || !/^https?:\/\//i.test(first)) return null;
+        const pins = [];
+        for(let i = 1; i < lines.length; i++) {
+            const eq = lines[i].indexOf('=');
+            if(eq < 0) continue;
+            const coords = lines[i].slice(0, eq).trim();
+            const label = lines[i].slice(eq + 1).trim();
+            const m = coords.match(/^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/);
+            if(!m) continue;
+            pins.push({ x: parseFloat(m[1]), y: parseFloat(m[2]), label });
+        }
+        return { img: first, pins };
+    }
+
+    function loadDiagramImage(keepPins) {
+        const url = document.getElementById('diagramUrlInput').value.trim();
+        if(!url) { alert("Paste your diagram image link first."); return; }
+        if(!/^https?:\/\//i.test(url)) { alert("The link should start with http:// or https://"); return; }
+        diagramImgUrl = url;
+        const img = document.getElementById('diagramCanvasImg');
+        img.src = url;
+        img.onerror = () => alert("That image link didn't load. Make sure it's a public link that ends in .png / .jpg and opens in a browser.");
+        document.getElementById('diagramStageWrap').classList.remove('is-hidden');
+        renderDiagramPins();
+        syncDiagramTextarea();
+    }
+
+    // tap on the image → add a pin at that spot (as a percentage of the image size)
+    function diagramCanvasClick(ev) {
+        const canvas = document.getElementById('diagramCanvas');
+        const rect = canvas.getBoundingClientRect();
+        const x = ((ev.clientX - rect.left) / rect.width) * 100;
+        const y = ((ev.clientY - rect.top) / rect.height) * 100;
+        diagramPins.push({ x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, label: "" });
+        renderDiagramPins();
+        syncDiagramTextarea();
+        SoundFX.slot();
+        // focus the newly added label box
+        setTimeout(() => { const inp = document.getElementById('diaLbl_' + (diagramPins.length - 1)); if(inp) inp.focus(); }, 30);
+    }
+
+    function removeDiagramPin(i) {
+        diagramPins.splice(i, 1);
+        renderDiagramPins();
+        syncDiagramTextarea();
+    }
+
+    function renderDiagramPins() {
+        const canvas = document.getElementById('diagramCanvas');
+        if(!canvas) return;
+        // remove old pins/removers (keep the <img>)
+        [...canvas.querySelectorAll('.diagram-pin, .diagram-pin-remove')].forEach(n => n.remove());
+        canvas.onclick = (ev) => { if(ev.target.id === 'diagramCanvasImg' || ev.target.id === 'diagramCanvas') diagramCanvasClick(ev); };
+        diagramPins.forEach((p, i) => {
+            const pin = document.createElement('span');
+            pin.className = "diagram-pin diagram-pin-admin";
+            pin.style.left = p.x + "%"; pin.style.top = p.y + "%";
+            pin.innerText = (i + 1);
+            canvas.appendChild(pin);
+            const rm = document.createElement('span');
+            rm.className = "diagram-pin-remove";
+            rm.style.left = p.x + "%"; rm.style.top = p.y + "%";
+            rm.innerText = "✕";
+            rm.onclick = (e) => { e.stopPropagation(); removeDiagramPin(i); };
+            canvas.appendChild(rm);
+        });
+        // label inputs
+        const list = document.getElementById('diagramPinList');
+        list.innerHTML = "";
+        if(!diagramPins.length) {
+            list.innerHTML = `<p class="text-[11px] text-slate-400">No pins yet — tap a part on the image above.</p>`;
+        }
+        diagramPins.forEach((p, i) => {
+            const row = document.createElement('div');
+            row.className = "flex items-center gap-2";
+            row.innerHTML = `<span class="num" style="min-width:24px;height:24px;border-radius:999px;background:var(--ep-green);color:#fff;font-weight:800;font-size:12px;line-height:24px;text-align:center;">${i + 1}</span>`;
+            const inp = document.createElement('input');
+            inp.type = "text"; inp.id = "diaLbl_" + i; inp.value = p.label || "";
+            inp.placeholder = "Correct label for pin " + (i + 1) + " (e.g. Mitochondria)";
+            inp.className = "hc-input flex-1 rounded-lg px-3 py-2 text-xs";
+            inp.oninput = () => { diagramPins[i].label = inp.value; syncDiagramTextarea(); };
+            const del = document.createElement('button');
+            del.type = "button"; del.innerText = "✕"; del.className = "text-rose-500 font-bold text-sm px-2";
+            del.onclick = () => removeDiagramPin(i);
+            row.appendChild(inp); row.appendChild(del);
+            list.appendChild(row);
+        });
+    }
+
+    // keep the hidden textarea in sync so the normal Save button stores it
+    function syncDiagramTextarea() {
+        let out = diagramImgUrl;
+        diagramPins.forEach(p => { out += `\n${p.x},${p.y} = ${p.label || ""}`; });
+        document.getElementById('adminContentTextarea').value = out;
     }
 
     // #28 — auto-bracket likely high-yield keywords in a pasted paragraph
@@ -1223,17 +1551,18 @@
             const lines = block.split('\n');
             const header = (lines.shift() || "").trim();
             const parts = header.split('|').map(p => p.trim());
-            if(parts.length < 2) { errors.push(`Block ${bi+1}: header must be "chapter | stage | type | timer".`); return; }
+            if(parts.length < 2) { errors.push(`Block ${bi+1}: header must be "chapter | part | type | timer".`); return; }
             const chCode = parts[0], stageIdx = parts[1];
             const stageType = (parts[2] || 'fill').toLowerCase();
             const timerVal = parseInt(parts[3]) || 180;
             const content = lines.join('\n').trim();
             if(!ChapterNamesMasterMatrix[chCode]) { errors.push(`Block ${bi+1}: unknown chapter "${chCode}" (use e.g. 11-1).`); return; }
+            if(!VARIETY_TYPES.includes(stageType)) { errors.push(`Block ${bi+1}: type must be fill, truefalse, arrange, match, or imgmatch.`); return; }
             if(!content) { errors.push(`Block ${bi+1}: no content.`); return; }
             if(stageType === 'fill' && !content.includes('[')) { errors.push(`Block ${bi+1}: fill type needs [brackets].`); return; }
 
-            const storageKey = `arc_${chCode}_stg_${stageIdx}`;
-            const pkg = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], stageIdx, timerVal, textSeq: content, distractors: [], stageType };
+            const storageKey = partTypeKey(chCode, stageIdx, stageType);
+            const pkg = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], stageIdx, part: stageIdx, timerVal, textSeq: content, distractors: [], stageType, savedAt: Date.now() };
             localStorage.setItem(storageKey, JSON.stringify(pkg));
             if(cloudReady) cloudDatabaseRef.ref('stages/' + storageKey).set(pkg);
             saved++;
@@ -1266,17 +1595,26 @@
         } else if(stageType === 'truefalse') {
             const rows = textSeq.split('\n').map(l=>l.trim()).filter(Boolean).filter(l => /^[TF]\s*:/i.test(l));
             if(rows.length < 1) return alert("True/False type: each line must start with 'T:' or 'F:'.");
+        } else if(stageType === 'imgmatch') {
+            const parsed = parseDiagramContent(textSeq);
+            if(!parsed || !parsed.img) return alert("Diagram: paste the image link and tap Load first.");
+            if(parsed.pins.length < 1) return alert("Diagram: tap the image to add at least one pin.");
+            if(parsed.pins.some(p => !p.label || !p.label.trim())) return alert("Diagram: every pin needs a correct label. Fill the empty boxes.");
         }
 
-        const storageKey = `arc_${chCode}_stg_${stageIdx}`;
-        const pkg = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], stageIdx, timerVal, textSeq, distractors, stageType };
+        const storageKey = partTypeKey(chCode, stageIdx, stageType);
+        const pkg = { storageKey, chCode, chName: ChapterNamesMasterMatrix[chCode], stageIdx, part: stageIdx, timerVal, textSeq, distractors, stageType, savedAt: Date.now() };
 
         localStorage.setItem(storageKey, JSON.stringify(pkg));
         if(cloudReady) cloudDatabaseRef.ref('stages/' + storageKey).set(pkg);
 
-        alert("Stage saved! It now appears in the sidebar.");
+        alert(`Saved! The ${VARIETY_META[stageType].label} game for Part ${stageIdx} now appears in the sidebar.`);
         document.getElementById('adminContentTextarea').value = "";
         document.getElementById('adminDistractorInput').value = "";
+        // reset the diagram builder if it was used
+        diagramPins = []; diagramImgUrl = "";
+        const diaUrl = document.getElementById('diagramUrlInput'); if(diaUrl) diaUrl.value = "";
+        const diaWrap = document.getElementById('diagramStageWrap'); if(diaWrap) diaWrap.classList.add('is-hidden');
         renderSyllabusSidebarMenus();
     }
 
@@ -1288,7 +1626,20 @@
         if(cloudReady) {
             cloudDatabaseRef.ref('stages').once('value', (snapshot) => {
                 const cloudData = snapshot.val() || {};
-                Object.keys(cloudData).forEach(k => localStorage.setItem(k, JSON.stringify(cloudData[k])));
+                Object.keys(cloudData).forEach(k => {
+                    const incoming = cloudData[k];
+                    let localRec = null;
+                    try { localRec = JSON.parse(localStorage.getItem(k)); } catch(e){}
+                    // keep whichever is newer; if a local edit is newer, push it up instead of overwriting it
+                    const localTime = (localRec && localRec.savedAt) || 0;
+                    const cloudTime = (incoming && incoming.savedAt) || 0;
+                    if(localRec && localTime > cloudTime) {
+                        cloudDatabaseRef.ref('stages/' + k).set(localRec);   // local wins → sync upward
+                    } else {
+                        localStorage.setItem(k, JSON.stringify(incoming));   // cloud is newer/equal → take it
+                    }
+                });
+                migrateOldStageKeys();             // convert any legacy keys pulled from cloud
                 generateMenuHTMLDOMStructure();    // refresh after cloud arrives
             }).catch(()=>{});
         }
@@ -1304,12 +1655,16 @@
             const isC11 = key.startsWith('11-');
             const targetBox = isC11 ? c11 : c12;
 
-            const stages = [];
-            for(let s = 1; s <= maxStagesFor(); s++) {
-                const record = localStorage.getItem(`arc_${key}_stg_${s}`);
-                if(record) stages.push({ s, data: JSON.parse(record) });
+            // gather parts that have any variety content
+            const partsMap = {};   // part -> { type: data }
+            for(let p = 1; p <= maxStagesFor(); p++) {
+                VARIETY_TYPES.forEach(type => {
+                    const rec = localStorage.getItem(partTypeKey(key, p, type));
+                    if(rec) { if(!partsMap[p]) partsMap[p] = {}; partsMap[p][type] = JSON.parse(rec); }
+                });
             }
-            if(stages.length === 0) return;
+            const partNums = Object.keys(partsMap).map(Number).sort((a, b) => a - b);
+            if(partNums.length === 0) return;
             anyStage = true;
 
             const unlocked = isChapterUnlocked(key);
@@ -1317,24 +1672,25 @@
 
             const blockCard = document.createElement('div');
             blockCard.className = "p-2 bg-white border border-slate-200 rounded-xl mb-1";
-
-            const titleBar = `<p class="text-[10px] font-extrabold text-slate-400 uppercase mb-1.5 flex items-center justify-between">
+            blockCard.innerHTML = `<p class="text-[10px] font-extrabold text-slate-400 uppercase mb-1.5 flex items-center justify-between">
                 <span>${ChapterNamesMasterMatrix[key]}</span>
                 ${isDemo ? '<span class="text-emerald-600">FREE</span>' : (unlocked ? '<span class="text-emerald-600">✓ unlocked</span>' : '<span class="text-amber-600">🔒</span>')}
             </p>`;
-            blockCard.innerHTML = titleBar;
 
-            // chapter completion bar (passed stages / total stages in this chapter)
+            // completion bar across all variety-items in the chapter
             if(unlocked) {
-                const passedCount = stages.filter(st => playerProfile.passed && playerProfile.passed[st.data.storageKey]).length;
-                const completionPct = Math.round((passedCount / stages.length) * 100);
+                let totalItems = 0, clearedItems = 0;
+                partNums.forEach(p => VARIETY_TYPES.forEach(t => {
+                    if(partsMap[p][t]) { totalItems++; if(playerProfile.passed && playerProfile.passed[partsMap[p][t].storageKey]) clearedItems++; }
+                }));
+                const completionPct = totalItems ? Math.round((clearedItems / totalItems) * 100) : 0;
                 blockCard.innerHTML += `<div class="mb-2">
-                    <div class="flex justify-between text-[9px] font-bold text-slate-400 mb-0.5"><span>${passedCount}/${stages.length} cleared</span><span>${completionPct}%</span></div>
+                    <div class="flex justify-between text-[9px] font-bold text-slate-400 mb-0.5"><span>${clearedItems}/${totalItems} games cleared</span><span>${completionPct}%</span></div>
                     <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div style="width:${completionPct}%; height:100%; background:#7cb62f;"></div></div>
                 </div>`;
             }
 
-            // locked chapter → single "unlock" button
+            // locked chapter → single unlock button
             if(!unlocked) {
                 const lockBtn = document.createElement('button');
                 lockBtn.className = "w-full text-left p-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-xs font-bold text-amber-700 transition flex items-center gap-2";
@@ -1345,59 +1701,64 @@
                 return;
             }
 
-            stages.forEach(({ s, data }) => {
-                const row = document.createElement('div');
-                row.className = "flex gap-1 mb-1 items-center";
+            // each PART shows 4 variety buttons
+            partNums.forEach(p => {
+                const partWrap = document.createElement('div');
+                partWrap.className = "mb-2";
+                partWrap.innerHTML = `<p class="text-[11px] font-extrabold text-slate-600 mb-1">Part ${p}</p>`;
 
-                const playable = isStagePlayable(key, s);
-                const passed = playerProfile.passed && playerProfile.passed[data.storageKey];
-                const stageStars = (playerProfile.stars && playerProfile.stars[data.storageKey]) || 0;
-                const starHtml = stageStars > 0 ? ` <span class="text-amber-500">${"★".repeat(stageStars)}</span>` : '';
-                const typeIcon = { fill: '✏️', arrange: '🔢', match: '🔗', truefalse: '✓✗' }[data.stageType || 'fill'];
+                const grid = document.createElement('div');
+                grid.className = "grid grid-cols-2 gap-1";
 
-                const actionBtn = document.createElement('button');
-                if(playable) {
-                    actionBtn.className = "flex-1 text-left p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-xs font-bold text-emerald-800 transition";
-                    actionBtn.innerHTML = `${typeIcon} Stage ${s}${starHtml}`;
-                    actionBtn.onclick = () => launchActiveArcadeSession(data.storageKey);
-                } else {
-                    actionBtn.className = "flex-1 text-left p-2 rounded-lg bg-slate-50 text-xs font-bold text-slate-400 cursor-not-allowed";
-                    actionBtn.innerHTML = `🔒 Stage ${s}`;
-                    actionBtn.onclick = () => alert(`Pass Stage ${s-1} with 70% or more to unlock this stage.`);
-                }
-                row.appendChild(actionBtn);
+                VARIETY_TYPES.forEach(type => {
+                    const data = partsMap[p][type];
+                    const meta = VARIETY_META[type];
+                    const btn = document.createElement('button');
+                    if(data) {
+                        const stars = (playerProfile.stars && playerProfile.stars[data.storageKey]) || 0;
+                        const starHtml = stars > 0 ? ` <span class="text-amber-500">${"★".repeat(stars)}</span>` : '';
+                        btn.className = "text-left p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[11px] font-bold text-emerald-800 transition flex items-center justify-between";
+                        btn.innerHTML = `<span>${meta.icon} ${meta.label}${starHtml}</span>`;
+                        btn.onclick = () => launchActiveArcadeSession(data.storageKey);
 
-                if(isAdminLoggedIn) {
-                    const editBtn = document.createElement('button');
-                    editBtn.className = "bg-amber-100 text-[10px] font-extrabold text-amber-700 px-2 rounded-lg";
-                    editBtn.innerText = "Edit";
-                    editBtn.onclick = () => {
-                        document.getElementById('adminChapterSelection').value = data.chCode;
-                        populateAdminPartsDropdown();
-                        document.getElementById('adminPartSelection').value = data.stageIdx;
-                        document.getElementById('adminTimerConfig').value = data.timerVal;
-                        document.getElementById('adminContentTextarea').value = data.textSeq;
-                        document.getElementById('adminDistractorInput').value = (data.distractors || []).join(', ');
-                        document.getElementById('adminStageType').value = data.stageType || 'fill';
-                        updateAdminFormatHint();
-                        document.getElementById('adminPanel').scrollIntoView({ behavior:'smooth' });
-                    };
-                    row.appendChild(editBtn);
-
-                    const delBtn = document.createElement('button');
-                    delBtn.className = "bg-rose-100 text-[10px] font-extrabold text-rose-700 px-2 rounded-lg";
-                    delBtn.innerText = "Del";
-                    delBtn.onclick = () => {
-                        if(confirm(`Delete Stage ${s} of ${ChapterNamesMasterMatrix[key]}?`)) {
-                            localStorage.removeItem(data.storageKey);
-                            if(cloudReady) cloudDatabaseRef.ref('stages/' + data.storageKey).remove();
-                            renderSyllabusSidebarMenus();
+                        if(isAdminLoggedIn) {
+                            const del = document.createElement('span');
+                            del.className = "text-rose-400 text-[10px] ml-1";
+                            del.innerText = "✕";
+                            del.title = "Delete";
+                            del.onclick = (e) => {
+                                e.stopPropagation();
+                                if(confirm(`Delete the ${meta.label} game of Part ${p}?`)) {
+                                    localStorage.removeItem(data.storageKey);
+                                    if(cloudReady) cloudDatabaseRef.ref('stages/' + data.storageKey).remove();
+                                    renderSyllabusSidebarMenus();
+                                }
+                            };
+                            btn.appendChild(del);
                         }
-                    };
-                    row.appendChild(delBtn);
-                }
-                blockCard.appendChild(row);
+                    } else {
+                        btn.className = "text-left p-2 rounded-lg bg-slate-50 text-[11px] font-bold text-slate-300 " + (isAdminLoggedIn ? "hover:bg-slate-100 cursor-pointer" : "cursor-default");
+                        btn.innerHTML = `<span>${meta.icon} ${meta.label}</span>`;
+                        if(isAdminLoggedIn) {
+                            btn.title = "Add this game";
+                            btn.onclick = () => {
+                                document.getElementById('adminChapterSelection').value = key;
+                                populateAdminPartsDropdown();
+                                document.getElementById('adminPartSelection').value = p;
+                                document.getElementById('adminStageType').value = type;
+                                updateAdminFormatHint();
+                                document.getElementById('adminPanel').scrollIntoView({ behavior:'smooth' });
+                            };
+                        } else {
+                            btn.onclick = () => alert(`The ${meta.label} game for Part ${p} hasn't been added yet.`);
+                        }
+                    }
+                    grid.appendChild(btn);
+                });
+                partWrap.appendChild(grid);
+                blockCard.appendChild(partWrap);
             });
+
             targetBox.appendChild(blockCard);
         });
 
@@ -1501,6 +1862,7 @@
             if(currentStageType === 'arrange') buildArrangeStage(data);
             else if(currentStageType === 'match') buildMatchStage(data);
             else if(currentStageType === 'truefalse') buildTrueFalseStage(data);
+            else if(currentStageType === 'imgmatch') buildImageMatchStage(data);
         }
 
         // reset lifeline buttons
@@ -1566,13 +1928,98 @@
     function buildMatchStage(data) {
         const pairs = data.textSeq.split('\n').map(l => l.trim()).filter(l => l.includes('='))
             .map(l => { const [a, b] = l.split('='); return { left: a.trim(), right: b.trim() }; });
-        altState = { type: 'match', pairs, assigned: {} };
+        altState = { type: 'match', pairs, assigned: {}, isImage: false };
         // scrambled right-side options
         altState.rightOptions = pairs.map(p => p.right).sort(() => Math.random() - 0.5);
         document.getElementById('altModeInstruction').innerText = "Tap a definition on the right, then tap the term it matches on the left:";
         altState.selectedRight = null;
         renderMatchBoard();
     }
+
+    function buildImageMatchStage(data) {
+        const parsed = parseDiagramContent(data.textSeq);
+        // graceful guard for old-format or empty content
+        if(!parsed || !parsed.img || !parsed.pins.length) {
+            altState = { type: 'imgmatch', img: null, pins: [], assigned: {}, options: [], selectedLabel: null, reveal: false };
+            document.getElementById('altModeInstruction').innerText = "This diagram needs to be re-added by your teacher in the new 'Label the diagram' format.";
+            document.getElementById('altModeBoard').innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">⚠️ No labelled diagram is set up here yet.</div>`;
+            return;
+        }
+        const options = parsed.pins.map(p => p.label).sort(() => Math.random() - 0.5);
+        altState = { type: 'imgmatch', img: parsed.img, pins: parsed.pins, assigned: {}, options, selectedLabel: null, reveal: false };
+        document.getElementById('altModeInstruction').innerText = "Tap a label below, then tap the matching numbered pin on the diagram:";
+        renderDiagramLabelBoard();
+    }
+
+    function renderDiagramLabelBoard() {
+        const board = document.getElementById('altModeBoard');
+        const st = altState;
+        board.innerHTML = `
+            <div style="display:inline-block; position:relative; max-width:100%;">
+                <img src="${st.img}" alt="diagram" style="display:block; max-width:100%; height:auto; border-radius:10px; background:#f8fafc;"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display:none; font-size:13px; color:#dc2626; padding:14px; text-align:center;">⚠️ The diagram image didn't load — check your internet connection.</div>
+                <div id="diagramPinLayer" style="position:absolute; inset:0;"></div>
+            </div>
+            <div id="diagramLabelBank" class="flex flex-wrap gap-2 mt-3"></div>
+            <div id="diagramAnswerList" class="space-y-2 mt-3"></div>`;
+
+        const layer = board.querySelector('#diagramPinLayer');
+        st.pins.forEach((p, i) => {
+            const pin = document.createElement('span');
+            const assigned = st.assigned[i];
+            let cls = "diagram-pin" + (assigned ? " done" : "");
+            if(st.reveal) cls = "diagram-pin " + (normTxt(assigned) === normTxt(p.label) ? "right" : "wrong");
+            pin.className = cls;
+            pin.style.left = p.x + "%"; pin.style.top = p.y + "%";
+            pin.innerHTML = (i + 1) + (assigned ? `<span class="pin-tag">${assigned}</span>` : "");
+            if(!st.reveal) pin.onclick = () => assignDiagramLabel(i);
+            layer.appendChild(pin);
+        });
+
+        // label bank (chips) — used ones greyed
+        const bank = board.querySelector('#diagramLabelBank');
+        st.options.forEach(opt => {
+            const used = Object.values(st.assigned).includes(opt);
+            const chip = document.createElement('div');
+            chip.className = "word-chip" + (st.selectedLabel === opt ? " selected" : "") + (used ? " used" : "");
+            chip.innerText = opt;
+            if(!st.reveal) chip.onclick = () => { if(used) return; SoundFX.click(); st.selectedLabel = (st.selectedLabel === opt ? null : opt); renderDiagramLabelBoard(); };
+            bank.appendChild(chip);
+        });
+
+        // tappable numbered list (clearer on small phones)
+        const list = board.querySelector('#diagramAnswerList');
+        st.pins.forEach((p, i) => {
+            const assigned = st.assigned[i];
+            const row = document.createElement('div');
+            let border = assigned ? "border-color:#2563eb;" : "";
+            if(st.reveal) border = "border-color:" + (normTxt(assigned) === normTxt(p.label) ? "#3B6D11" : "#A32D2D") + ";";
+            row.className = "diagram-row";
+            row.setAttribute('style', border);
+            row.innerHTML = `<span class="num">${i + 1}</span>
+                <span class="flex-1 text-sm font-bold ${assigned ? 'text-slate-700' : 'text-slate-300'}">${assigned || 'tap a label, then tap this'}</span>`;
+            if(st.reveal && normTxt(assigned) !== normTxt(p.label)) {
+                row.innerHTML += `<span class="text-[11px] text-emerald-700 font-bold">✓ ${p.label}</span>`;
+            }
+            if(!st.reveal) row.onclick = () => assignDiagramLabel(i);
+            list.appendChild(row);
+        });
+    }
+
+    function assignDiagramLabel(pinIdx) {
+        if(gameSubmitted) return;
+        const st = altState;
+        // tapping an already-filled pin clears it
+        if(st.assigned[pinIdx]) { delete st.assigned[pinIdx]; SoundFX.click(); renderDiagramLabelBoard(); updateStageProgress(); return; }
+        if(!st.selectedLabel) return;
+        SoundFX.slot();
+        st.assigned[pinIdx] = st.selectedLabel;
+        st.selectedLabel = null;
+        renderDiagramLabelBoard();
+        updateStageProgress();
+    }
+
     function renderMatchBoard() {
         const board = document.getElementById('altModeBoard');
         board.innerHTML = `<div class="grid grid-cols-2 gap-3">
@@ -1585,9 +2032,17 @@
         altState.pairs.forEach((p, i) => {
             const slot = document.createElement('div');
             const assignedVal = altState.assigned[i];
-            slot.className = "bg-white border-2 rounded-xl p-3 cursor-pointer " + (assignedVal ? "border-emerald-400" : "border-slate-200");
-            slot.innerHTML = `<div class="text-sm font-bold text-slate-700">${p.left}</div>
-                <div class="text-xs ${assignedVal?'text-emerald-600 font-bold':'text-slate-300'} mt-1">${assignedVal || 'tap to assign'}</div>`;
+            slot.className = "bg-white border-2 rounded-xl p-2 cursor-pointer " + (assignedVal ? "border-emerald-400" : "border-slate-200");
+            if(altState.isImage) {
+                slot.innerHTML = `
+                    <img src="${p.left}" alt="diagram" style="width:100%; height:110px; object-fit:contain; border-radius:8px; background:#f8fafc;"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display:none; font-size:11px; color:#dc2626; text-align:center; padding:8px;">⚠️ image didn't load</div>
+                    <div class="text-xs ${assignedVal?'text-emerald-600 font-bold':'text-slate-300'} mt-1 text-center">${assignedVal || 'tap to assign a label'}</div>`;
+            } else {
+                slot.innerHTML = `<div class="text-sm font-bold text-slate-700">${p.left}</div>
+                    <div class="text-xs ${assignedVal?'text-emerald-600 font-bold':'text-slate-300'} mt-1">${assignedVal || 'tap to assign'}</div>`;
+            }
             slot.onclick = () => assignMatch(i);
             leftCol.appendChild(slot);
         });
@@ -1648,30 +2103,38 @@
         updateStageProgress();
     }
 
+    // normalize for forgiving comparison (handles trailing spaces, \r\n from Windows pastes, case)
+    function normTxt(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim().toLowerCase(); }
+
     // evaluate alt formats → returns {correct, total} and paints feedback
     function evaluateAltStage() {
         let correct = 0, total = 0;
         if(altState.type === 'arrange') {
             total = altState.correct.length;
-            altState.current.forEach((item, i) => { if(item === altState.correct[i]) correct++; });
+            altState.current.forEach((item, i) => { if(normTxt(item) === normTxt(altState.correct[i])) correct++; });
             // paint
             const board = document.getElementById('altModeBoard');
             [...board.children].forEach((row, i) => {
-                const ok = altState.current[i] === altState.correct[i];
+                const ok = normTxt(altState.current[i]) === normTxt(altState.correct[i]);
                 row.style.background = ok ? "#eaf3de" : "#fcebeb";
                 row.style.borderColor = ok ? "#3B6D11" : "#A32D2D";
                 if(!ok) row.innerHTML += `<div class="text-[11px] text-emerald-700 font-bold mt-1 w-full">Correct: ${altState.correct[i]}</div>`;
             });
         } else if(altState.type === 'match') {
             total = altState.pairs.length;
-            altState.pairs.forEach((p, i) => { if(altState.assigned[i] === p.right) correct++; });
+            altState.pairs.forEach((p, i) => { if(normTxt(altState.assigned[i]) === normTxt(p.right)) correct++; });
             const leftCol = document.getElementById('matchLeftCol');
             if(leftCol) [...leftCol.children].forEach((slot, i) => {
-                const ok = altState.assigned[i] === altState.pairs[i].right;
+                const ok = normTxt(altState.assigned[i]) === normTxt(altState.pairs[i].right);
                 slot.style.background = ok ? "#eaf3de" : "#fcebeb";
                 slot.style.borderColor = ok ? "#3B6D11" : "#A32D2D";
                 if(!ok) slot.innerHTML += `<div class="text-[11px] text-emerald-700 font-bold mt-1">✓ ${altState.pairs[i].right}</div>`;
             });
+        } else if(altState.type === 'imgmatch') {
+            total = altState.pins.length;
+            altState.pins.forEach((p, i) => { if(normTxt(altState.assigned[i]) === normTxt(p.label)) correct++; });
+            altState.reveal = true;
+            renderDiagramLabelBoard();   // repaint pins green/red and reveal correct labels
         } else if(altState.type === 'truefalse') {
             total = altState.rows.length;
             altState.rows.forEach((r, i) => { if(altState.picks[i] === r.answer) correct++; });
@@ -2210,12 +2673,12 @@ Fill in the blanks before the timer runs out. Good luck! 🚀`;
             actionContainer.innerHTML += `<button onclick="launchActiveArcadeSession('${activeModuleStorageCompositeKey}', false, [${wrong.join(',')}])" class="text-white text-xs font-bold px-5 py-2.5 rounded-xl" style="background:#0ea5e9;">🔁 Fix my ${wrong.length} missed blank${wrong.length>1?'s':''}</button>`;
         }
 
-        // next stage button if it exists
+        // next part (same variety) if it exists
         try {
             const cur = JSON.parse(localStorage.getItem(activeModuleStorageCompositeKey));
-            const nextKey = `arc_${cur.chCode}_stg_${parseInt(cur.stageIdx) + 1}`;
+            const nextKey = partTypeKey(cur.chCode, parseInt(cur.stageIdx) + 1, cur.stageType || 'fill');
             if(localStorage.getItem(nextKey)) {
-                actionContainer.innerHTML += `<button onclick="launchActiveArcadeSession('${nextKey}')" class="bg-indigo-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-indigo-700">➡️ Next stage</button>`;
+                actionContainer.innerHTML += `<button onclick="launchActiveArcadeSession('${nextKey}')" class="bg-indigo-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-indigo-700">➡️ Next part</button>`;
             }
         } catch(e){}
 
@@ -2454,6 +2917,7 @@ ${url}`;
         } else if(altState) {
             if(altState.type === 'arrange') { total = 1; done = 1; }   // always "in progress"
             else if(altState.type === 'match') { total = altState.pairs.length; done = Object.keys(altState.assigned).length; }
+            else if(altState.type === 'imgmatch') { total = (altState.pins || []).length; done = Object.keys(altState.assigned).length; }
             else if(altState.type === 'truefalse') { total = altState.rows.length; done = Object.keys(altState.picks).length; }
         }
         fill.style.width = (total ? Math.round((done / total) * 100) : 0) + "%";
@@ -2533,6 +2997,8 @@ ${url}`;
        ============================================================ */
     applySettings();
     updateOnlineStatus();
+    migrateOldStageKeys();
+    seedSampleContentOnce();
     renderPlayerStats();
     refreshGroupStatusLine();
     renderSyllabusSidebarMenus();
@@ -2546,6 +3012,17 @@ ${url}`;
         <div style="font-size:20px; font-weight:800;">Paused</div>
         <p style="font-size:13px; color:#cbd5e1; max-width:260px; text-align:center;">The text is hidden and the timer is frozen so you can't peek. Resume when you're ready.</p>
         <button onclick="togglePause()" class="ep-green-bg text-white font-bold px-6 py-3 rounded-xl">▶ Resume</button>
+    </div>
+
+    <!-- MY PROGRESS MODAL -->
+    <div id="progressOverlay" class="is-hidden" style="position:fixed; inset:0; z-index:7000; background:rgba(15,23,42,0.7); display:flex; align-items:center; justify-content:center; padding:1rem;">
+        <div class="bg-white rounded-2xl shadow-xl w-full" style="max-width:440px; padding:1.5rem; max-height:88vh; overflow-y:auto;">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-extrabold text-slate-800">📈 My progress</h2>
+                <button onclick="document.getElementById('progressOverlay').classList.add('is-hidden')" class="text-slate-400 text-xl font-bold leading-none">✕</button>
+            </div>
+            <div id="progressBody"></div>
+        </div>
     </div>
 
     <!-- TUTORIAL OVERLAY -->
